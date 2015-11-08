@@ -4,3 +4,6 @@
 
 # maven/
 target
+
+questionnaire-sms/src/main/resources/ihuyiAccount.properties
+questionnaire-email/src/main/resources/emailAccount.properties
