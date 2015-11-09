@@ -28,15 +28,15 @@ import java.util.*;
  */
 public class SmsServiceImpl implements SmsService {
 
-	private SmsImpl sms;
+	private volatile SmsImpl sms;
 
 	/**
 	 * 注册时发送短信的模板
 	 */
-	private String register;
+	private volatile String register;
 
 	public SmsServiceImpl(){
-		updateTemplet();
+		updateData();
 	}
 
 	public SmsImpl getSms() {
@@ -48,10 +48,13 @@ public class SmsServiceImpl implements SmsService {
 	}
 
 	/**
-	 * 更新模板内容
+	 * 更新模板内容, 以及用户名, 密码等数据.
+	 * fixme 为了提高性能, 这里没有加锁, 但是会导致更新的同时会有部分用户使用的还是旧的 模板 和 用户名/密码,
+	 * 那么, 是否何以牺牲一定的正确性, 来换取性能呢? 如果加锁, 这里使用读写锁应该更合适吧:
+	 * 大多数时间都是在读, 偶尔写一次.
 	 */
 	@Override
-	public void updateTemplet(){
+	public void updateData(){
 		Properties properties = new Properties();
 		try (InputStream inputStream = new ClassPathResource("smsTemplet.properties").getInputStream()){
 			properties.load(inputStream);
@@ -60,6 +63,7 @@ public class SmsServiceImpl implements SmsService {
 		catch(IOException e) {
 			e.printStackTrace();
 		}
+		sms.updateMetaData();
 	}
 
 	/**

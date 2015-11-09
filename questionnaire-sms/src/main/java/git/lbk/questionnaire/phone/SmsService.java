@@ -23,9 +23,9 @@ package git.lbk.questionnaire.phone;
 public interface SmsService {
 
 	/**
-	 * 更新模板内容
+	 * 更新模板内容, 以及用户名, 密码等数据.
 	 */
-	void updateTemplet();
+	void updateData();
 
 	/**
 	 * 发送注册验证码

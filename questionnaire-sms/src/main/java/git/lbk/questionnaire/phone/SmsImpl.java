@@ -28,14 +28,17 @@ import java.util.concurrent.*;
 
 /**
  * 该类包装了SendSms接口.
- * 实现了限制ip, 手机号日发送次数, 以及短时间内的发送频率
+ * 实现了异步发送, 限制ip, 手机号日发送次数, 以及短时间内的发送频率
+ * fixme 这个类是否需要拆分成两/三个类? 感觉不知道怎么命名, 而且功能有点复杂.
+ * 而拆成两个:一个负责异步发送, 一个负责限制次数, 就比较好命名了.
+ * 但是那样的话, 类是不是太小, 太多了
  */
 public class SmsImpl implements Sms, ApplicationContextAware {
 
 	private volatile long sendInterval;
 	private volatile int ipDailyMaxSendCount;
 	private volatile int mobileDailyMaxSendCount;
-	private volatile long clearMapInterval;
+	private long clearMapInterval;
 
 	private ExecutorService executorService;
 	private ConcurrentMap<String, Long> sendDateMap;

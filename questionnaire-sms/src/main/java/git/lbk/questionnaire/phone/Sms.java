@@ -21,7 +21,7 @@ import git.lbk.questionnaire.model.SmsCount;
 
 /**
  * 该接口包装了SendSms接口.
- * 实现了限制ip, 手机号日发送次数, 以及短时间内的发送频率
+ * 实现了异步发送, 限制ip, 手机号日发送次数, 以及短时间内的发送频率
  */
 public interface Sms {
 
