@@ -28,6 +28,8 @@
         <module>questionnaire-persist</module>
         <module>questionnaire-sms</module>
         <module>questionnaire-email</module>
+        <module>questionnaire-service</module>
+        <module>questionnaire-ipAddress</module>
     </modules>
 
     <properties>
@@ -71,6 +73,11 @@
             <groupId>org.easymock</groupId>
             <artifactId>easymockclassextension</artifactId>
             <version>${easymock.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>git.lbk</groupId>
+            <artifactId>questionnaire-persist</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

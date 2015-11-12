@@ -67,7 +67,7 @@ public interface Sms {
 	 * 初始化该类实例,
 	 * 在调用该方法之前需要先将发送间隔, 日发送最大次数, 清理发送记录的时间间隔注入
 	 */
-	void init();
+	void init() throws Exception;
 
 	/**
 	 * 发送短信

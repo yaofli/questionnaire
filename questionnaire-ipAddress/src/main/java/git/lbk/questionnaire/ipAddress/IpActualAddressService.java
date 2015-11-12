@@ -14,27 +14,25 @@
  * limitations under the License.
  */
 
-package git.lbk.questionnaire.util;
+package git.lbk.questionnaire.ipAddress;
 
-
-import java.util.regex.Pattern;
+import git.lbk.questionnaire.model.User;
 
 /**
- * 提供字符串工具
- * fixme 像这种工具应该放在哪个模块里? 单独建一个模块?
+ * 提供ip地址查询服务
  */
-public class StringUtil {
+public interface IpActualAddressService {
 
-	public static final Pattern MOBILE_REGEX = Pattern.compile("1[0-9]{2}([- ]?[0-9]{4}){2}");
+	void init() throws Exception;
 
 	/**
-	 * 检验手机号码格式是否正确
+	 * 根据用户最后登录的ip获取登录的实际地址, 然后将最后登录ip, 地点, 时间保存到数据库中
+	 * 该方法并不保证绝对的正确性, 比如连续调用两次该方法, 数据库中的最终数据可能是第一次时的数据, 而不是第二次的
 	 *
-	 * @param mobile 手机号码
-	 * @return 正确返回true, 否则返回false
+	 * @param user user实体
 	 */
-	public static boolean verifyMobile(String mobile) {
-		return mobile != null && MOBILE_REGEX.matcher(mobile).matches();
-	}
+	void saveIpActualInfo(User user);
+
+	void destroy();
 
 }

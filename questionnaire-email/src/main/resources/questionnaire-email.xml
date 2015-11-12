@@ -21,17 +21,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
-    <bean class="git.lbk.questionnaire.placeholder.EncryptPropertyPlaceholderConfigurer"
-          p:location="emailAccount.properties"
-          p:fileEncoding="utf-8">
-        <property name="encryptPropNames">
-            <list>
-                <value>email.username</value>
-                <value>email.password</value>
-            </list>
-        </property>
-    </bean>
-
     <!--
         fixme 这里的做法和sms模块里的哪个好?
         这里的更简单: 不去考虑更新密码等信息
@@ -69,6 +58,7 @@
 
     <bean id="mailService" class="git.lbk.questionnaire.email.SendMailServiceImpl"
           init-method="init"
+          destroy-method="destroy"
           p:asyncSendMail-ref="asyncSendMail"
           p:templatePath="mailTemplate"/>
 

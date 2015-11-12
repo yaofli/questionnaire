@@ -18,7 +18,7 @@ package git.lbk.questionnaire.email;
 
 public interface SendMailService {
 
-	void init();
+	void init() throws Exception;
 
 	/**
 	 * 发送注册验证邮件
@@ -27,5 +27,7 @@ public interface SendMailService {
 	 * @param userEmail 用户邮箱
 	 */
 	void sendRegisterMail(String username, String captcha, String userEmail);
+
+	void destroy();
 
 }

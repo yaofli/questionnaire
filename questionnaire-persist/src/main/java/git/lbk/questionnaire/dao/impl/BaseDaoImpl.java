@@ -82,7 +82,7 @@ public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 	 * @param objects 参数
 	 * @return 受影响的行数
 	 */
-	public int batchEntityByHQL(String hql, Object... objects) {
+	public int updateEntityByHQL(String hql, Object... objects) {
 		Query query = sf.getCurrentSession().createQuery(hql);
 		for(int i=0; i<objects.length; i++){
 			query.setParameter(i, objects[i]);
@@ -95,7 +95,7 @@ public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 	 * @param sql     sql语句
 	 * @param objects sql参数
 	 */
-	public int executeSQL(String sql, Object... objects){
+	public int updateEntityBySQL(String sql, Object... objects){
 		SQLQuery query = sf.getCurrentSession().createSQLQuery(sql);
 		for(int i = 0; i < objects.length; i++) {
 			query.setParameter(i, objects[i]);

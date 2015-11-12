@@ -29,7 +29,7 @@ public interface SmsService {
 
 	/**
 	 * 发送注册验证码
-	 *
+	 * // fixme 这得参数是不是有点多了? 难道要再创建一个实体类吗?
 	 * @param mobile   手机号
 	 * @param userName 用户名
 	 * @param captcha  验证码

@@ -31,7 +31,8 @@ import java.util.concurrent.*;
  * 实现了异步发送, 限制ip, 手机号日发送次数, 以及短时间内的发送频率
  * fixme 这个类是否需要拆分成两/三个类? 感觉不知道怎么命名, 而且功能有点复杂.
  * 而拆成两个:一个负责异步发送, 一个负责限制次数, 就比较好命名了.
- * 但是那样的话, 类是不是太小, 太多了
+ * 但是那样的话, 类是不是太小, 太多了.
+ * 就像git.lbk.questionnaire.email.AsyncSendMailImpl类(questionnaire-email模块), 感觉就太小了, 根本不像个类
  */
 public class SmsImpl implements Sms, ApplicationContextAware {
 
@@ -101,11 +102,11 @@ public class SmsImpl implements Sms, ApplicationContextAware {
 	 * 在调用该方法之前需要先将发送间隔, 日发送最大次数, 清理发送记录的时间间隔注入
 	 */
 	@Override
-	public void init(){
+	public void init() throws Exception{
 		executorService = Executors.newCachedThreadPool();
 		sendDateMap = new ConcurrentHashMap<>();
 		timer = new Timer("sms destroy thread");
-		timer.schedule(new DestroyMobileMap(), clearMapInterval*1000, clearMapInterval*1000);
+		timer.schedule(new DestroyMobileMap(), clearMapInterval * 1000, clearMapInterval * 1000);
 	}
 
 	/**
@@ -114,20 +115,20 @@ public class SmsImpl implements Sms, ApplicationContextAware {
 	 * @param mobile  手机号码
 	 * @param message 短信内容
 	 * @param ip      请求发送短信的客户端的ip
-	 * @throws FrequentlyException 如果发送过于频繁
+	 * @throws FrequentlyException    如果发送过于频繁
 	 * @throws SendManyDailyException 如果超过了一天发送的最大次数
 	 */
 	@Override
 	public void sendMessage(String mobile, String message, String ip)
 			throws FrequentlyException, SendManyDailyException {
 		//fixme 这段关于多线程的处理是否"正确", 就是说除了isGreatMaxCount有潜在的线程竞争之外, 还有没其他bug?
-		if(isFrequently(mobile)){
+		if(isFrequently(mobile)) {
 			throw new FrequentlyException("发送过于频繁: " + mobile);
 		}
 		else if(isFrequently(ip)) {
 			throw new FrequentlyException("发送过于频繁: " + ip);
 		}
-		if(isGreatMaxCount(mobile, mobileDailyMaxSendCount) ){
+		if(isGreatMaxCount(mobile, mobileDailyMaxSendCount)) {
 			throw new SendManyDailyException("已超过日最大发送次数: " + mobile);
 		}
 		else if(isGreatMaxCount(ip, ipDailyMaxSendCount)) {
@@ -185,7 +186,7 @@ public class SmsImpl implements Sms, ApplicationContextAware {
 	 * 释放资源
 	 */
 	@Override
-	public void destroy() {
+	public void destroy(){
 		executorService.shutdown();
 		timer.cancel();
 		sendDateMap.clear();
@@ -193,6 +194,7 @@ public class SmsImpl implements Sms, ApplicationContextAware {
 			executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
 		}
 		catch(InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 

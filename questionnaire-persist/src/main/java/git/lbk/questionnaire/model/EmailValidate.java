@@ -29,6 +29,11 @@ public class EmailValidate implements Serializable{
 
 	public static final long serialVersionUID = 0;
 
+	/**
+	 * 注册邮箱验证码的过期时间, 单位为秒
+	 */
+	public static final int REGISTE_EXPIRETIME = 2 * 24 * 60 * 60;
+
 	private String identityCode;
 	private User user;
 	private Date createTime;

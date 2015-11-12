@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2015 LBK
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <bean id="ipActualAddress" class="git.lbk.questionnaire.ipAddress.IpActualAddressImpl">
+        <property name="apiKey" value="${baidu.apikey}"/>
+        <property name="httpUrl" value="${ip.url}"/>
+        <!--fixme 这里有没有方法把列表存到properties文件里, 比如用","分割,
+         然后在这里(spring bean配置文件)中转成list, 注入到bean里 -->
+        <property name="unknownData">
+            <list>
+                <value>None</value>
+                <value>未知</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="ipAddressService" class="git.lbk.questionnaire.ipAddress.IpActualAddressServiceImpl"
+          init-method="init" destroy-method="destroy">
+        <property name="ipActualAddress" ref="ipActualAddress"/>
+        <property name="userDao" ref="userDao" />
+    </bean>
+
+    <tx:advice id="ipTxAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED" isolation="DEFAULT"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+
+    <aop:config>
+        <aop:advisor advice-ref="ipTxAdvice"
+                     pointcut="execution(* *..IpActualAddressImpl.updateUserLastLoginIp(..))" />
+    </aop:config>
+
+</beans>

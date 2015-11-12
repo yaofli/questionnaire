@@ -55,4 +55,22 @@ public class UserDaoImpl extends BaseDaoImpl<User> {
 		return (User) uniqueResult("from User u where u.autoLogin = ?", autoLoginCode);
 	}
 
+	/**
+	 * 更新用户最后登录信息, 包括lastLoginTime, lastLoginAddress, lastLoginIp
+	 * @param user user实体
+	 * @return 成功返回true
+	 */
+	public void updateLastLoginInfo(User user){
+		String hql = "update User u set " +
+				"u.lastLoginTime = ?, " +
+				"u.lastLoginAddress = ?, " +
+				"u.lastLoginIp = ? " +
+				"where u.id = ? ";
+		updateEntityByHQL(hql,
+				user.getLastLoginTime(),
+				user.getLastLoginAddress(),
+				user.getLastLoginIp(),
+				user.getId());
+	}
+
 }

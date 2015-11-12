@@ -34,6 +34,15 @@ public class User implements Serializable{
 
 	public final static long serialVersionUID = 0L;
 
+	/**
+	 * 用户状态: 正常
+	 */
+	public final static char NORMAL_STATUS = 'n';
+	/**
+	 * 用户状态, 邮箱未验证
+	 */
+	public final static char NOT_VERIFIED = 'v';
+
 	private Integer id;
 	private String name;
 	private String password;

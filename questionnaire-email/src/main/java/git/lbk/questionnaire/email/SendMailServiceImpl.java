@@ -40,7 +40,7 @@ public class SendMailServiceImpl implements SendMailService {
 	}
 
 	@Override
-	public void init() {
+	public void init() throws Exception{
 		registerTemplate = loadFile("registerUser.html");
 	}
 
@@ -78,5 +78,10 @@ public class SendMailServiceImpl implements SendMailService {
 		mailMessage.setTo(userEmail);
 		mailMessage.setSubject("XX账号-账号激活");
 		asyncSendMail.asynchronismSendMail(mailMessage);
+	}
+
+	@Override
+	public void destroy() {
+
 	}
 }

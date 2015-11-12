@@ -14,27 +14,29 @@
  * limitations under the License.
  */
 
-package git.lbk.questionnaire.util;
-
-
-import java.util.regex.Pattern;
+package git.lbk.questionnaire.service;
 
 /**
- * 提供字符串工具
- * fixme 像这种工具应该放在哪个模块里? 单独建一个模块?
+ * 验证码已失效异常
  */
-public class StringUtil {
-
-	public static final Pattern MOBILE_REGEX = Pattern.compile("1[0-9]{2}([- ]?[0-9]{4}){2}");
-
-	/**
-	 * 检验手机号码格式是否正确
-	 *
-	 * @param mobile 手机号码
-	 * @return 正确返回true, 否则返回false
-	 */
-	public static boolean verifyMobile(String mobile) {
-		return mobile != null && MOBILE_REGEX.matcher(mobile).matches();
+public class CaptchaExpireException extends RuntimeException {
+	public CaptchaExpireException() {
 	}
 
+	public CaptchaExpireException(String message) {
+		super(message);
+	}
+
+	public CaptchaExpireException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public CaptchaExpireException(Throwable cause) {
+		super(cause);
+	}
+
+	public CaptchaExpireException(String message, Throwable cause, boolean enableSuppression, boolean
+			writableStackTrace) {
+		super(message, cause, enableSuppression, writableStackTrace);
+	}
 }

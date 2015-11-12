@@ -20,22 +20,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean class="git.lbk.questionnaire.placeholder.EncryptPropertyPlaceholderConfigurer">
-        <property name="locations">
-            <list>
-                <value>ihuyiAccount.properties</value>
-                <value>sms.properties</value>
-            </list>
-        </property>
-        <property name="fileEncoding" value="utf-8"/>
-        <property name="encryptPropNames">
-            <list>
-                <value>sms.account</value>
-                <value>sms.password</value>
-            </list>
-        </property>
-    </bean>
-
     <bean id="sendSms" class="git.lbk.questionnaire.phone.SendSmsImpl" scope="prototype">
         <property name="maxTryNumber" value="2"/>
         <property name="account" value="${sms.account}"/>

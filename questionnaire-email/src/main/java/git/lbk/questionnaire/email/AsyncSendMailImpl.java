@@ -24,6 +24,9 @@ import java.util.function.Consumer;
 
 /**
  * 实现异步发送邮件功能
+ * fixme 和git.lbk.questionnaire.phone.SmsImpl(questionnaire-sms模块)里同样的疑问,
+ * 像这样写, 感觉每个类的功能确实很单一, 易懂, 可是是不是类太小了,
+ * 感觉这功能就用一个类去实现太浪费了吧?
  */
 public class AsyncSendMailImpl implements AsyncSendMail {
 
