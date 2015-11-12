@@ -36,8 +36,7 @@ import static org.springframework.test.util.AssertionErrors.assertEquals;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 /**
- * fixme 该测试类只在单线程下进行了测试. 因为我还不确定多线程该怎么测试.
- * mock对象是否是多线程安全的? 是否需要和persist中的Dao进行集成测试?
+ * fixme 该测试类只在单线程下进行了测试. 因为我还不确定多线程该怎么测试. mock对象是否是多线程安全的? 是否需要和persist中的Dao进行集成测试?
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:questionnaire-smsTest.xml")

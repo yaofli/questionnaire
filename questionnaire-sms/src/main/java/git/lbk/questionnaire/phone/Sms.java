@@ -50,18 +50,12 @@ public interface Sms {
 	 */
 	void setMobileDailyMaxSendCount(int mobileDailyMaxSendCount);
 
-
 	/**
 	 * 设置清理发送记录的时间间隔(单位: 秒)
 	 *
 	 * @param clearMapInterval 清理发送记录的时间间隔
 	 */
 	void setClearMapInterval(long clearMapInterval);
-
-	/**
-	 * 更新元数据, 包括用户名, 密码等信息
-	 */
-	void updateMetaData();
 
 	/**
 	 * 初始化该类实例,

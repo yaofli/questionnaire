@@ -21,11 +21,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
-    <!--
-        fixme 这里的做法和sms模块里的哪个好?
-        这里的更简单: 不去考虑更新密码等信息
-        而sms里的由于考虑更新密码等问题. 导致配置上感觉有点怪, 而且可能有潜在的bug
-    -->
     <bean id="sender"
           class="org.springframework.mail.javamail.JavaMailSenderImpl"
           p:protocol="${email.protocol}"

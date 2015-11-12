@@ -19,9 +19,6 @@ package git.lbk.questionnaire.phone;
 
 import git.lbk.questionnaire.dao.BaseDao;
 import git.lbk.questionnaire.model.SmsCount;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -29,12 +26,9 @@ import java.util.concurrent.*;
 /**
  * 该类包装了SendSms接口.
  * 实现了异步发送, 限制ip, 手机号日发送次数, 以及短时间内的发送频率
- * fixme 这个类是否需要拆分成两/三个类? 感觉不知道怎么命名, 而且功能有点复杂.
- * 而拆成两个:一个负责异步发送, 一个负责限制次数, 就比较好命名了.
- * 但是那样的话, 类是不是太小, 太多了.
- * 就像git.lbk.questionnaire.email.AsyncSendMailImpl类(questionnaire-email模块), 感觉就太小了, 根本不像个类
+ * fixme 这个类是否需要拆分成两/三个类? 感觉不知道怎么命名, 而且功能有点复杂. 而拆成两个:一个负责异步发送, 一个负责限制次数, 就比较好命名了. 但是那样的话, 类是不是太小, 太多了. 就像git.lbk.questionnaire.email.AsyncSendMailImpl类(questionnaire-email模块), 感觉就太小了, 根本不像个类
  */
-public class SmsImpl implements Sms, ApplicationContextAware {
+public class SmsImpl implements Sms{
 
 	private volatile long sendInterval;
 	private volatile int ipDailyMaxSendCount;
@@ -216,27 +210,6 @@ public class SmsImpl implements Sms, ApplicationContextAware {
 				}
 			}
 		}
-	}
-
-	//fixme 这样就直接依赖于Spring了, 是不是和Spring的非侵入相违背, 有没有办法去掉依赖?
-	private ApplicationContext applicationContext;
-	private String sendSmsBeanId;
-
-	/**
-	 * 更新元数据, 包括url, 用户名, 密码等信息
-	 */
-	@Override
-	public void updateMetaData() {
-		sendSms = applicationContext.getBean(sendSmsBeanId, SendSms.class);
-	}
-
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
-	}
-
-	public void setSendSmsBeanId(String sendSmsBeanId) {
-		this.sendSmsBeanId = sendSmsBeanId;
 	}
 
 	/**

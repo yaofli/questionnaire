@@ -20,7 +20,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="sendSms" class="git.lbk.questionnaire.phone.SendSmsImpl" scope="prototype">
+    <bean id="sendSms" class="git.lbk.questionnaire.phone.SendSmsImpl">
         <property name="maxTryNumber" value="2"/>
         <property name="account" value="${sms.account}"/>
         <property name="password" value="${sms.password}"/>

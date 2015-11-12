@@ -18,6 +18,7 @@ package git.lbk.questionnaire.service.impl;
 
 import git.lbk.questionnaire.dao.impl.EmailValidateDaoImpl;
 import git.lbk.questionnaire.dao.impl.UserDaoImpl;
+import git.lbk.questionnaire.ipAddress.IpActualAddressService;
 import git.lbk.questionnaire.model.EmailValidate;
 import git.lbk.questionnaire.model.User;
 import git.lbk.questionnaire.service.CaptchaExpireException;
@@ -30,12 +31,13 @@ import java.util.*;
 @Service
 public class UserServiceImpl implements UserService {
 
-	// fixme 这里直接使用UserDaoImpl类, 而不是它的父接口, 那么依赖注入的优势是不是就基本上没有了?
-	//  可是如果使用BaseDao的话, 那么像注册, 登录等功能就得写sql或者hql语句, 可是这不是dao层应该做的事吗?
+	// fixme 这里直接使用UserDaoImpl类, 而不是它的父接口, 那么依赖注入的优势是不是就基本上没有了? 可是如果使用BaseDao的话, 那么像注册, 登录等功能就得写sql或者hql语句, 可是这不是dao层应该做的事吗?
 	@Autowired
 	private UserDaoImpl userDao;
 	@Autowired
 	private EmailValidateDaoImpl emailValidateDao;
+	@Autowired
+	private IpActualAddressService ipActualAddressService;
 
 	/**
 	 * 验证邮箱或者手机号是否已被注册
@@ -100,7 +102,8 @@ public class UserServiceImpl implements UserService {
 	public User validateLoginInfo(String identity, String password, String ip) {
 		User user = userDao.validateLoginInfo(identity, password);
 		if(user != null){
-			// todo 更新用户最后登录ip及时间
+			user.setLastLoginIp(ip);
+			ipActualAddressService.saveIpActualInfo(user);
 		}
 		return user;
 	}
@@ -116,7 +119,8 @@ public class UserServiceImpl implements UserService {
 	public User validateAutoLoginInfo(String identity, String ip) {
 		User user = userDao.validateAutoLoginInfo(identity);
 		if(user != null) {
-			// todo 更新用户最后登录ip及时间
+			user.setLastLoginIp(ip);
+			ipActualAddressService.saveIpActualInfo(user);
 		}
 		return user;
 	}

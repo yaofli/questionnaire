@@ -29,10 +29,10 @@
         http://www.springframework.org/schema/tx
         http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
-    <context:component-scan base-package="git.lbk.questionnaire.dao"/>
+    <context:component-scan base-package="git.lbk.questionnaire.dao.impl"/>
 
     <bean class="git.lbk.questionnaire.placeholder.EncryptPropertyPlaceholderConfigurer">
-        <property name="location" value="jdbc.properties"/>
+        <property name="location" value="jdbcTest.properties"/>
         <property name="fileEncoding" value="utf-8"/>
         <property name="encryptPropNames">
             <list>
@@ -41,6 +41,16 @@
             </list>
         </property>
     </bean>
+
+    <jdbc:embedded-database database-name="questionnaire" type="H2">
+        <!--
+            经过测试, 表结构可以由hibernate生成, 因此不需要指定数据库结构文件
+            spring应该是先初始hibernate再执行这里指定的sql文件吧,
+            否则执行test-data.sql时应该还没有user表, 执行结果肯定是出错
+        <jdbc:script location="classpath:schema.sql"/>
+        -->
+        <jdbc:script location="classpath:test-data.sql"/>
+    </jdbc:embedded-database>
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
         <property name="driverClass" value="${jdbc.driverClass}"/>
@@ -53,16 +63,6 @@
         <property name="minPoolSize" value="${c3p0.pool.size.minPoolSize}"/>
         <property name="maxPoolSize" value="${c3p0.pool.size.maxPoolSize}"/>
     </bean>
-
-    <jdbc:embedded-database database-name="questionnaire" type="H2">
-        <!--
-            经过测试, 表结构可以由hibernate生成, 因此不需要指定数据库结构文件
-            spring应该是先初始hibernate再执行这里指定的sql文件吧,
-            否则执行test-data.sql时应该还没有user表, 执行结果肯定是出错
-        <jdbc:script location="classpath:schema.sql"/>
-        -->
-        <jdbc:script location="classpath:test-data.sql"/>
-    </jdbc:embedded-database>
 
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>

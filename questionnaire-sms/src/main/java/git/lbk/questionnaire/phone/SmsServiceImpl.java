@@ -36,7 +36,7 @@ public class SmsServiceImpl implements SmsService {
 	private volatile String register;
 
 	public SmsServiceImpl(){
-		updateData();
+		updateTemplet();
 	}
 
 	public SmsImpl getSms() {
@@ -48,13 +48,11 @@ public class SmsServiceImpl implements SmsService {
 	}
 
 	/**
-	 * 更新模板内容, 以及用户名, 密码等数据.
-	 * fixme 为了提高性能, 这里没有加锁, 但是会导致更新的同时会有部分用户使用的还是旧的 模板 和 用户名/密码,
-	 * 那么, 是否何以牺牲一定的正确性, 来换取性能呢? 如果加锁, 这里使用读写锁应该更合适吧:
-	 * 大多数时间都是在读, 偶尔写一次.
+	 * 更新模板内容
+	 * fixme 为了提高性能, 这里没有加锁, 但是会导致更新的同时会有部分用户使用的还是旧的 模板 和 用户名/密码, 那么, 是否何以牺牲一定的正确性, 来换取性能呢? 如果加锁, 这里使用读写锁应该更合适吧: 大多数时间都是在读, 偶尔写一次.
 	 */
 	@Override
-	public void updateData(){
+	public void updateTemplet(){
 		Properties properties = new Properties();
 		try (InputStream inputStream = new ClassPathResource("smsTemplet.properties").getInputStream()){
 			properties.load(inputStream);
@@ -63,7 +61,6 @@ public class SmsServiceImpl implements SmsService {
 		catch(IOException e) {
 			e.printStackTrace();
 		}
-		sms.updateMetaData();
 	}
 
 	/**

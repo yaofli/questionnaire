@@ -17,6 +17,7 @@
 package git.lbk.questionnaire.dao.impl;
 
 import git.lbk.questionnaire.model.User;
+import org.hibernate.hql.internal.ast.QuerySyntaxException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -163,8 +164,34 @@ public class UserDaoImplTest {
 	}
 
 	@Test
-	public void testBatchEntityByHQL() throws Exception {
-		//TODO 测试batchEntityByHQL方法
+	public void testUpdateEntityByHQL() throws Exception {
+		String name = user.getName();
+		user.setName("updateEntityByHQL");
+		String hql = "update User u set u.name = ? where u.id = ?";
+
+		userDao.updateEntityByHQL(hql, user.getName(), user.getId());
+		assertEquals(user, userDao.getEntity(user.getId()));
+
+		user.setName(name);
+		userDao.updateEntity(user);
+	}
+
+	@Test(expected = QuerySyntaxException.class)
+	public void testUpdateEntityByHQLError() throws Exception {
+		String hql = "update user u set u.name = ? where u.id = ?";
+		userDao.updateEntityByHQL(hql, user.getName(), user.getId());
+	}
+
+	@Test
+	public void testUpdateEntityBySQL(){
+		String name = user.getName();
+		user.setName("updateEntityBySQL");
+		String sql = "update user set name=? where id=?";
+		userDao.updateEntityBySQL(sql, user.getName(), user.getId());
+		assertEquals(user, userDao.getEntity(user.getId()));
+
+		user.setName(name);
+		userDao.updateEntity(user);
 	}
 
 	@Test
