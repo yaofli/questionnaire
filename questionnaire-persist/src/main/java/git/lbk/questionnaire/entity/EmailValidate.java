@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package git.lbk.questionnaire.model;
+package git.lbk.questionnaire.entity;
 
 import git.lbk.questionnaire.util.DateUtil;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.*;
 
@@ -29,14 +31,21 @@ public class EmailValidate implements Serializable{
 
 	public static final long serialVersionUID = 0;
 
-	/**
-	 * 注册邮箱验证码的过期时间, 单位为秒
-	 */
-	public static final int REGISTE_EXPIRETIME = 2 * 24 * 60 * 60;
+	public static final String REGISTED_TYPE = "reg";
 
+	/**
+	 * 邮箱验证码的过期时间, 单位为小时
+	 */
+	public static final int EXPIRE_TIME = 2 * 24;
+
+	@Pattern(regexp = "\\p{XDigit}{64}")
 	private String identityCode;
+
 	private User user;
+
 	private Date createTime;
+
+	@NotNull
 	private String type;
 
 	public String getIdentityCode() {

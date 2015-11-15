@@ -30,6 +30,7 @@
     <properties>
         <json-lib.version>2.3</json-lib.version>
         <org.json.version>20150729</org.json.version>
+        <jackson.version>2.6.2</jackson.version>
     </properties>
 
     <dependencies>
@@ -44,15 +45,9 @@
             <version>${springframework.version}</version>
         </dependency>
         <dependency>
-            <groupId>net.sf.json-lib</groupId>
-            <artifactId>json-lib</artifactId>
-            <version>${json-lib.version}</version>
-            <classifier>jdk15</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>${org.json.version}</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
     </dependencies>
 

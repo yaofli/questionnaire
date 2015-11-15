@@ -18,7 +18,7 @@ package git.lbk.questionnaire.phone;
 
 import git.lbk.questionnaire.dao.BaseDao;
 import git.lbk.questionnaire.dao.impl.SmsCountDaoImpl;
-import git.lbk.questionnaire.model.SmsCount;
+import git.lbk.questionnaire.entity.SmsCount;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Ignore;

@@ -16,28 +16,33 @@
 
 package git.lbk.questionnaire.service.impl;
 
-import git.lbk.questionnaire.dao.impl.EmailValidateDaoImpl;
 import git.lbk.questionnaire.dao.impl.UserDaoImpl;
+import git.lbk.questionnaire.email.SendMailService;
+import git.lbk.questionnaire.entity.EmailValidate;
+import git.lbk.questionnaire.entity.User;
 import git.lbk.questionnaire.ipAddress.IpActualAddressService;
-import git.lbk.questionnaire.model.EmailValidate;
-import git.lbk.questionnaire.model.User;
+import git.lbk.questionnaire.security.MessageDigestUtil;
 import git.lbk.questionnaire.service.CaptchaExpireException;
 import git.lbk.questionnaire.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.*;
-
-@Service
 public class UserServiceImpl implements UserService {
 
 	// fixme 这里直接使用UserDaoImpl类, 而不是它的父接口, 那么依赖注入的优势是不是就基本上没有了? 可是如果使用BaseDao的话, 那么像注册, 登录等功能就得写sql或者hql语句, 可是这不是dao层应该做的事吗?
-	@Autowired
 	private UserDaoImpl userDao;
-	@Autowired
-	private EmailValidateDaoImpl emailValidateDao;
-	@Autowired
+	private SendMailService sendMailService;
 	private IpActualAddressService ipActualAddressService;
+
+	public void setUserDao(UserDaoImpl userDao) {
+		this.userDao = userDao;
+	}
+
+	public void setSendMailService(SendMailService sendMailService) {
+		this.sendMailService = sendMailService;
+	}
+
+	public void setIpActualAddressService(IpActualAddressService ipActualAddressService) {
+		this.ipActualAddressService = ipActualAddressService;
+	}
 
 	/**
 	 * 验证邮箱或者手机号是否已被注册
@@ -59,6 +64,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public int registe(User user) {
 		try {
+			user.setPassword(MessageDigestUtil.SHA256(user.getPassword()));
 			userDao.saveEntity(user);
 		}
 		catch(Exception e) {
@@ -76,14 +82,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public User activeAccount(EmailValidate emailValidate) throws CaptchaExpireException {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(emailValidate.getCreateTime());
-		calendar.add(Calendar.SECOND, EmailValidate.REGISTE_EXPIRETIME);
-		if(calendar.before(Calendar.getInstance())) {
-			throw new CaptchaExpireException("验证码已经失效, 过期时间 " + calendar);
-		}
-		emailValidate = emailValidateDao.getEntity(emailValidate.getIdentityCode());
-		emailValidateDao.deleteEntity(emailValidate);
+		sendMailService.validateMailCaptcha(emailValidate);
 		User user = emailValidate.getUser();
 		user.setStatus(User.NORMAL_STATUS);
 		userDao.updateEntity(user);
@@ -100,6 +99,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public User validateLoginInfo(String identity, String password, String ip) {
+		password = MessageDigestUtil.SHA256(password);
 		User user = userDao.validateLoginInfo(identity, password);
 		if(user != null){
 			user.setLastLoginIp(ip);

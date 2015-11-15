@@ -16,7 +16,7 @@
 
 package git.lbk.questionnaire.dao.impl;
 
-import git.lbk.questionnaire.model.EmailValidate;
+import git.lbk.questionnaire.entity.EmailValidate;
 import org.springframework.stereotype.Repository;
 
 @Repository("emailValidateDao")

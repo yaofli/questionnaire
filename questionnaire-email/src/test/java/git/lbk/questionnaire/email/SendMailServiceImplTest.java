@@ -16,30 +16,33 @@
 
 package git.lbk.questionnaire.email;
 
+import git.lbk.questionnaire.dao.BaseDao;
+import git.lbk.questionnaire.entity.EmailValidate;
+import git.lbk.questionnaire.entity.User;
 import org.easymock.EasyMock;
 import org.easymock.LogicalOperator;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:questionnaire-emailTest.xml")
+import static org.easymock.EasyMock.expectLastCall;
+
 public class SendMailServiceImplTest {
 
 	private SendMailService mailService;
 	private AsyncSendMail asyncSendMail;
+	private BaseDao<EmailValidate> baseDao;
 
 	@Before
-	public void before(){
+	public void before() throws Exception {
 		asyncSendMail = EasyMock.createMock(AsyncSendMail.class);
+		baseDao = EasyMock.createMock(BaseDao.class);
 
 		SendMailServiceImpl mailService = new SendMailServiceImpl();
 		mailService.setTemplatePath("mailTemplate");
 		mailService.setAsyncSendMail(asyncSendMail);
+		mailService.setBaseDao(baseDao);
 		mailService.init();
 		this.mailService = mailService;
 	}
@@ -58,11 +61,17 @@ public class SendMailServiceImplTest {
 				return o1.getSubject().compareTo(o2.getSubject());
 			}
 		}, LogicalOperator.EQUAL));
-		EasyMock.replay(asyncSendMail);
+		baseDao.saveEntity(EasyMock.isA(EmailValidate.class));
+		expectLastCall().once();
 
-		mailService.sendRegisterMail("abc", "1234567", mailMessage.getTo());
+		EasyMock.replay(asyncSendMail, baseDao);
+
+		User user = new User();
+		user.setId(1);
+		user.setName("abc");
+		mailService.sendRegisterMail(user, mailMessage.getTo());
 
 		Thread.sleep(1000);
-		EasyMock.verify(asyncSendMail);
+		EasyMock.verify(asyncSendMail, baseDao);
 	}
 }

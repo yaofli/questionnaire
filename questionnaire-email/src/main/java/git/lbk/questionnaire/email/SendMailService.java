@@ -16,17 +16,26 @@
 
 package git.lbk.questionnaire.email;
 
+import git.lbk.questionnaire.entity.EmailValidate;
+import git.lbk.questionnaire.entity.User;
+
 public interface SendMailService {
 
 	void init() throws Exception;
 
 	/**
 	 * 发送注册验证邮件
-	 * @param username 用户名
-	 * @param captcha 验证码
+	 * @param user 用户实体
 	 * @param userEmail 用户邮箱
 	 */
-	void sendRegisterMail(String username, String captcha, String userEmail);
+	void sendRegisterMail(User user, String userEmail);
+
+	/**
+	 * 根据emailValidate中的验证码, 创建时间, 类型检验邮箱验证码, 如果正确, 则返回与之关联的用户实体, 否则返回null
+	 * @param emailValidate 验证码
+	 * @return 如果正确, 则返回与之关联的用户实体, 否则返回null
+	 */
+	User validateMailCaptcha(EmailValidate emailValidate);
 
 	void destroy();
 

@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 public class StringUtil {
 
 	public static final Pattern MOBILE_REGEX = Pattern.compile("1[0-9]{2}([- ]?[0-9]{4}){2}");
+	public static final Pattern EMAIL_REGEX = Pattern.compile("[A-Z0-9._%+-]+@[A-Z0-9.-]+(\\.[A-Z]{2,6}){1,3}");
 
 	/**
 	 * 检验手机号码格式是否正确
@@ -35,6 +36,68 @@ public class StringUtil {
 	 */
 	public static boolean verifyMobile(String mobile) {
 		return mobile != null && MOBILE_REGEX.matcher(mobile).matches();
+	}
+
+	/**
+	 * 验证邮箱格式是否正确
+	 * @param email 邮箱
+	 * @return 正确返回true, 否则返回false
+	 */
+	public static boolean verifyEmail(String email){
+		return email != null && EMAIL_REGEX.matcher(email).matches();
+	}
+
+	/**
+	 * 判断给定的字符串数组中是否有空字符串(等于null 或者 等于"")
+	 *
+	 * @param strArray 字符数组
+	 * @return 如果给定的数组为null, 或者里面有空字符串则返回true, 否则返回false
+	 */
+	public static boolean anyNull(String... strArray) {
+		if(strArray == null) {
+			return true;
+		}
+		for(String str : strArray) {
+			if(isNull(str)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 判断给定的字符串是否为空字符串(等于null 或者 等于"")
+	 *
+	 * @param str 需要判断是否为空的字符串
+	 * @return 如果字符串为空, 则返回true, 否则返回false
+	 */
+	public static boolean isNull(String str) {
+		return str == null || str.equals("");
+	}
+
+	/**
+	 * 储存十六进制的所有可用字符
+	 */
+	private final static char HEX_DIGITS[] = "0123456789ABCDEF".toCharArray();
+
+
+	/**
+	 * 将储存有0~15的byte数组转换为字符串形式
+	 *
+	 * @param b byte数组
+	 * @return 数组的字符串形式
+	 */
+	public static String hexBytesToString(byte[] b) {
+		if(b==null){
+			return "";
+		}
+		int length = b.length;
+		StringBuffer str = new StringBuffer(length * 2);
+		for(int i = 0; i < length; i++) {
+			str.append(HEX_DIGITS[b[i] >> 4 & 0xf]);
+			str.append(HEX_DIGITS[b[i] & 0xf]);
+		}
+		return str.toString();
 	}
 
 }

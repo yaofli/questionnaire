@@ -16,7 +16,7 @@
 
 package git.lbk.questionnaire.dao.impl;
 
-import git.lbk.questionnaire.model.SmsCount;
+import git.lbk.questionnaire.entity.SmsCount;
 import org.springframework.stereotype.Repository;
 
 @Repository("smsCountDao")

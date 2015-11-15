@@ -16,7 +16,7 @@
 
 package git.lbk.questionnaire.ipAddress;
 
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,11 +41,6 @@ public class IpActualAddressImpl implements IpActualAddress {
 	 * 返回的json中城市的键
 	 */
 	private static final String CITY = "city";
-
-	/**
-	 * 返回的json中地区的键
-	 */
-	private static final String DISTRICT = "district";
 
 	/**
 	 * 返回的json中运营商的键
@@ -78,7 +73,7 @@ public class IpActualAddressImpl implements IpActualAddress {
 	@Override
 	public String getIpActualAddress(String ip) throws CannotAcquireAddressException {
 		try {
-			return  getAddressInfo(getActualAddressJson(ip));
+			return getAddressInfo(getActualAddressJson(ip));
 		}
 		catch(Exception e) {
 			CannotAcquireAddressException ex = new CannotAcquireAddressException("无法获取Ip地址的地理信息");
@@ -122,20 +117,26 @@ public class IpActualAddressImpl implements IpActualAddress {
 	 * @return
 	 */
 	private String getAddressInfo(String json) {
-		JSONObject jsonObject = JSONObject.fromObject(json);
-		int errNum = jsonObject.getInt("errNum");
-		if(errNum != 0) {
-			// 这里retData是数组, 不是JSONObject
+		ObjectMapper objectMapper = new ObjectMapper();
+		Map<String, Object> map;
+		try {
+			map = objectMapper.readValue(json, Map.class);
+			if((Integer)map.get("errNum") != 0) {
+				// 这里retData是数组, 不是JSONObject
+				return "";
+			}
+		}
+		catch(IOException e) {
+			e.printStackTrace();
 			return "";
 		}
 
 		StringBuilder stringBuilder = new StringBuilder();
-		JSONObject retData = jsonObject.getJSONObject("retData");
-		stringBuilder.append(deleteUnknowData(retData.getString(COUNTRY)));
-		stringBuilder.append(deleteUnknowData(retData.getString(PROVINCE)));
-		stringBuilder.append(deleteUnknowData(retData.getString(CITY)));
-		stringBuilder.append(deleteUnknowData(retData.getString(DISTRICT)) + "\n");
-		stringBuilder.append(deleteUnknowData(retData.getString(CARRIER)));
+		Map<String, String> retData = (Map<String, String>) map.get("retData");
+		stringBuilder.append(deleteUnknowData(retData.get(COUNTRY)));
+		stringBuilder.append(deleteUnknowData(retData.get(PROVINCE)));
+		stringBuilder.append(deleteUnknowData(retData.get(CITY)));
+		stringBuilder.append(deleteUnknowData(retData.get(CARRIER)));
 		return stringBuilder.toString();
 	}
 
@@ -146,7 +147,7 @@ public class IpActualAddressImpl implements IpActualAddress {
 	 * @return 处理过的字符串
 	 */
 	private String deleteUnknowData(String str) {
-		if(unknownData.contains(str)){
+		if(unknownData.contains(str)) {
 			return "";
 		}
 		return str;

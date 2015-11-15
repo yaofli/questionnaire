@@ -69,7 +69,7 @@
         <property name="configLocation" value="classpath:hibernateTest.cfg.xml"/>
         <property name="mappingDirectoryLocations">
             <list>
-                <value>classpath:git/lbk/questionnaire/model</value>
+                <value>classpath:git/lbk/questionnaire/entity</value>
             </list>
         </property>
     </bean>

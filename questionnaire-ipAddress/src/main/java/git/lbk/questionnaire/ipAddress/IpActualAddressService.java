@@ -16,7 +16,7 @@
 
 package git.lbk.questionnaire.ipAddress;
 
-import git.lbk.questionnaire.model.User;
+import git.lbk.questionnaire.entity.User;
 
 /**
  * 提供ip地址查询服务

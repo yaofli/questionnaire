@@ -16,7 +16,7 @@
 
 package git.lbk.questionnaire.dao.impl;
 
-import git.lbk.questionnaire.model.User;
+import git.lbk.questionnaire.entity.User;
 import org.hibernate.hql.internal.ast.QuerySyntaxException;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,10 +51,10 @@ public class UserDaoImplTest {
 		user.setName("zs");
 		user.setPassword("1234567890");
 		user.setAutoLogin("zsAutoLogin");
-		user.setTelephone("13145679381");
+		user.setMobile("13145679381");
 		user.setEmail("zs@gmail.com");
 		user.setStatus('n');
-		user.setType("c");
+		user.setType(User.COMMON);
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		user.setRegisterTime(dateFormat.parse("2014-02-06 22:08:30"));
 	}
@@ -115,7 +115,7 @@ public class UserDaoImplTest {
 		saveUser.setEmail("saveUser@gmail.com");
 		saveUser.setStatus('n');
 		saveUser.setRegisterTime(new Date());
-		saveUser.setType("c");
+		saveUser.setType(User.COMMON);
 
 		userDao.saveEntity(saveUser);
 		User u = userDao.getEntity(saveUser.getId());
@@ -132,7 +132,7 @@ public class UserDaoImplTest {
 		saveUser.setEmail("saveOrUpdateUserFirst@gmail.com");
 		saveUser.setStatus('n');
 		saveUser.setRegisterTime(new Date());
-		saveUser.setType("c");
+		saveUser.setType(User.COMMON);
 
 		userDao.saveOrUpdateEntity(saveUser);
 		assertEquals("保存实体出错", saveUser, userDao.getEntity(saveUser.getId()));
@@ -205,7 +205,7 @@ public class UserDaoImplTest {
 
 	@Test
 	public void testIsRegisted() throws Exception {
-		assertTrue("没有找到注册用户", userDao.isRegisted(user.getTelephone()));
+		assertTrue("没有找到注册用户", userDao.isRegisted(user.getMobile()));
 		assertTrue("没有找到注册用户", userDao.isRegisted(user.getEmail()));
 
 		assertFalse("查找到为注册用户", userDao.isRegisted("abc"));
@@ -219,7 +219,7 @@ public class UserDaoImplTest {
 				userDao.validateLoginInfo(user.getEmail(), user.getPassword()));
 
 		assertEquals("用户登录失败", user,
-				userDao.validateLoginInfo(user.getTelephone(), user.getPassword()));
+				userDao.validateLoginInfo(user.getMobile(), user.getPassword()));
 
 		assertEquals("无效用户登录成功", null, userDao.validateLoginInfo("", "12345"));
 	}

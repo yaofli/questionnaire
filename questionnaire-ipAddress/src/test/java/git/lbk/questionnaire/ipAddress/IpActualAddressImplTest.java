@@ -25,7 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.assertNotEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:questionnaire-ipAddress.xml")
+@ContextConfiguration(locations = "classpath:questionnaire-ipAddressTest.xml")
 public class IpActualAddressImplTest {
 
 	@Autowired

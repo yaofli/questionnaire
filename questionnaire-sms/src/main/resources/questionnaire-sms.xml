@@ -20,7 +20,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="sendSms" class="git.lbk.questionnaire.phone.SendSmsImpl">
+    <bean id="sendSms" class="git.lbk.questionnaire.phone.SendSmsConsoleImpl">
         <property name="maxTryNumber" value="2"/>
         <property name="account" value="${sms.account}"/>
         <property name="password" value="${sms.password}"/>
@@ -31,7 +31,6 @@
         <property name="ipDailyMaxSendCount" value="${sms.ipDailyMaxSendCount}"/>
         <property name="mobileDailyMaxSendCount" value="${sms.mobileDailyMaxSendCount}"/>
         <property name="clearMapInterval" value="${sms.clearMapInterval}"/>
-        <property name="sendSmsBeanId" value="sendSms"/>
 
         <property name="sendSms" ref="sendSms"/>
         <property name="smsDao" ref="smsCountDao"/>

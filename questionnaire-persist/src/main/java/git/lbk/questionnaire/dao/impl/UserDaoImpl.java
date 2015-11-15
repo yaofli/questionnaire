@@ -16,7 +16,7 @@
 
 package git.lbk.questionnaire.dao.impl;
 
-import git.lbk.questionnaire.model.User;
+import git.lbk.questionnaire.entity.User;
 import org.springframework.stereotype.Repository;
 
 @Repository("userDao")

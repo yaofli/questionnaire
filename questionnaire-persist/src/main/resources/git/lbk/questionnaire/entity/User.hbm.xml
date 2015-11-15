@@ -21,17 +21,17 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
-    <class name="git.lbk.questionnaire.model.User" table="user">
+    <class name="git.lbk.questionnaire.entity.User" table="user">
         <id name="id" column="id" type="java.lang.Integer">
             <generator class="native"/>
                 </id>
         <property name="name" column="name" type="java.lang.String"/>
         <property name="password" column="password" type="java.lang.String"/>
         <property name="autoLogin" column="autoLogin" type="java.lang.String"/>
-        <property name="telephone" column="telephone" type="java.lang.String"/>
+        <property name="mobile" column="mobile" type="java.lang.String"/>
         <property name="email" column="email" type="java.lang.String"/>
         <property name="status" column="status" type="java.lang.Character"/>
-        <property name="type" column="type" type="java.lang.String"/>
+        <property name="type" column="type" type="java.lang.Character"/>
         <property name="registerTime" column="registerTime" type="java.util.Date"/>
         <property name="lastLoginTime" column="lastLoginTime" type="java.util.Date"/>
         <property name="lastLoginAddress" column="lastLoginAddress" type="java.lang.String"/>

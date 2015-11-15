@@ -16,8 +16,8 @@
 
 package git.lbk.questionnaire.service;
 
-import git.lbk.questionnaire.model.EmailValidate;
-import git.lbk.questionnaire.model.User;
+import git.lbk.questionnaire.entity.EmailValidate;
+import git.lbk.questionnaire.entity.User;
 
 public interface UserService {
 

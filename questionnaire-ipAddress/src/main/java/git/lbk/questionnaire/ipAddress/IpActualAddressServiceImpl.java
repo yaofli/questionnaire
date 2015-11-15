@@ -17,7 +17,7 @@
 package git.lbk.questionnaire.ipAddress;
 
 import git.lbk.questionnaire.dao.impl.UserDaoImpl;
-import git.lbk.questionnaire.model.User;
+import git.lbk.questionnaire.entity.User;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;

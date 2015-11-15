@@ -17,7 +17,7 @@
 package git.lbk.questionnaire.phone;
 
 import git.lbk.questionnaire.dao.BaseDao;
-import git.lbk.questionnaire.model.SmsCount;
+import git.lbk.questionnaire.entity.SmsCount;
 
 /**
  * 该接口包装了SendSms接口.

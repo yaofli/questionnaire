@@ -16,6 +16,7 @@
 
 package git.lbk.questionnaire.phone;
 
+import git.lbk.questionnaire.entity.SmsMessage;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
@@ -64,20 +65,36 @@ public class SmsServiceImpl implements SmsService {
 	}
 
 	/**
-	 * 发送注册验证码
-	 * @param mobile 手机号
-	 * @param userName 用户名
-	 * @param captcha 验证码
-	 * @param ip 客户ip
-	 * @throws FrequentlyException 如果发送过于频繁
+	 * 发送验证码
+	 *
+	 * @param smsMessage 发送短信的基本数据
+	 * @throws FrequentlyException    如果发送过于频繁
 	 * @throws SendManyDailyException 如果超过了一天发送的最大次数
+	 * @throws UnknownTypeException    如果发送的验证码类型不存在
 	 */
 	@Override
-	public void sendRegisterSms(String mobile, String ip, String userName, String captcha)
+	public void sendCaptcha(SmsMessage smsMessage)
+			throws FrequentlyException, SendManyDailyException, UnknownTypeException {
+		if(SmsMessage.REGISTED.equals(smsMessage.getType())){
+			sendRegisterSms(smsMessage);
+		}
+		else{
+			throw new UnknownTypeException("未知的验证码类型: " + smsMessage.getType());
+		}
+	}
+
+	/**
+	 * 发送注册验证码
+	 *
+	 * @param smsMessage 发送短信的基本数据
+	 * @throws FrequentlyException    如果发送过于频繁
+	 * @throws SendManyDailyException 如果超过了一天发送的最大次数
+	 */
+	private void sendRegisterSms(SmsMessage smsMessage)
 			throws FrequentlyException, SendManyDailyException{
-		sms.sendMessage(mobile,
-				register.replace("{userName}", userName).replace("{captcha}", captcha),
-				ip);
+		sms.sendMessage(smsMessage.getMobile(),
+				register.replace("{captcha}", smsMessage.getCaptcha()),
+				smsMessage.getIp());
 	}
 
 }

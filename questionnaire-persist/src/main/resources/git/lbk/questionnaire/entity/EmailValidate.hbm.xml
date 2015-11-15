@@ -19,12 +19,14 @@
 <!DOCTYPE hibernate-mapping PUBLIC
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping>
+<hibernate-mapping package="git.lbk.questionnaire.entity">
 
-    <class name="git.lbk.questionnaire.model.SmsCount" table="sms_count">
-        <id name="identity" column="identity" type="java.lang.String">
+    <class name="EmailValidate" table="email_validate">
+        <id name="identityCode" column="identityCode" type="java.lang.String">
             <generator class="assigned"/>
         </id>
-        <property name="count" column="count" type="java.lang.Integer"/>
+        <many-to-one name="user" class="User" column="userId"/>
+        <property name="createTime" column="createTime" type="java.util.Date"/>
+        <property name="type" column="type" type="java.lang.String"/>
     </class>
 </hibernate-mapping>

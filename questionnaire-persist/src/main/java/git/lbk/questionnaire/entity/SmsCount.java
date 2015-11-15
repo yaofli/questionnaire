@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package git.lbk.questionnaire.model;
+package git.lbk.questionnaire.entity;
 
 import java.io.Serializable;
 
