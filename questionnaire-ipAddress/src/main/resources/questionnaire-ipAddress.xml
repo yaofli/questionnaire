@@ -51,11 +51,8 @@
         </tx:attributes>
     </tx:advice>
 
-    <aop:aspectj-autoproxy proxy-target-class="true"/>
-
     <aop:config>
-        <aop:advisor advice-ref="ipTxAdvice"
-                     pointcut="execution(* *..IpActualAddressImpl.updateUserLastLoginIp(..))" />
+        <aop:advisor advice-ref="ipTxAdvice" pointcut="execution(* git.lbk.questionnaire.ipAddress.IpActualAddressServiceImpl.updateUserLastLoginIp(..))" />
     </aop:config>
 
 </beans>

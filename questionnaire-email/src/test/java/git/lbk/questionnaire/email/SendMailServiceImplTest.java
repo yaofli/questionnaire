@@ -35,7 +35,7 @@ public class SendMailServiceImplTest {
 	private BaseDao<EmailValidate> baseDao;
 
 	@Before
-	public void before() throws Exception {
+	public void setUp() throws Exception {
 		asyncSendMail = EasyMock.createMock(AsyncSendMail.class);
 		baseDao = EasyMock.createMock(BaseDao.class);
 

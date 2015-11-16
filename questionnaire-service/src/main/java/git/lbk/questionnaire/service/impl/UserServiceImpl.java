@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
 	 * @return 成功返回SUCCESS, 如果邮箱/手机号已经注册, 则返回IDENTITY_USED
 	 */
 	@Override
-	public int registe(User user) {
+	public int registed(User user) {
 		try {
 			user.setPassword(MessageDigestUtil.SHA256(user.getPassword()));
 			userDao.saveEntity(user);
@@ -82,8 +82,10 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public User activeAccount(EmailValidate emailValidate) throws CaptchaExpireException {
-		sendMailService.validateMailCaptcha(emailValidate);
-		User user = emailValidate.getUser();
+		User user = sendMailService.validateMailCaptcha(emailValidate);
+		if(user == null){
+			throw new CaptchaExpireException("验证码不正确: " + emailValidate.getIdentityCode());
+		}
 		user.setStatus(User.NORMAL_STATUS);
 		userDao.updateEntity(user);
 		return user;

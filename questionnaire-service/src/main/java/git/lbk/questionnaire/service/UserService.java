@@ -44,7 +44,7 @@ public interface UserService {
 	 * @param user 用户实体对象
 	 * @return 成功返回SUCCESS, 如果邮箱/手机号已经注册, 则返回IDENTITY_USED
 	 */
-	int registe(User user);
+	int registed(User user);
 
 	/**
 	 * 通过邮箱验证码激活账号. 该方法返回之后, 如果验证码正确, 则emailValidate里会的用户信息会被设置为该验证码的用户

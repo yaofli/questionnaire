@@ -19,6 +19,8 @@ package git.lbk.questionnaire.phone;
 
 import git.lbk.questionnaire.dao.BaseDao;
 import git.lbk.questionnaire.entity.SmsCount;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -29,14 +31,15 @@ import java.util.concurrent.*;
  * fixme 这个类是否需要拆分成两/三个类? 感觉不知道怎么命名, 而且功能有点复杂. 而拆成两个:一个负责异步发送, 一个负责限制次数, 就比较好命名了. 但是那样的话, 类是不是太小, 太多了. 就像git.lbk.questionnaire.email.AsyncSendMailImpl类(questionnaire-email模块), 感觉就太小了, 根本不像个类
  */
 public class SmsImpl implements Sms{
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private volatile long sendInterval;
 	private volatile int ipDailyMaxSendCount;
 	private volatile int mobileDailyMaxSendCount;
-	private long clearMapInterval;
+	private volatile long clearMapInterval;
 
 	private ExecutorService executorService;
-	private ConcurrentMap<String, Long> sendDateMap;
+	private ConcurrentMap<String, Long> sendAddressMap;
 	private BaseDao<SmsCount> smsDao;
 	private Timer timer;
 	private SendSms sendSms;
@@ -98,9 +101,14 @@ public class SmsImpl implements Sms{
 	@Override
 	public void init() throws Exception{
 		executorService = Executors.newCachedThreadPool();
-		sendDateMap = new ConcurrentHashMap<>();
+		sendAddressMap = new ConcurrentHashMap<>();
 		timer = new Timer("sms destroy thread");
-		timer.schedule(new DestroyMobileMap(), clearMapInterval * 1000, clearMapInterval * 1000);
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				cleanMobileMap();
+			}
+		}, clearMapInterval * 1000, clearMapInterval * 1000);
 	}
 
 	/**
@@ -116,36 +124,55 @@ public class SmsImpl implements Sms{
 	public void sendMessage(String mobile, String message, String ip)
 			throws FrequentlyException, SendManyDailyException {
 		//fixme 这段关于多线程的处理是否"正确", 就是说除了isGreatMaxCount有潜在的线程竞争之外, 还有没其他bug?
-		if(isFrequently(mobile)) {
-			throw new FrequentlyException("发送过于频繁: " + mobile);
-		}
-		else if(isFrequently(ip)) {
-			throw new FrequentlyException("发送过于频繁: " + ip);
-		}
+		checkFrequently(mobile);
+		checkFrequently(ip);
 		if(isGreatMaxCount(mobile, mobileDailyMaxSendCount)) {
 			throw new SendManyDailyException("已超过日最大发送次数: " + mobile);
 		}
-		else if(isGreatMaxCount(ip, ipDailyMaxSendCount)) {
+		if(isGreatMaxCount(ip, ipDailyMaxSendCount)) {
 			throw new SendManyDailyException("已超过日最大发送次数: " + ip);
 		}
-		executorService.submit((Runnable) () -> sendSms.sendMessage(mobile, message));
+		executorService.submit(() -> sendSms.sendMessage(mobile, message));
 	}
 
 	/**
-	 * 判断距离上次发送时间是否短于最短发送间隔了, 如果已经达到了最短间隔, 那么将发送时间置为当前时间
+	 * 检查给定的id发送间隔是否小于最小发送间隔
+	 * @param id ip 或者 手机号
+	 * @throws FrequentlyException 如果小于最小的发送间隔
+	 */
+	private void checkFrequently(String id) throws FrequentlyException{
+		if(isFrequently(id)) {
+			long sendTime = sendAddressMap.get(id);
+			long currentTime = System.currentTimeMillis() >> 10;
+			logger.debug("当前线程: " + Thread.currentThread().getName() + ", id: " + id
+					+ ", 上次发送时间: " + sendTime + ", 当前时间: " + currentTime + ", 最小发送间隔: " + sendInterval);
+			throw new FrequentlyException("发送过于频繁: " + id
+					+ ", 上次发送时间: " + sendTime
+					+ ", 当前时间: " + currentTime);
+		}
+	}
+
+	/**
+	 * 判断距离上次发送时间是否短于最短发送间隔了, 如果已经超过了最短间隔, 那么将发送时间置为当前时间
 	 *
-	 * @param mobile 发送手机号
+	 * @param id 发送手机号 或 ip
 	 * @return 短于最短发送间隔则返回true, 否则返回false
 	 */
-	private boolean isFrequently(String mobile) {
-		Long sendTime = sendDateMap.get(mobile);
+	private boolean isFrequently(String id) {
+		Long sendTime = sendAddressMap.get(id);
 		long currentTime = System.currentTimeMillis() >> 10; // 大致相当于除1000
 		if(sendTime == null) {
-			return sendDateMap.putIfAbsent(mobile, currentTime) != null;
+			return sendAddressMap.putIfAbsent(id, currentTime) != null;
 		}
 		long canSendTime = sendTime + sendInterval;
-		if(canSendTime < currentTime) {
-			return !sendDateMap.replace(mobile, sendTime, currentTime);
+		if(canSendTime <= currentTime) {
+			// 如果没有替换成功有两种情况:
+			//  1. 有另外一个线程进行了替换, 那么这个线程就按失败处理
+			//  2. 清理线程把map里的过期数据清零了, 那么, 就再按空进行一次放入, 如果这时不为空. 那么是肯定有一个线程放入了数据, 不论刚才是否进行了清理
+			if(!sendAddressMap.replace(id, sendTime, currentTime)){
+				return sendAddressMap.putIfAbsent(id, currentTime) != null;
+			}
+			return false;
 		}
 		return true;
 	}
@@ -183,7 +210,7 @@ public class SmsImpl implements Sms{
 	public void destroy(){
 		executorService.shutdown();
 		timer.cancel();
-		sendDateMap.clear();
+		sendAddressMap.clear();
 		try {
 			executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
 		}
@@ -192,50 +219,60 @@ public class SmsImpl implements Sms{
 		}
 	}
 
+	/**
+	 * 将sendAddressMap中的所有过期数据删除
+	 * 在测试时需要调用, 所以不能是private.
+ 	 */
+	void cleanMobileMap(){
+		long currentTime = System.currentTimeMillis() >> 10; // 大致相当于除1000
+		long expireSendTime = currentTime - sendInterval;
 
-	private class DestroyMobileMap extends TimerTask {
-
-		@Override
-		public void run() {
-			long currentTime = System.currentTimeMillis() >> 10; // 大致相当于除1000
-			long expireSendTime = currentTime - sendInterval;
-
-			for(String key : sendDateMap.keySet()) {
-				Long sendTime = sendDateMap.get(key);
-				if(sendTime == null) {
-					continue;
-				}
-				if(expireSendTime > sendTime) {
-					sendDateMap.remove(key, sendTime);
-				}
+		for(String key : sendAddressMap.keySet()) {
+			Long sendTime = sendAddressMap.get(key);
+			if(sendTime == null) {
+				continue;
+			}
+			if(expireSendTime > sendTime) {
+				sendAddressMap.remove(key, sendTime);
 			}
 		}
 	}
 
-	/**
-	 * 返回发送计数的map. 测试时用
-	 *
-	 * @return 发送计数的map
-	 */
-	Map<String, Long> getSendDateMap() {
-		return Collections.unmodifiableMap(sendDateMap);
+	// 测试时使用的get方法
+
+	Map<String, Long> getSendAddressMap() {
+		return Collections.unmodifiableMap(sendAddressMap);
 	}
 
-	/**
-	 * 返回线程池对象. 测试时用
-	 *
-	 * @return 线程池对象
-	 */
 	ExecutorService getExecutorService() {
 		return executorService;
 	}
 
-	/**
-	 * 返回定时器对象. 测试时用
-	 *
-	 * @return 定时器对象
-	 */
 	Timer getTimer() {
 		return timer;
+	}
+
+	SendSms getSendSms() {
+		return sendSms;
+	}
+
+	BaseDao<SmsCount> getSmsDao() {
+		return smsDao;
+	}
+
+	long getSendInterval() {
+		return sendInterval;
+	}
+
+	int getIpDailyMaxSendCount() {
+		return ipDailyMaxSendCount;
+	}
+
+	int getMobileDailyMaxSendCount() {
+		return mobileDailyMaxSendCount;
+	}
+
+	long getClearMapInterval() {
+		return clearMapInterval;
 	}
 }

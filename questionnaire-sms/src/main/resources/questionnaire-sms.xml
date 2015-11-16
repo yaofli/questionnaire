@@ -16,9 +16,10 @@
   -->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd">
+       http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <bean id="sendSms" class="git.lbk.questionnaire.phone.SendSmsConsoleImpl">
         <property name="maxTryNumber" value="2"/>
@@ -39,5 +40,16 @@
     <bean id="smsService" class="git.lbk.questionnaire.phone.SmsServiceImpl">
         <property name="sms" ref="sms"/>
     </bean>
+
+    <tx:advice id="smsTxAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED" isolation="DEFAULT"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:config>
+        <aop:advisor advice-ref="smsTxAdvice"
+                     pointcut="execution(* git.lbk.questionnaire.phone.SmsImpl.sendMessage(..))"/>
+    </aop:config>
 
 </beans>

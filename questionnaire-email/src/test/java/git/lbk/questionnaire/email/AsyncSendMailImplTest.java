@@ -43,7 +43,7 @@ public class AsyncSendMailImplTest {
 	private BiConsumer<MailMessage, MessagingException> fail = EasyMock.createMock(BiConsumer.class);
 
 	@Before
-	public void before(){
+	public void setUp(){
 		mailMessage = new MailMessage();
 		mailMessage.setTo("test@gmail.com");
 		mailMessage.setSubject("主题");
@@ -101,7 +101,7 @@ public class AsyncSendMailImplTest {
 	}
 
 	@After
-	public void after(){
+	public void tearDown(){
 		greenMail.stop();
 	}
 }

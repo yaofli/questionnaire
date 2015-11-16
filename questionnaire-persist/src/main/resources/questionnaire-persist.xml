@@ -44,6 +44,7 @@
         fixme 这里如果使用 mappingDirectoryLocations 属性, 就会报错:
          class path resource [git/lbk/questionnaire/entity] cannot be resolved to absolute file path because it does not reside in the file system: jar:file:(项目目录)/questionnaire-web/target/questionnaire-web-0.0.1-SNAPSHOT/WEB-INF/lib/questionnaire-persist-0.0.1-SNAPSHOT.jar!/git/lbk/questionnaire/entity/
          但是, 打开那个jar包确实可以看到 git/lbk/questionnaire/entity 目录.
+         而且这个配置在测试时也没有错误. 现在不知道哪里错了
         -->
      <!--   <property name="mappingDirectoryLocations">
             <list>

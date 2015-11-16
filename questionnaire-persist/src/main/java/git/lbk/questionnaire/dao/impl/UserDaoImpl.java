@@ -29,7 +29,7 @@ public class UserDaoImpl extends BaseDaoImpl<User> {
 	 * @return 已被注册返回true, 否则返回false
 	 */
 	public boolean isRegisted(String identity){
-		return uniqueResult("from User u where (u.email = ? or u.telephone = ?)",
+		return uniqueResult("from User u where (u.email = ? or u.mobile = ?)",
 				identity, identity) != null;
 	}
 
@@ -41,7 +41,7 @@ public class UserDaoImpl extends BaseDaoImpl<User> {
 	 * @return 如果验证通过则返回用户的信息, 否则返回null
 	 */
 	public User validateLoginInfo(String identity, String password){
-		return (User) uniqueResult("from User u where (u.email = ? or u.telephone = ?) and u.password = ? ",
+		return (User) uniqueResult("from User u where (u.email = ? or u.mobile = ?) and u.password = ? ",
 					identity, identity, password);
 	}
 

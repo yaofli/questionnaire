@@ -45,7 +45,7 @@ public class UserDaoImplTest {
 	private User user;
 
 	@Before
-	public void before() throws ParseException {
+	public void setUp() throws ParseException {
 		user = new User();
 		user.setId(3);
 		user.setName("zs");
@@ -77,7 +77,7 @@ public class UserDaoImplTest {
 		assertEquals("查询出的数据数量不正确", 1, list.size());
 		assertEquals("查询出的数据不正确", user, list.get(0));
 
-		list = userDao.findEntityByHQL("from User u where u.telephone = ?", "user");
+		list = userDao.findEntityByHQL("from User u where u.mobile = ?", "user");
 		assertEquals("查询出的数据数量不正确", 0, list.size());
 	}
 
@@ -87,7 +87,7 @@ public class UserDaoImplTest {
 				userDao.uniqueResult("from User u where u.email = ?", user.getEmail()));
 
 		assertEquals("查询出的数据不正确", null,
-				userDao.uniqueResult("from User u where u.telephone = ?", "user"));
+				userDao.uniqueResult("from User u where u.mobile = ?", "user"));
 	}
 
 	@Test

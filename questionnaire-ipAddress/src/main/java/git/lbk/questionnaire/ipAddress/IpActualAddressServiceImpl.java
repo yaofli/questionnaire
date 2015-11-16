@@ -68,7 +68,7 @@ public class IpActualAddressServiceImpl implements IpActualAddressService {
 	 * 更新用户最后登录信息
 	 * @param user user实体
 	 */
-	public void updateUserLastLoginIp(User user){
+	protected void updateUserLastLoginIp(User user){
 		userDao.updateLastLoginInfo(user);
 	}
 

@@ -35,7 +35,7 @@ public class SendMimeMailTest {
 	private GreenMail greenMail;
 
 	@Before
-	public void before(){
+	public void setUp(){
 		greenMail = new GreenMail(ServerSetup.SMTP);
 		greenMail.setUser("test@gamil.com", "123456");
 		greenMail.start();
@@ -62,7 +62,7 @@ public class SendMimeMailTest {
 	}
 
 	@After
-	public void after(){
+	public void tearDown(){
 		greenMail.stop();
 	}
 

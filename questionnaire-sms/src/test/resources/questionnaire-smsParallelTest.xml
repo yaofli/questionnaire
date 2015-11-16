@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2015 LBK
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+
+    <import resource="questionnaire-persist.xml"/>
+
+    <bean class="git.lbk.questionnaire.placeholder.EncryptPropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>jdbcTest.properties</value>
+                <value>ihuyiAccount.properties</value>
+                <value>smsParallelTest.properties</value>
+            </list>
+        </property>
+        <property name="fileEncoding" value="utf-8"/>
+        <property name="encryptPropNames">
+            <list>
+                <value>jdbc.username</value>
+                <value>jdbc.password</value>
+
+                <value>sms.account</value>
+                <value>sms.password</value>
+            </list>
+        </property>
+    </bean>
+
+    <jdbc:embedded-database database-name="questionnaire" type="H2">
+        <jdbc:script location="classpath:schema.sql"/>
+    </jdbc:embedded-database>
+
+
+    <bean id="sendSms" class="git.lbk.questionnaire.phone.SendSmsParallelTest">
+        <constructor-arg name="ignoreSms" value="true"/>
+    </bean>
+
+    <bean id="sms" class="git.lbk.questionnaire.phone.SmsImpl" init-method="init" destroy-method="destroy">
+        <property name="sendInterval" value="${sms.sendInterval}"/>
+        <property name="ipDailyMaxSendCount" value="${sms.ipDailyMaxSendCount}"/>
+        <property name="mobileDailyMaxSendCount" value="${sms.mobileDailyMaxSendCount}"/>
+        <property name="clearMapInterval" value="${sms.clearMapInterval}"/>
+
+        <property name="smsDao" ref="smsCountDao"/>
+        <property name="sendSms" ref="sendSms"/>
+    </bean>
+
+    <tx:advice id="smsTxAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED" isolation="DEFAULT"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+    <aop:config>
+        <!-- 由于在测试方法单独调用了getEntity方法, 不加事务就无法运行, 所以, 这里给BaseDao也加上事务 -->
+        <aop:advisor advice-ref="smsTxAdvice"
+                     pointcut="execution(* git.lbk.questionnaire.phone.SmsImpl.sendMessage(..)) or execution(* git.lbk.questionnaire.dao.BaseDao.*(..))"/>
+    </aop:config>
+</beans>

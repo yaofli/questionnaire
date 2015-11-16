@@ -17,8 +17,14 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans.xsd">
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <bean id="userService" class="git.lbk.questionnaire.service.impl.UserServiceImpl">
         <property name="userDao" ref="userDao"/>
@@ -26,4 +32,18 @@
         <property name="ipActualAddressService" ref="ipAddressService"/>
     </bean>
 
+    <tx:advice id="ipTxAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <!-- 读操作 -->
+            <tx:method name="is*" propagation="REQUIRED" isolation="DEFAULT" read-only="true"/>
+            <tx:method name="validate*" propagation="REQUIRED" isolation="DEFAULT" read-only="true"/>
+
+            <tx:method name="*" propagation="REQUIRED" isolation="DEFAULT"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:config>
+        <aop:advisor advice-ref="ipTxAdvice"
+                     pointcut="execution(* git.lbk.questionnaire.service.*Service.*(..))"/>
+    </aop:config>
 </beans>

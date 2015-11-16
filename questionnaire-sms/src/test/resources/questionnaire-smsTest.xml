@@ -36,7 +36,7 @@
         </property>
     </bean>
 
-    <bean id="sendSms" class="git.lbk.questionnaire.phone.SendSmsImpl">
+    <bean id="sendSms" class="git.lbk.questionnaire.phone.SendSmsConsoleImpl">
         <property name="maxTryNumber" value="1"/>
         <property name="account" value="${sms.account}"/>
         <property name="password" value="${sms.password}"/>

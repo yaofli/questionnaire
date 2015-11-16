@@ -37,7 +37,7 @@ public class IpActualAddressServiceImplTest {
 	private User user;
 
 	@Before
-	public void before() throws Exception {
+	public void setUp() throws Exception {
 		ipActualAddress = EasyMock.createMock(IpActualAddress.class);
 		userDao = EasyMock.createMock(UserDaoImpl.class);
 

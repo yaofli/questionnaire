@@ -36,7 +36,7 @@ import static org.springframework.test.util.AssertionErrors.assertEquals;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 /**
- * fixme 该测试类只在单线程下进行了测试. 因为我还不确定多线程该怎么测试. mock对象是否是多线程安全的? 是否需要和persist中的Dao进行集成测试?
+ * 该测试类只在单线程下进行了测试.多线程的测试参见{@link SendSmsParallelTest}
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:questionnaire-smsTest.xml")
@@ -53,7 +53,7 @@ public class SmsImplTest {
 	private String strSms;
 
 	@Before
-	public void before() {
+	public void setUp() {
 		sendSmsMock = EasyMock.createMock(SendSms.class);
 		smsCountMock = EasyMock.createMock(SmsCountDaoImpl.class);
 		sms.setSendSms(sendSmsMock);
@@ -126,7 +126,7 @@ public class SmsImplTest {
 	public void testDestroy() throws Exception {
 		SmsImpl smsImpl = (SmsImpl) sms;
 		sms.destroy();
-		assertEquals("发送次数缓存map没有清理", 0, smsImpl.getSendDateMap().size());
+		assertEquals("发送次数缓存map没有清理", 0, smsImpl.getSendAddressMap().size());
 		assertTrue("线程池没有关闭", smsImpl.getExecutorService().isShutdown());
 		smsImpl.getTimer().schedule(new TimerTask() {
 			@Override

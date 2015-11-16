@@ -69,7 +69,7 @@ public class UserController {
 				return "registedPage";
 			}
 		}
-		if(userService.registe(user) == UserService.SUCCESS) {
+		if(userService.registed(user) == UserService.SUCCESS) {
 			HttpSession session = request.getSession();
 			session.setAttribute(SESSION_USER_ID, user.getId());
 			session.setAttribute(SESSION_USER_NAME, user.getName());

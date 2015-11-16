@@ -14,4 +14,4 @@
     - ip.url=http://apis.baidu.com/apistore/iplookupservice/iplookup
 
 
-做这个网站的时候产生的大部分问题都由 fixme 注释标记出来, 如果您关于这些问题有自己的看法, 请抽点时间, 跟我说说您的想法. 我的邮箱是 i.am.t.lbk@gmail.com
+做这个网站的时候产生的大部分问题都由 fixme 注释标记出来, 还有部分问题写到了question.md中, 如果您关于这些问题有自己的看法, 请抽点时间, 跟我说说您的想法. 我的邮箱是 [i.am.t.lbk@gmail.com](mailto:i.am.t.lbk@gmail.com)
