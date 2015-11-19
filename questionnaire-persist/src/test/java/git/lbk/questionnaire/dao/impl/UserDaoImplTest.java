@@ -204,13 +204,13 @@ public class UserDaoImplTest {
 	}
 
 	@Test
-	public void testIsRegisted() throws Exception {
-		assertTrue("没有找到注册用户", userDao.isRegisted(user.getMobile()));
-		assertTrue("没有找到注册用户", userDao.isRegisted(user.getEmail()));
+	public void testGetUserByAccount() throws Exception {
+		assertNotNull("没有找到注册用户", userDao.getUserByAccount(user.getMobile()));
+		assertNotNull("没有找到注册用户", userDao.getUserByAccount(user.getEmail()));
 
-		assertFalse("查找到为注册用户", userDao.isRegisted("abc"));
-		assertFalse("查找到用户名为空字符的用户", userDao.isRegisted(""));
-		assertFalse("查找到用户名为空的用户", userDao.isRegisted(null));
+		assertNull("查找到为注册用户", userDao.getUserByAccount("abc"));
+		assertNull("查找到用户名为空字符的用户", userDao.getUserByAccount(""));
+		assertNull("查找到用户名为空的用户", userDao.getUserByAccount(null));
 	}
 
 	@Test

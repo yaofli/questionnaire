@@ -25,7 +25,8 @@
        http://www.springframework.org/schema/tx/spring-tx.xsd
        http://www.springframework.org/schema/aop
        http://www.springframework.org/schema/aop/spring-aop.xsd">
-
+<!--
+    经常没网络, 所以, 没法发邮件....
     <bean id="sender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="protocol" value="${email.protocol}"/>
         <property name="host" value="${email.host}"/>
@@ -35,33 +36,36 @@
         <property name="javaMailProperties">
             <props>
                 <prop key="mail.${email.protocol}.auth">${email.auth}</prop>
-                <prop key="com.sun.mail.smtp.SMTPSSLTransport">javax.net.ssl.SSLSocketFactory</prop>
-                <prop key="mail.smtp.port">${email.port}</prop>
-                <prop key="mail.smtp.socketFactory.port">${email.port}</prop>
+                &lt;!&ndash;<prop key="com.sun.mail.smtp.SMTPSSLTransport">javax.net.ssl.SSLSocketFactory</prop>&ndash;&gt;
+                <prop key="mail.${email.protocol}.port">${email.port}</prop>
+                <prop key="mail.${email.protocol}.socketFactory.port">${email.port}</prop>
             </props>
         </property>
     </bean>
+
+    <bean id="sendMimeMail" class="git.lbk.questionnaire.email.SendMimeEmail">
+        <property name="sender" ref="sender"/>
+        <property name="from" value="${email.username}"/>
+    </bean>
+-->
+
+    <bean id="sendMimeMail" class="git.lbk.questionnaire.email.SendEmailToConsole"/>
 
     <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
         <property name="corePoolSize" value="3"/>
         <property name="maxPoolSize" value="10"/>
     </bean>
 
-    <bean id="sendMimeMail" class="git.lbk.questionnaire.email.SendMimeMail">
-        <property name="sender" ref="sender"/>
-        <property name="from" value="${email.username}"/>
-    </bean>
-
-    <bean id="asyncSendMail" class="git.lbk.questionnaire.email.AsyncSendMailImpl">
+    <bean id="asyncSendMail" class="git.lbk.questionnaire.email.AsyncSendEmailImpl">
         <property name="sendMail" ref="sendMimeMail"/>
         <property name="taskExecutor" ref="taskExecutor"/>
     </bean>
 
-    <bean id="mailService" class="git.lbk.questionnaire.email.SendMailServiceImpl"
+    <bean id="mailService" class="git.lbk.questionnaire.email.SendEmailServiceImpl"
           init-method="init"
           destroy-method="destroy">
         <property name="asyncSendMail" ref="asyncSendMail"/>
-        <property name="baseDao" ref="emailValidateDao"/>
+        <property name="emailDao" ref="emailValidateDao"/>
         <property name="templatePath" value="mailTemplate"/>
     </bean>
 
@@ -75,6 +79,6 @@
 
     <aop:config>
         <aop:advisor advice-ref="mailTxAdvice"
-                     pointcut="execution(* git.lbk.questionnaire.email.SendMailServiceImpl.sendRegisterMail(..)) or execution(* git.lbk.questionnaire.email.SendMailServiceImpl.validateMailCaptcha(..))"/>
+                     pointcut="execution(* git.lbk.questionnaire.email.SendEmailServiceImpl.sendRegisterMail(..)) or execution(* git.lbk.questionnaire.email.SendEmailServiceImpl.validateMailCaptcha(..))"/>
     </aop:config>
 </beans>

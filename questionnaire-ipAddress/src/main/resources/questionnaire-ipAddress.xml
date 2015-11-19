@@ -26,23 +26,24 @@
         http://www.springframework.org/schema/tx
         http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-    <bean id="ipActualAddress" class="git.lbk.questionnaire.ipAddress.IpActualAddressImpl">
+    <!--<bean id="ipActualAddress" class="git.lbk.questionnaire.ipAddress.IpActualAddressImpl">
         <property name="apiKey" value="${baidu.apikey}"/>
-        <property name="httpUrl" value="${ip.url}"/>
+        <property name="httpUrl" value="${ip.url}"/>-->
         <!--fixme 这里有没有方法把列表存到properties文件里, 比如用","分割,
          然后在这里(spring bean配置文件)中转成list, 注入到bean里 -->
-        <property name="unknownData">
+    <!--    <property name="unknownData">
             <list>
                 <value>None</value>
                 <value>未知</value>
             </list>
         </property>
-    </bean>
+    </bean>-->
+    <bean id="ipActualAddress" class="git.lbk.questionnaire.ipAddress.IpActualAddressImitateImpl"/>
 
     <bean id="ipAddressService" class="git.lbk.questionnaire.ipAddress.IpActualAddressServiceImpl"
           init-method="init" destroy-method="destroy">
         <property name="ipActualAddress" ref="ipActualAddress"/>
-        <property name="userDao" ref="userDao" />
+        <property name="userDao" ref="userDao"/>
     </bean>
 
     <tx:advice id="ipTxAdvice" transaction-manager="transactionManager">
@@ -51,8 +52,11 @@
         </tx:attributes>
     </tx:advice>
 
+    <!--
+    fixme 这里貌似相当不好, 跨层添加事务, 可能导致那一层产生的莫名的bug. 当然, 由于类中使用的本来就是类本身, 而不是接口, 所以这里应该就不算是暴漏实现类了吧, 反正在类里已经暴漏过了...可是, 如果单独建一个类封装的就太狠了吧: 就像 UpdateUserLastLogin 类
+    -->
     <aop:config>
-        <aop:advisor advice-ref="ipTxAdvice" pointcut="execution(* git.lbk.questionnaire.ipAddress.IpActualAddressServiceImpl.updateUserLastLoginIp(..))" />
+        <aop:advisor advice-ref="ipTxAdvice" pointcut="execution(* git.lbk.questionnaire.dao.impl.UserDaoImpl.updateLastLoginInfo(..))" />
     </aop:config>
 
 </beans>

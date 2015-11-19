@@ -23,14 +23,14 @@ import org.springframework.stereotype.Repository;
 public class UserDaoImpl extends BaseDaoImpl<User> {
 
 	/**
-	 * 验证邮箱或者手机号是否已被注册
+	 * 获得指定邮箱或者手机号的用户信息
 	 *
-	 * @param identity 邮箱或者手机号
+	 * @param account 邮箱或者手机号
 	 * @return 已被注册返回true, 否则返回false
 	 */
-	public boolean isRegisted(String identity){
-		return uniqueResult("from User u where (u.email = ? or u.mobile = ?)",
-				identity, identity) != null;
+	public User getUserByAccount(String account){
+		return (User) uniqueResult("from User u where (u.email = ? or u.mobile = ?)",
+				account, account);
 	}
 
 	/**

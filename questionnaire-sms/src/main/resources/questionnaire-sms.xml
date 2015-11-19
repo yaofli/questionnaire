@@ -21,13 +21,13 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <bean id="sendSms" class="git.lbk.questionnaire.phone.SendSmsConsoleImpl">
-        <property name="maxTryNumber" value="2"/>
+    <bean id="sendSms" class="git.lbk.questionnaire.sms.SendSmsConsoleImpl">
+        <property name="maxTryNumber" value="${sms.maxTryNumber}"/>
         <property name="account" value="${sms.account}"/>
         <property name="password" value="${sms.password}"/>
     </bean>
 
-    <bean id="sms" class="git.lbk.questionnaire.phone.SmsImpl" init-method="init" destroy-method="destroy">
+    <bean id="sms" class="git.lbk.questionnaire.sms.SmsImpl" init-method="init" destroy-method="destroy">
         <property name="sendInterval" value="${sms.sendInterval}"/>
         <property name="ipDailyMaxSendCount" value="${sms.ipDailyMaxSendCount}"/>
         <property name="mobileDailyMaxSendCount" value="${sms.mobileDailyMaxSendCount}"/>
@@ -37,7 +37,7 @@
         <property name="smsDao" ref="smsCountDao"/>
     </bean>
 
-    <bean id="smsService" class="git.lbk.questionnaire.phone.SmsServiceImpl">
+    <bean id="smsService" class="git.lbk.questionnaire.sms.SmsServiceImpl">
         <property name="sms" ref="sms"/>
     </bean>
 
@@ -49,7 +49,7 @@
 
     <aop:config>
         <aop:advisor advice-ref="smsTxAdvice"
-                     pointcut="execution(* git.lbk.questionnaire.phone.SmsImpl.sendMessage(..))"/>
+                     pointcut="execution(* git.lbk.questionnaire.sms.SmsImpl.sendMessage(..))"/>
     </aop:config>
 
 </beans>

@@ -8,9 +8,9 @@
 
     <p>您好！</p>
 
-    <p>您于 ${currentTime} 注册xxx帐号 ${username} ，点击以下链接，即可激活该帐号：</p>
+    <p>您于 ${registerTime} 注册xxx帐号 ${username} ，点击以下链接，即可激活该帐号：</p>
 
-    <a href="http://localhost/user/?regverify&captcha=${captcha}">http://localhost/user/?regverify&captcha=${captcha}</a>
+    <a href="http://localhost:8080/user/actionAccount?identityCode=${captcha}&type=${type}">http://localhost:8080/user/actionAccount?identityCode=${captcha}&type=${type}</a>
 
     <p>(如果您无法点击此链接，请将它复制到浏览器地址栏后访问)</p>
 

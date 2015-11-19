@@ -17,8 +17,19 @@
 package git.lbk.questionnaire.dao.impl;
 
 import git.lbk.questionnaire.entity.EmailValidate;
+import git.lbk.questionnaire.entity.User;
 import org.springframework.stereotype.Repository;
 
 @Repository("emailValidateDao")
 public class EmailValidateDaoImpl extends BaseDaoImpl<EmailValidate> {
+
+	/**
+	 * 根据用户id和验证码类型删除记录
+	 * @param user 用户对象
+	 * @param type 验证码类型
+	 */
+	public void deleteByUserIDAndType(User user, String type){
+		updateEntityByHQL("delete from EmailValidate where user=? and type=?", user, type);
+	}
+
 }

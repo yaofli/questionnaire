@@ -48,10 +48,6 @@ public class User implements Serializable{
 	public final static char NOT_VERIFIED = 'v';
 
 	/**
-	 * 用户类型, 管理员
-	 */
-	public final static char ADMIN = 'a';
-	/**
 	 * 用户类型, 普通会员
 	 */
 	public final static char COMMON = 'c';

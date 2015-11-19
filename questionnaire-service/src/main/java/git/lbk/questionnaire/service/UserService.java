@@ -16,7 +16,6 @@
 
 package git.lbk.questionnaire.service;
 
-import git.lbk.questionnaire.entity.EmailValidate;
 import git.lbk.questionnaire.entity.User;
 
 public interface UserService {
@@ -31,39 +30,30 @@ public interface UserService {
 	int IDENTITY_USED = 1;
 
 	/**
-	 * 验证邮箱或者手机号是否已被注册
-	 *
-	 * @param identity 邮箱或者手机号
-	 * @return 已被注册返回true, 否则返回false
+	 * 判断用户是否注册
+	 * @param account 用户 手机号 或者 邮箱
+	 * @return 如果用户已经注册, 且 已经激活 或者 账号还在有效期内, 则返回true, 否则返回false
 	 */
-	boolean isRegisted(String identity);
+	boolean isRegister(String account);
 
 	/**
 	 * 用户注册
 	 *
 	 * @param user 用户实体对象
+	 * @param ip 用户ip
 	 * @return 成功返回SUCCESS, 如果邮箱/手机号已经注册, 则返回IDENTITY_USED
 	 */
-	int registed(User user);
-
-	/**
-	 * 通过邮箱验证码激活账号. 该方法返回之后, 如果验证码正确, 则emailValidate里会的用户信息会被设置为该验证码的用户
-	 *
-	 * @param emailValidate 邮箱验证码信息
-	 * @return 该验证码关联的用户信息
-	 * @throws CaptchaExpireException 如果验证码已经过期, 则抛出CaptchaExpireException异常
-	 */
-	User activeAccount(EmailValidate emailValidate) throws CaptchaExpireException;
+	int register(User user, String ip);
 
 	/**
 	 * 验证用户登录信息是否匹配
 	 *
-	 * @param identity 用户邮箱或者用户手机
+	 * @param account 用户邮箱或者用户手机
 	 * @param password 用户密码
 	 * @param ip 用户登录ip
 	 * @return 如果验证通过则返回用户的信息, 否则返回null
 	 */
-	User validateLoginInfo(String identity, String password, String ip);
+	User validateLoginInfo(String account, String password, String ip);
 
 	/**
 	 * 验证用户自动登录信息是否匹配
@@ -74,4 +64,19 @@ public interface UserService {
 	 */
 	User validateAutoLoginInfo(String identity, String ip);
 
+	/**
+	 * 通过邮箱验证码激活账号. 该方法返回之后, 如果验证码正确, 则emailValidate里会的用户信息会被设置为该验证码的用户
+	 *
+	 * @param mailCaptcha 邮箱验证码
+	 * @param ip ip地址
+	 * @return 该验证码关联的用户信息
+	 */
+	User activeAccount(String mailCaptcha, String ip);
+
+	/**
+	 * 重新发送注册邮件
+	 * @param email 邮箱
+	 * @return 用户信息正确返回true, 否则返回false.
+	 */
+	boolean registerEmailSend(String email);
 }

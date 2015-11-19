@@ -28,7 +28,7 @@
 
     <bean id="userService" class="git.lbk.questionnaire.service.impl.UserServiceImpl">
         <property name="userDao" ref="userDao"/>
-        <property name="sendMailService" ref="mailService"/>
+        <property name="emailService" ref="mailService"/>
         <property name="ipActualAddressService" ref="ipAddressService"/>
     </bean>
 

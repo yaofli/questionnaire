@@ -24,7 +24,7 @@ import javax.validation.constraints.Pattern;
  */
 public class SmsMessage {
 
-	public final static String REGISTED = "reg";
+	public final static String REGISTER = "reg";
 
 	@Pattern(regexp = "\\d{11}")
 	private String mobile;

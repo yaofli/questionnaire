@@ -31,6 +31,7 @@
         <json-lib.version>2.3</json-lib.version>
         <org.json.version>20150729</org.json.version>
         <jackson.version>2.6.2</jackson.version>
+        <h2database.version>1.4.190</h2database.version>
     </properties>
 
     <dependencies>
@@ -48,6 +49,13 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2database.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

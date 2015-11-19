@@ -36,20 +36,20 @@
         </property>
     </bean>
 
-    <bean id="sendSms" class="git.lbk.questionnaire.phone.SendSmsConsoleImpl">
-        <property name="maxTryNumber" value="1"/>
+    <bean id="sendSms" class="git.lbk.questionnaire.sms.SendSmsImpl">
+        <property name="maxTryNumber" value="${sms.maxTryNumber}"/>
         <property name="account" value="${sms.account}"/>
         <property name="password" value="${sms.password}"/>
     </bean>
 
-    <bean id="sms" class="git.lbk.questionnaire.phone.SmsImpl" init-method="init" destroy-method="destroy">
+    <bean id="sms" class="git.lbk.questionnaire.sms.SmsImpl" init-method="init" destroy-method="destroy">
         <property name="sendInterval" value="${sms.sendInterval}"/>
         <property name="ipDailyMaxSendCount" value="${sms.ipDailyMaxSendCount}"/>
         <property name="mobileDailyMaxSendCount" value="${sms.mobileDailyMaxSendCount}"/>
         <property name="clearMapInterval" value="${sms.clearMapInterval}"/>
     </bean>
 
-    <bean id="smsService" class="git.lbk.questionnaire.phone.SmsServiceImpl">
+    <bean id="smsService" class="git.lbk.questionnaire.sms.SmsServiceImpl">
         <property name="sms" ref="sms"/>
     </bean>
 

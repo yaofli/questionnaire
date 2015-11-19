@@ -25,8 +25,8 @@ import java.util.regex.Pattern;
  */
 public class StringUtil {
 
-	public static final Pattern MOBILE_REGEX = Pattern.compile("1[0-9]{2}([- ]?[0-9]{4}){2}");
-	public static final Pattern EMAIL_REGEX = Pattern.compile("[A-Z0-9._%+-]+@[A-Z0-9.-]+(\\.[A-Z]{2,6}){1,3}");
+	public static final Pattern MOBILE_REGEX = Pattern.compile("1[0-9]{10}");
+	public static final Pattern EMAIL_REGEX = Pattern.compile("[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+(\\.\\w{2,6}){1,3}");
 
 	/**
 	 * 检验手机号码格式是否正确

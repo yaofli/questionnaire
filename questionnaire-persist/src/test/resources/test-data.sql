@@ -4,3 +4,10 @@ VALUES
   ('123', '1234567890', '123AutoLogin', '12345678901', NULL, 'i', 'c', '2015-10-29 7:34:23', NULL, NULL, NULL),
   ('zs', '1234567890', 'zsAutoLogin', '13145679381', 'zs@gmail.com', 'n', 'c', '2014-02-06 22:08:30', NULL, NULL,
    NULL);
+
+INSERT INTO email_validate(identityCode, userId ,createTime, type)
+VALUES
+('1', 1, getdate(), 'reg'),
+('2', 2, getdate(), 'reg'),
+('3', 1, getdate(), 'reg'),
+('4', 1, getdate(), 'pwd')

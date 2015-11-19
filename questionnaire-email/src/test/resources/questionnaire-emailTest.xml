@@ -40,8 +40,8 @@
         <property name="javaMailProperties">
             <props>
                 <prop key="mail.${email.protocol}.auth">${email.auth}</prop>
-                <prop key="mail.smtp.port">${email.port}</prop>
-                <prop key="mail.smtp.socketFactory.port">${email.port}</prop>
+                <prop key="mail.${email.protocol}.port">${email.port}</prop>
+                <prop key="mail.${email.protocol}.socketFactory.port">${email.port}</prop>
             </props>
         </property>
     </bean>
@@ -51,17 +51,17 @@
         <property name="maxPoolSize" value="10"/>
     </bean>
 
-    <bean id="sendMimeMail" class="git.lbk.questionnaire.email.SendMimeMail">
+    <bean id="sendMimeMail" class="git.lbk.questionnaire.email.SendMimeEmail">
         <property name="sender" ref="sender"/>
         <property name="from" value="${email.username}"/>
     </bean>
 
-    <bean id="asyncSendMail" class="git.lbk.questionnaire.email.AsyncSendMailImpl">
+    <bean id="asyncSendMail" class="git.lbk.questionnaire.email.AsyncSendEmailImpl">
         <property name="sendMail" ref="sendMimeMail"/>
         <property name="taskExecutor" ref="taskExecutor"/>
     </bean>
 
-    <bean id="mailService" class="git.lbk.questionnaire.email.SendMailServiceImpl"
+    <bean id="mailService" class="git.lbk.questionnaire.email.SendEmailServiceImpl"
           init-method="init">
         <property name="asyncSendMail" ref="asyncSendMail"/>
         <property name="templatePath" value="mailTemplate"/>

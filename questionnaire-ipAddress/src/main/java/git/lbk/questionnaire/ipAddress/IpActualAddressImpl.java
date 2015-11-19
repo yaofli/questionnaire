@@ -17,6 +17,8 @@
 package git.lbk.questionnaire.ipAddress;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -47,6 +49,8 @@ public class IpActualAddressImpl implements IpActualAddress {
 	 */
 	private static final String CARRIER = "carrier";
 
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 	private String apiKey;
 	private String httpUrl;
 	private List<String> unknownData;
@@ -76,9 +80,8 @@ public class IpActualAddressImpl implements IpActualAddress {
 			return getAddressInfo(getActualAddressJson(ip));
 		}
 		catch(Exception e) {
-			CannotAcquireAddressException ex = new CannotAcquireAddressException("无法获取Ip地址的地理信息");
-			ex.initCause(e);
-			throw ex;
+			logger.error("无法获取ip地址!", e);
+			throw new CannotAcquireAddressException("无法获取Ip地址的地理信息", e);
 		}
 	}
 

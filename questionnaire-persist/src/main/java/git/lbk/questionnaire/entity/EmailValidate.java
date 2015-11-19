@@ -31,13 +31,14 @@ public class EmailValidate implements Serializable{
 
 	public static final long serialVersionUID = 0;
 
-	public static final String REGISTED_TYPE = "reg";
+	public static final String REGISTER_TYPE = "reg";
 
 	/**
 	 * 邮箱验证码的过期时间, 单位为小时
 	 */
 	public static final int EXPIRE_TIME = 2 * 24;
 
+	@NotNull
 	@Pattern(regexp = "\\p{XDigit}{64}")
 	private String identityCode;
 
