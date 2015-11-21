@@ -31,7 +31,7 @@ import java.util.concurrent.*;
  * fixme 这个类是否需要拆分成两/三个类? 感觉不知道怎么命名, 而且功能有点复杂. 而拆成两个:一个负责异步发送, 一个负责限制次数, 就比较好命名了. 但是那样的话, 类是不是太小, 太多了. 就像git.lbk.questionnaire.email.AsyncSendMailImpl类(questionnaire-email模块), 感觉就太小了, 根本不像个类
  */
 public class SmsImpl implements Sms{
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private static final Logger logger = LoggerFactory.getLogger(SmsImpl.class);
 
 	private volatile long sendInterval;
 	private volatile int ipDailyMaxSendCount;

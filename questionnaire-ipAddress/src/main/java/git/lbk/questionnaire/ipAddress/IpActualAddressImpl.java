@@ -49,7 +49,7 @@ public class IpActualAddressImpl implements IpActualAddress {
 	 */
 	private static final String CARRIER = "carrier";
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private static final Logger logger = LoggerFactory.getLogger(IpActualAddressImpl.class);
 
 	private String apiKey;
 	private String httpUrl;
@@ -117,7 +117,7 @@ public class IpActualAddressImpl implements IpActualAddress {
 	 * 解析返回的json字符串, 从中获取地理信息
 	 *
 	 * @param json json字符串
-	 * @return
+	 * @return 地理信息字符串
 	 */
 	private String getAddressInfo(String json) {
 		ObjectMapper objectMapper = new ObjectMapper();

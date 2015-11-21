@@ -73,11 +73,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>questionnaire-email</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>questionnaire-sms</artifactId>
             <version>${project.version}</version>
         </dependency>

@@ -2,7 +2,7 @@
 一个小的调查问卷网站, 用来练习java技术
 
 由于下面的文件包含用户名, 密码, 所以没有提交.
-**里面的用户名/密码之类的信息都需要进行加密处理, 可以使用 questionnaire-persist 模块中的测试类 git.lbk.questionnaire.security.AESUtilsTest.decrypt 进行加密**
+**里面的用户名/密码之类的信息都需要进行加密处理, 可以使用 questionnaire-persist 模块中的测试类 git.lbk.questionnaire.security.AESUtilsTest 中的 encrypt 进行加密**
 
 - questionnaire-sms/src/main/resources/ihuyiAccount.properties
     - 结构为:

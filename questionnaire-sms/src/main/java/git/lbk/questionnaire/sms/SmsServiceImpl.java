@@ -31,7 +31,7 @@ import java.util.*;
  */
 public class SmsServiceImpl implements SmsService {
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private static final Logger logger = LoggerFactory.getLogger(SmsServiceImpl.class);
 
 	private volatile SmsImpl sms;
 

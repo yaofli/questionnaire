@@ -92,10 +92,10 @@ public class StringUtil {
 			return "";
 		}
 		int length = b.length;
-		StringBuffer str = new StringBuffer(length * 2);
-		for(int i = 0; i < length; i++) {
-			str.append(HEX_DIGITS[b[i] >> 4 & 0xf]);
-			str.append(HEX_DIGITS[b[i] & 0xf]);
+		StringBuilder str = new StringBuilder(length * 2);
+		for(byte aB : b) {
+			str.append(HEX_DIGITS[aB >> 4 & 0xf]);
+			str.append(HEX_DIGITS[aB & 0xf]);
 		}
 		return str.toString();
 	}

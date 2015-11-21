@@ -26,11 +26,13 @@ import git.lbk.questionnaire.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.security.SecureRandom;
 import java.util.*;
 
 public class UserServiceImpl implements UserService {
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+	private static final Random RAND = new SecureRandom();
 
 	// fixme 这里直接使用UserDaoImpl类, 而不是它的父接口, 那么依赖注入的优势是不是就基本上没有了? 可是如果使用BaseDao的话, 那么像注册, 登录等功能就得写sql或者hql语句. 难道为每一个Dao都创建一个对应的接口吗?
 	// 可是这不是dao层应该做的事吗?
@@ -183,7 +185,8 @@ public class UserServiceImpl implements UserService {
 		user.setAutoLogin(MessageDigestUtil.SHA256(System.currentTimeMillis()
 				+ user.getMobile()
 				+ user.getEmail()
-				+ user.getPassword()));
+				+ user.getPassword())
+				+ RAND.nextInt());
 	}
 
 	/**

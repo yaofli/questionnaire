@@ -16,19 +16,67 @@
 
 $(function (){
 
+	var userNameIsValid = false;
 	var isMobile = false;
 	var accountIsValid = false;
+	var accountIsUsed = true;
 	var passwordIsValid = false;
 	var confirmPasswordIsValida = false;
 	var imageCaptchaIsValid = false;
 	var smsCaptchaIsValid = false;
 
+	$('#name').blur(function(){
+		if( $('#name').val().trim() == '' ){
+			userNameIsValid = false;
+			promptUserNameRequired();
+		}
+		else{
+			userNameIsValid = true;
+		}
+	});
+
+	/**
+	 * 检验账号
+	 */
+	$("#account").blur(function (){
+		var account = $("#account").val();
+		if( account.match(/\d{11}/) ){
+			isMobile = true;
+			accountIsValid = true;
+			$("#smsModule").removeClass('am-hide');
+		}
+		else if( account.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+(\.\w{2,6}){1,3}/) ){
+			isMobile = false;
+			accountIsValid = true;
+			$("#smsModule").addClass('am-hide');
+		}
+		else{
+			promptAccountError();
+			return;
+		}
+		checkUpAccountUsed(account);
+	});
+
+	/**
+	 * 检验账号是否已经注册,
+	 *  如果已经注册则设置 accountIsUsed 为 true, 并提示用户.
+	 *  否则将 accountIsUsed 置为 false
+	 * @param account 账号
+	 */
+	function checkUpAccountUsed(account){
+		$.get('/user/isRegister', {account: account}, function (isUsed){
+			accountIsUsed = isUsed;
+			if( isUsed ){
+				promptAccountUsed();
+			}
+		});
+	}
+
 	/**
 	 * 检验密码
-	 * fixme 如果密码是全空格组成, 算不算合法?
 	 */
 	$('#password').blur(function (){
-		if( $('#password').val() == '' ){
+		if( $('#password').val().length < 6 ){
 			passwordIsValid = false;
 			promptPasswordRequired();
 		}
@@ -50,25 +98,6 @@ $(function (){
 		}
 	});
 
-	/**
-	 * 检验账号
-	 */
-	$("#account").blur(function (){
-		var account = $("#account").val();
-		if( account.match(/\d{11}/) ){
-			isMobile = true;
-			$("#getSmsCaptcha").parent().css("display", "block");
-		}
-		else if( account.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+(\.\w{2,6}){1,3}/) ){
-			isMobile = false;
-			$("#getSmsCaptcha").parent().css("display", "none");
-		}
-		else{
-			promptAccountError();
-			return;
-		}
-		checkUpAccountUsed(account);
-	});
 
 	/**
 	 * 检查图片验证码的格式是否正确
@@ -88,7 +117,7 @@ $(function (){
 	 */
 	$('#getSmsCaptcha').click(function (){
 		if( !accountIsValid ){
-			promptMobileUsed();
+			promptAccountUsed();
 			return false;
 		}
 		else if( !imageCaptchaIsValid ){
@@ -119,8 +148,13 @@ $(function (){
 	/**
 	 * 提交数据
 	 */
-	$('#submit').click(function (){
+	$('#userRegister').submit(function (){
+		var loading = layer.load(1, {
+			shade: [0.1, '#fff']
+		});
+
 		if( !checkInput() ){
+			layer.close(loading);
 			return false;
 		}
 
@@ -129,16 +163,15 @@ $(function (){
 			password: $('#password').val()
 		};
 		if( isMobile ){
+			var smsCaptcha = $('#smsCaptcha');
 			data['mobile'] = $('#account').val();
-			data[$('#smsCaptcha').attr('name')] = $('#smsCaptcha').val();
+			data[smsCaptcha.attr('name')] = smsCaptcha.val();
 		}
 		else{
+			var imageCaptcha = $('#imageCaptcha');
 			data['email'] = $('#account').val();
-			data[$('#imageCaptcha').attr('name')] = $('#imageCaptcha').val();
+			data[imageCaptcha.attr('name')] = imageCaptcha.val();
 		}
-		var loading = layer.load(1, {
-			shade: [0.1, '#fff'] //0.1透明度的白色背景
-		});
 
 		$.post('/user/register', data, function (json){
 			var status = json['status'];
@@ -147,34 +180,25 @@ $(function (){
 					layer.msg('信息错误, 请检查后重新注册');
 				}
 				else if( status == 'sms captcha error' ){
-					layer.msg('短信验证码错误, 请重新输入');
+					promptSmsCaptchaError();
 					$('smsCaptcha').val('');
 				}
 				else if( status == 'captcha error' ){
-					layer.msg('验证码错误, 请重新输入');
-					$('imageCaptcha').val('');
+					promptImageCaptchaError();
+					$('#imageCaptcha').val('');
 					captcha.flush('#flushCaptcha img:first');
 				}
 				else if( status == 'repeat register' ){
-					if( isMobile ){
-						layer.msg('手机号已经注册, 经检查后重试');
-					}
-					else{
-						layer.msg('邮箱已经注册, 经检查后重试');
-					}
+					promptAccountUsed();
 				}
 			}
 			else{
 				if( isMobile ){
-					//layer.msg('注册成功, 即将跳转到<a href="/">首页</a>');
 					window.location = "/WEB-INF/views/index.jsp";
 				}
 				else{
 					window.location = "/user/registerNotify?email=" + data['email'];
 				}
-				var exceedDate = new Date();
-				exceedDate.setDate(exceedDate.getDate() + 30);
-				document.cookie = "autoLogin" + "=" + json['autoLogin'] + ";expires=" + exceedDate.toGMTString();
 			}
 			layer.close(loading);
 		}, 'json');
@@ -184,6 +208,10 @@ $(function (){
 	function checkInput(){
 		if( !accountIsValid ){
 			promptAccountError()
+			return false;
+		}
+		if( accountIsUsed ){
+			promptAccountUsed();
 			return false;
 		}
 		if( !passwordIsValid ){
@@ -205,47 +233,25 @@ $(function (){
 		return true;
 	}
 
-	/**
-	 * 检验账号是否已经注册,
-	 *  如果已经注册则返回true, 同时设置accountIsValid为false, 并提示用户.
-	 *  否则返回false, 并将accountIsValid置为true
-	 * @param account 账号
-	 */
-	function checkUpAccountUsed(account){
-		//TODO 添加ajax请求检验是否注册
-		//var isUsed = false;
-
-		var isUsed = (account == undefined);
-
-		if( !isUsed ){
-			accountIsValid = true;
-			return isUsed;
-		}
-
-		accountIsValid = false;
-		if( isMobile ){
-			promptMobileUsed();
-		}
-		else{
-			promptEmailUsed();
-		}
-		return isUsed
+	function promptUserNameRequired(){
+		layer.tips('用户名不能为空', '#name');
 	}
 
 	function promptAccountError(){
 		layer.tips('请输入正确的 手机号/邮箱', '#account');
 	}
 
-	function promptEmailUsed(){
-		layer.tips('该邮箱已经注册, 请检查是否输入错误, 或者<a href="#">重置密码</a>', '#account');
-	}
-
-	function promptMobileUsed(){
-		layer.tips('该手机号已经注册, 请检查是否输入错误, 或者<a href="#">重置密码</a>', '#account');
+	function promptAccountUsed(){
+		if(isMobile){
+			layer.tips('该手机号已经注册, 请检查是否输入错误, 或者<a href="#">重置密码</a>', '#account');
+		}
+		else{
+			layer.tips('该邮箱已经注册, 请检查是否输入错误, 或者<a href="#">重置密码</a>', '#account');
+		}
 	}
 
 	function promptPasswordRequired(){
-		layer.tips('请输入密码', '#password');
+		layer.tips('密码不能少于6位', '#password');
 	}
 
 	function promptConfirmPasswordError(){

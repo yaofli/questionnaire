@@ -14,12 +14,34 @@
  * limitations under the License.
  */
 
-body, ul, ol, p, h1, h2, h3, h4, h5, dl, dd, form, input, textarea, td, th {
-    margin: 0;
-    padding: 0;
-    font-family: "微软雅黑", Arial;
-}
+package git.lbk.questionnaire.util;
 
-li {
-    list-style-type: none;
+import javax.servlet.http.Cookie;
+
+/**
+ * cookie工具类
+ */
+public class CookieUtil {
+
+	/**
+	 * 从一个cookie数组中挑选出指定名称的cookie的值.
+	 *
+	 * @param c    cookie数组
+	 * @param name 需要的cookie的名称
+	 * @return 找到则返回相应的值, 否则返回空字符串
+	 */
+	public static String getValue(Cookie[] c, String name) {
+		if(c == null) {
+			return "";
+		}
+		String value = "";
+		for(Cookie aC : c) {
+			if(aC.getName().equals(name)) {
+				value = aC.getValue();
+				break;
+			}
+		}
+		return value;
+	}
+
 }

@@ -41,7 +41,7 @@ import java.util.*;
 @RequestMapping("/sms")
 public class SmsCaptchaController {
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private static final Logger logger = LoggerFactory.getLogger(SmsCaptchaController.class);
 	/**
 	 * 短信验证码在session中key
 	 */

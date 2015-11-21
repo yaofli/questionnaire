@@ -36,8 +36,9 @@
     <mvc:default-servlet-handler/>
     <mvc:annotation-driven/>
 
-    <mvc:view-controller path="/user/registerPage" view-name="registerPage"/>
     <mvc:view-controller path="/" view-name="index"/>
     <mvc:view-controller path="/index.jsp" view-name="index"/>
+    <mvc:view-controller path="/user/registerPage" view-name="registerPage"/>
+    <mvc:view-controller path="loginPage" view-name="templet/loginPage"/>
 
 </beans>

@@ -31,7 +31,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class IpActualAddressServiceImpl implements IpActualAddressService {
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private static final Logger logger = LoggerFactory.getLogger(IpActualAddressServiceImpl.class);
+
 	private IpActualAddress ipActualAddress;
 	private ExecutorService executorService;
 	private UserDaoImpl userDao;

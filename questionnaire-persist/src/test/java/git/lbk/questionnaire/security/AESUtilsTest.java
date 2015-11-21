@@ -33,7 +33,7 @@ public class AESUtilsTest {
 	}
 
 	@Test
-	public void decrypt(){
+	public void encrypt(){
 		String str = "";
 		String ciphertext = AESUtils.encrypt(str);
 		System.out.println(ciphertext);

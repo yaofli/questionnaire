@@ -29,11 +29,13 @@ import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.*;
 
 public class SendEmailServiceImpl implements SendEmailService {
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private static final Logger logger = LoggerFactory.getLogger(SendEmailServiceImpl.class);
+	private static final Random RAND = new SecureRandom();
 
 	private EmailValidateDaoImpl emailDao;
 	private AsyncSendEmail asyncSendMail;
@@ -126,7 +128,7 @@ public class SendEmailServiceImpl implements SendEmailService {
 	 * @return 验证码
 	 */
 	private String createCaptcha(int userId, String userName, String email) {
-		return MessageDigestUtil.SHA256(userId + email + System.currentTimeMillis() + userName);
+		return MessageDigestUtil.SHA256(userId + email + System.currentTimeMillis() + userName + RAND.nextInt());
 	}
 
 	/**
