@@ -36,6 +36,13 @@
     <mvc:default-servlet-handler/>
     <mvc:annotation-driven/>
 
+    <mvc:interceptors>
+
+        <bean class="git.lbk.questionnaire.springmvc.interceptors.UserLoginInterceptor">
+            <property name="userService" ref="userService"/>
+        </bean>
+    </mvc:interceptors>
+
     <mvc:view-controller path="/" view-name="index"/>
     <mvc:view-controller path="/index.jsp" view-name="index"/>
     <mvc:view-controller path="/user/registerPage" view-name="registerPage"/>

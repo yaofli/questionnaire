@@ -19,9 +19,7 @@ package git.lbk.questionnaire.springmvc.controller;
 import git.lbk.questionnaire.entity.EmailValidate;
 import git.lbk.questionnaire.entity.User;
 import git.lbk.questionnaire.service.UserService;
-import git.lbk.questionnaire.util.CaptchaUtil;
-import git.lbk.questionnaire.util.NetUtil;
-import git.lbk.questionnaire.util.StringUtil;
+import git.lbk.questionnaire.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,6 +102,7 @@ public class UserController {
 		if(userService.register(user, NetUtil.getRealIP(request)) == UserService.SUCCESS) {
 			saveUserToSession(user, request.getSession());
 			map.put("status", "success");
+			CookieUtil.setAutoLoginCookie(request, response, user.getAutoLogin());
 		}
 		else {
 			map.put("status", "repeat register");
@@ -113,7 +112,7 @@ public class UserController {
 
 	@ResponseBody
 	@RequestMapping("/login")
-	public Map<String, Object> login(HttpServletRequest request) {
+	public Map<String, Object> login(HttpServletRequest request, HttpServletResponse response) {
 		Map<String, Object> map = new HashMap<>();
 		if(!CaptchaUtil.validateImageCpatcha(request)){
 			map.put("status", "captcha error");
@@ -133,15 +132,11 @@ public class UserController {
 		}
 		saveUserToSession(user, request.getSession());
 		map.put("status", "success");
-		map.put("lastLoginTime", user.getLastLoginTime());
+		map.put("lastLoginTime", DateUtil.format(user.getLastLoginTime(), "yyyy-MM-dd HH:mm"));
 		map.put("lastLoginIp", user.getLastLoginIp());
 		map.put("lastLoginAddress", user.getLastLoginAddress());
 		if("true".equals(request.getParameter("autoLogin"))){
-			// 设置自动登录cookie
-			logger.debug("autoLogin");
-		}
-		else{
-			logger.debug(request.getParameter("autoLogin"));
+			CookieUtil.setAutoLoginCookie(request, response, user.getAutoLogin());
 		}
 		return map;
 	}
@@ -159,7 +154,8 @@ public class UserController {
 	@RequestMapping("/logout")
 	public String logout(HttpServletRequest request, HttpServletResponse response){
 		request.getSession().invalidate();
-		return "/index";
+		CookieUtil.deleteAutoLoginCookie(response);
+		return "redirect:/";
 	}
 
 	/**

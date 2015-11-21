@@ -26,7 +26,6 @@
             class="am-icon-bars"></span></button>
 
     <div class="am-collapse am-topbar-collapse" id="topbar-collapse">
-
         <ul class="am-nav am-nav-pills am-topbar-nav am-topbar-right admin-header-list">
             <c:if test="${sessionScope.userId == null}">
                 <script src="<c:url value="/js/loadLoginPage.js"/>"></script>

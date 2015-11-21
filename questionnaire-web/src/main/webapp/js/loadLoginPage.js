@@ -28,7 +28,7 @@ $(function(){
 			$.get('/loginPage', function (content){
 				loginPage = content;
 				openLoginPage();
-			});
+			}, 'html');
 		}
 		else{
 			openLoginPage();

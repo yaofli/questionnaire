@@ -47,7 +47,6 @@
     <script src="<c:url value="/js/layer/layer.js"/>" ></script>
 </head>
 <body>
-
 <jsp:include page="templet/header.jsp" />
 
 <jsp:include page="templet/footer.jsp"/>

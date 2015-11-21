@@ -1,5 +1,4 @@
-﻿<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%--
+﻿<%--
   ~ Copyright 2015 LBK
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +14,7 @@
   ~ limitations under the License.
   --%>
 <%-- 页脚 --%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <footer data-am-widget="footer" class="am-footer am-footer-default" data-am-footer="{  }">
 	<div class="am-footer-switch">
 		<span class="am-footer-ysp" data-rel="mobile" data-am-modal="{target: '#am-switch-mode'}">电脑版</span>
