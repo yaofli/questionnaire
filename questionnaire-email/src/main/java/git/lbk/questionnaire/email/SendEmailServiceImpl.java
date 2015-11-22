@@ -87,9 +87,9 @@ public class SendEmailServiceImpl implements SendEmailService {
 			calendar.add(Calendar.HOUR_OF_DAY, EmailValidate.EXPIRE_TIME);
 			String emailContext = registerTemplate.replace("${username}", user.getName());
 			emailContext = emailContext.replace("${captcha}", emailValidate.getIdentityCode());
-			emailContext = emailContext.replace("${expireTime}", DateUtil.format(calendar.getTime(), "yyyy-MM-dd hh:mm:ss"));
-			emailContext = emailContext.replace("${currentTime}", DateUtil.getNowDataToString("yyyy-MM-dd hh:mm:ss"));
-			emailContext = emailContext.replace("${registerTime}", DateUtil.format(user.getRegisterTime(), "yyyy-MM-dd hh:mm:ss"));
+			emailContext = emailContext.replace("${expireTime}", DateUtil.format(calendar.getTime(), "yyyy-MM-dd HH:mm:ss"));
+			emailContext = emailContext.replace("${currentTime}", DateUtil.getNowDataToString("yyyy-MM-dd HH:mm:ss"));
+			emailContext = emailContext.replace("${registerTime}", DateUtil.format(user.getRegisterTime(), "yyyy-MM-dd HH:mm:ss"));
 			emailContext = emailContext.replace("${type}", EmailValidate.REGISTER_TYPE);
 
 

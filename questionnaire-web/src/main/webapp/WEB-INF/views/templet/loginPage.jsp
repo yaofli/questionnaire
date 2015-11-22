@@ -15,6 +15,7 @@
   --%>
 
 <%-- 登录form --%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <form id="loginPage_userRegister" action="#" class="am-form am-form-horizontal am-margin-top-sm" method="post">
     <div class="am-form-group">
@@ -90,6 +91,7 @@
 
                 $.post('<c:url value="/user/login"/>', data, function (json){
                     if( json['status'] == 'success' ){
+                        // fixme 这里和templet/footer.jsp中的几乎一样, 但是我还没想好该怎么去除重复. 弄成一个模板, 然后ajax请求?
                         var tips = '<p class="am-text-center">登录成功, 5秒后自动刷新(关闭本窗口立即刷新)</p>' +
                                 '<div class="am-panel am-panel-default">' +
                                 '<div class="am-panel-hd am-cf">上次登录信息</div>' +

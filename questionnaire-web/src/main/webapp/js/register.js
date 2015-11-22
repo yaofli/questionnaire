@@ -259,7 +259,7 @@ $(function (){
 	}
 
 	function promptImageCaptchaError(){
-		layer.tips('验证码格式不正确', '#imageCaptcha');
+		layer.tips('验证码不正确', '#imageCaptcha');
 	}
 
 	function promptSmsCaptchaError(){

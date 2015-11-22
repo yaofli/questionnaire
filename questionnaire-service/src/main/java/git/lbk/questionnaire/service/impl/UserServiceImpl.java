@@ -183,11 +183,12 @@ public class UserServiceImpl implements UserService {
 	 */
 	private void setAutoLoginInfo(User user) {
 		user.setAutoLogin(MessageDigestUtil.SHA256(System.currentTimeMillis()
+				+ ""
 				+ user.getId()      // 注册时id为null
 				+ user.getEmail()
 				+ user.getMobile()
-				+ user.getPassword())
-				+ RAND.nextInt());
+				+ user.getPassword()
+				+ RAND.nextInt()));
 	}
 
 	/**

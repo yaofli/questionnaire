@@ -26,27 +26,28 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>BK调查网</title>
+    <base href="<c:url value="/"/>">
     <meta name="renderer" content="webkit">
     <meta http-equiv="Cache-Control" content="no-siteapp" />
-    <link rel="icon" type="image/png" href="<c:url value="/assets/i/favicon.png"/>" />
+    <link rel="icon" type="image/png" href="assets/i/favicon.png" />
 
     <meta name="mobile-web-app-capable" content="yes">
-    <link rel="icon" sizes="192x192" href="<c:url value="/assets/i/app-icon72x72@2x.png"/>" />
+    <link rel="icon" sizes="192x192" href="assets/i/app-icon72x72@2x.png" />
 
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="Amaze UI" />
-    <link rel="apple-touch-icon-precomposed" href="<c:url value="/assets/i/app-icon72x72@2x.png"/>" />
+    <link rel="apple-touch-icon-precomposed" href="assets/i/app-icon72x72@2x.png" />
 
-    <meta name="msapplication-TileImage" content="<c:url value="/assets/i/app-icon72x72@2x.png"/>" />
+    <meta name="msapplication-TileImage" content="assets/i/app-icon72x72@2x.png" />
     <meta name="msapplication-TileColor" content="#0e90d2">
 
-    <link rel="stylesheet" href="<c:url value="/assets/css/amazeui.min.css"/>" />
-    <link rel="stylesheet" href="<c:url value="/assets/css/app.css"/>" />
+    <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="assets/css/app.css" />
 
     <title>激活XX账号</title>
-    <script src="<c:url value="/js/jquery.min.js" />"></script>
-    <script src="<c:url value="/js/layer/layer.js"/>"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/layer/layer.js"></script>
     <script>
         $(function (){
             $('#resendEmail').click(function (){

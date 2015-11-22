@@ -224,15 +224,15 @@ public class UserController {
 		if(error.hasErrors()
 				|| !emailValidate.getType().equals(EmailValidate.REGISTER_TYPE)) {
 			request.setAttribute("error", "error");
-			return "/actionAccount";
+			return "redirect:/user/actionAccountPage";
 		}
 		User user = userService.activeAccount(emailValidate.getIdentityCode(), NetUtil.getRealIP(request));
 		if(user != null) {
 			saveUserToSession(user, request.getSession());
-			return "/index";
+			return "redirect:/user/actionAccountPage";
 		}
 		request.setAttribute("error", "error");
-		return "/actionAccount";
+		return "redirect:/user/actionAccountPage";
 	}
 
 }

@@ -26,23 +26,24 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>BK调查网</title>
+    <base href="<c:url value="/"/>">
     <meta name="renderer" content="webkit">
     <meta http-equiv="Cache-Control" content="no-siteapp" />
-    <link rel="icon" type="image/png" href="<c:url value="/assets/i/favicon.png"/>" />
+    <link rel="icon" type="image/png" href="assets/i/favicon.png" />
 
     <meta name="mobile-web-app-capable" content="yes">
-    <link rel="icon" sizes="192x192" href="<c:url value="/assets/i/app-icon72x72@2x.png"/>" />
+    <link rel="icon" sizes="192x192" href="assets/i/app-icon72x72@2x.png" />
 
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="Amaze UI" />
-    <link rel="apple-touch-icon-precomposed" href="<c:url value="/assets/i/app-icon72x72@2x.png"/>" />
+    <link rel="apple-touch-icon-precomposed" href="assets/i/app-icon72x72@2x.png" />
 
-    <meta name="msapplication-TileImage" content="<c:url value="/assets/i/app-icon72x72@2x.png"/>" />
+    <meta name="msapplication-TileImage" content="assets/i/app-icon72x72@2x.png" />
     <meta name="msapplication-TileColor" content="#0e90d2">
 
-    <link rel="stylesheet" href="<c:url value="/assets/css/amazeui.min.css"/>" />
-    <link rel="stylesheet" href="<c:url value="/assets/css/app.css"/>" />
+    <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="assets/css/app.css" />
 
     <title>用户账号激活</title>
 </head>
@@ -51,12 +52,12 @@
 
 <c:if test="${error == null}">
     <p class="am-text-center am-text-success">
-        激活成功, 即将跳转到<a href="<c:url value="/" />" >首页</a>
+        激活成功, 即将跳转到<a href="/">首页</a>
     </p>
 </c:if>
 <c:if test="${error != null}">
     <p class="am-text-center am-text-warning">
-        验证码错误, 可能已经激活, 或者验证码过期, 即将跳转到<a href="<c:url value="/" />" >首页</a>
+        验证码错误, 可能已经激活, 或者验证码过期, 即将跳转到<a href="/">首页</a>
     </p>
 </c:if>
 <script>
