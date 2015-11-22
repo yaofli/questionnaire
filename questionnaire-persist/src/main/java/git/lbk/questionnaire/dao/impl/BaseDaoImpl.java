@@ -84,8 +84,10 @@ public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 	 */
 	public int updateEntityByHQL(String hql, Object... objects) {
 		Query query = sf.getCurrentSession().createQuery(hql);
-		for(int i=0; i<objects.length; i++){
-			query.setParameter(i, objects[i]);
+		if(objects != null) {
+			for(int i = 0; i < objects.length; i++) {
+				query.setParameter(i, objects[i]);
+			}
 		}
 		return query.executeUpdate();
 	}

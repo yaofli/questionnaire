@@ -20,6 +20,8 @@ import git.lbk.questionnaire.entity.EmailValidate;
 import git.lbk.questionnaire.entity.User;
 import org.springframework.stereotype.Repository;
 
+import java.util.*;
+
 @Repository("emailValidateDao")
 public class EmailValidateDaoImpl extends BaseDaoImpl<EmailValidate> {
 
@@ -30,6 +32,14 @@ public class EmailValidateDaoImpl extends BaseDaoImpl<EmailValidate> {
 	 */
 	public void deleteByUserIDAndType(User user, String type){
 		updateEntityByHQL("delete from EmailValidate where user=? and type=?", user, type);
+	}
+
+	/**
+	 * 删除早于指定时间创建的验证码
+	 * @param date 在该时间之前的验证码均会被删除
+	 */
+	public void deleteBeforeTime(Date date){
+		updateEntityByHQL("delete from EmailValidate where createTime<?", date);
 	}
 
 }

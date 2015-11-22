@@ -27,6 +27,7 @@ public class DateUtil {
 
 	/**
 	 * 比较两个Date(及其子类)表示的时间是否一致.
+	 *
 	 * @param a date对象
 	 * @param b 和a相比较的date对象
 	 * @return 如果a和b同时为null或者表示的时间一致则返回true, 否则返回false
@@ -35,7 +36,6 @@ public class DateUtil {
 		if(a == null) {
 			return b == null;
 		}
-
 		if(b == null) {
 			return false;
 		}
@@ -47,21 +47,37 @@ public class DateUtil {
 	/**
 	 * 获得时间的格式化字符串
 	 *
-	 * @param date 日期对象
+	 * @param date   日期对象
 	 * @param format 格式化字符串
 	 * @return 格式化的日期字符串
 	 */
-	public static String format(Date date, String format){
+	public static String format(Date date, String format) {
 		DateFormat dateFormat = new SimpleDateFormat(format);
 		return dateFormat.format(date);
 	}
 
 	/**
 	 * 获得当前时间格式化字符串
+	 *
 	 * @param format 格式化字符串
 	 * @return 格式化的当前日期字符串
 	 */
-	public static String getDate(String format){
+	public static String getNowDataToString(String format) {
 		return format(new Date(), format);
 	}
+
+	/**
+	 * 获取当前时间特定偏移量的Date对象.
+	 *
+	 * @param field  Calendar中的日历字段常量数组
+	 * @param amount 为字段添加的日期或时间量数组
+	 * @return 指定偏移量的日期
+	 */
+	public static Date getDate(int field, int amount) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		calendar.add(field, amount);
+		return calendar.getTime();
+	}
+
 }

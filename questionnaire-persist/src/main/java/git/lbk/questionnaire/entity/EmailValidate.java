@@ -89,7 +89,6 @@ public class EmailValidate implements Serializable{
 		EmailValidate that = (EmailValidate) o;
 
 		if(identityCode != null ? !identityCode.equals(that.identityCode) : that.identityCode != null) return false;
-		if(user != null ? !user.equals(that.user) : that.user != null) return false;
 		if(!DateUtil.equals(createTime, that.createTime)) return false;
 		return !(type != null ? !type.equals(that.type) : that.type != null);
 
@@ -98,7 +97,6 @@ public class EmailValidate implements Serializable{
 	@Override
 	public int hashCode() {
 		int result = identityCode != null ? identityCode.hashCode() : 0;
-		result = 31 * result + (user != null ? user.hashCode() : 0);
 		result = 31 * result + (createTime != null ? createTime.hashCode() : 0);
 		result = 31 * result + (type != null ? type.hashCode() : 0);
 		return result;
@@ -108,7 +106,6 @@ public class EmailValidate implements Serializable{
 	public String toString() {
 		return "EmailValidate{" +
 				"identityCode='" + identityCode + '\'' +
-				", user=" + user +
 				", createTime=" + createTime +
 				", type='" + type + '\'' +
 				'}';

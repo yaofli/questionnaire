@@ -18,6 +18,7 @@ package git.lbk.questionnaire.sms;
 
 
 import git.lbk.questionnaire.dao.BaseDao;
+import git.lbk.questionnaire.dao.impl.SmsCountDaoImpl;
 import git.lbk.questionnaire.entity.SmsCount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +29,10 @@ import java.util.concurrent.*;
 /**
  * 该类包装了SendSms接口.
  * 实现了异步发送, 限制ip, 手机号日发送次数, 以及短时间内的发送频率
- * fixme 这个类是否需要拆分成两/三个类? 感觉不知道怎么命名, 而且功能有点复杂. 而拆成两个:一个负责异步发送, 一个负责限制次数, 就比较好命名了. 但是那样的话, 类是不是太小, 太多了. 就像git.lbk.questionnaire.email.AsyncSendMailImpl类(questionnaire-email模块), 感觉就太小了, 根本不像个类
+ * fixme 这个类是否需要拆分成两/三个类? 感觉不知道怎么命名, 而且功能有点复杂. 而拆成两个:一个负责异步发送, 一个负责限制次数, 就比较好命名了. 但是那样的话, 类是不是太小, 太多了. 就像git.lbk
+ * .questionnaire.email.AsyncSendMailImpl类(questionnaire-email模块), 感觉就太小了, 根本不像个类
  */
-public class SmsImpl implements Sms{
+public class SmsImpl implements Sms {
 	private static final Logger logger = LoggerFactory.getLogger(SmsImpl.class);
 
 	private volatile long sendInterval;
@@ -99,7 +101,7 @@ public class SmsImpl implements Sms{
 	 * 在调用该方法之前需要先将发送间隔, 日发送最大次数, 清理发送记录的时间间隔注入
 	 */
 	@Override
-	public void init() throws Exception{
+	public void init() throws Exception {
 		executorService = Executors.newCachedThreadPool();
 		sendAddressMap = new ConcurrentHashMap<>();
 		timer = new Timer("sms destroy thread");
@@ -126,17 +128,11 @@ public class SmsImpl implements Sms{
 		//fixme 这段关于多线程的处理是否"正确", 就是说除了isGreatMaxCount有潜在的线程竞争之外, 还有没其他bug?
 		checkFrequently(mobile);
 		checkFrequently(ip);
-		try {
-			if(isGreatMaxCount(mobile, mobileDailyMaxSendCount)) {
-				throw new SendManyDailyException("已超过日最大发送次数: " + mobile);
-			}
-			if(isGreatMaxCount(ip, ipDailyMaxSendCount)) {
-				throw new SendManyDailyException("已超过日最大发送次数: " + ip);
-			}
+		if(isGreatMaxCount(mobile, mobileDailyMaxSendCount)) {
+			throw new SendManyDailyException("已超过日最大发送次数: " + mobile);
 		}
-		catch(SendManyDailyException e) {
-			logger.error("检验发送短信次数是否超过日最大发送次数时发生错误", e);
-			throw new SendManyDailyException("已超过日最大发送次数.");
+		if(isGreatMaxCount(ip, ipDailyMaxSendCount)) {
+			throw new SendManyDailyException("已超过日最大发送次数: " + ip);
 		}
 		try {
 			executorService.submit(() -> sendSms.sendMessage(mobile, message));
@@ -148,10 +144,11 @@ public class SmsImpl implements Sms{
 
 	/**
 	 * 检查给定的id发送间隔是否小于最小发送间隔
+	 *
 	 * @param id ip 或者 手机号
 	 * @throws FrequentlyException 如果小于最小的发送间隔
 	 */
-	private void checkFrequently(String id) throws FrequentlyException{
+	private void checkFrequently(String id) throws FrequentlyException {
 		if(isFrequently(id)) {
 			long sendTime = sendAddressMap.get(id);
 			long currentTime = System.currentTimeMillis() >> 10;
@@ -182,7 +179,7 @@ public class SmsImpl implements Sms{
 			// 如果没有替换成功有两种情况:
 			//  1. 有另外一个线程进行了替换, 那么这个线程就按失败处理
 			//  2. 清理线程把map里的过期数据清零了, 那么, 就再按空进行一次放入, 如果这时不为空. 那么是肯定有一个线程放入了数据, 不论刚才是否进行了清理
-			if(!sendAddressMap.replace(id, sendTime, currentTime)){
+			if(!sendAddressMap.replace(id, sendTime, currentTime)) {
 				return sendAddressMap.putIfAbsent(id, currentTime) != null;
 			}
 			return false;
@@ -200,27 +197,41 @@ public class SmsImpl implements Sms{
 	 * @return 如果大于最大的发送次数则返回true, 否则返回false
 	 */
 	private boolean isGreatMaxCount(String identity, int maxCount) {
-		SmsCount smsCount = smsDao.getEntity(identity);
-		if(smsCount == null) {
-			smsCount = new SmsCount();
-			smsCount.setIdentity(identity);
-			smsCount.setCount(1);
-			smsDao.saveEntity(smsCount);
-			return false;
+		try {
+			SmsCount smsCount = smsDao.getEntity(identity);
+			if(smsCount == null) {
+				smsCount = new SmsCount();
+				smsCount.setIdentity(identity);
+				smsCount.setCount(1);
+				smsDao.saveEntity(smsCount);
+				return false;
+			}
+			if(smsCount.getCount() < maxCount) {
+				smsCount.setCount(smsCount.getCount() + 1);
+				smsDao.saveEntity(smsCount);
+				return false;
+			}
+			return true;
 		}
-		if(smsCount.getCount() < maxCount) {
-			smsCount.setCount(smsCount.getCount() + 1);
-			smsDao.saveEntity(smsCount);
-			return false;
+		catch(RuntimeException e){
+			return true;
 		}
-		return true;
+	}
+
+	/**
+	 * 清空发送短信计数表的数据
+	 */
+	@Override
+	public void clearData(){
+		logger.info("清空短信计数数据表");
+		((SmsCountDaoImpl)smsDao).truncate();
 	}
 
 	/**
 	 * 释放资源
 	 */
 	@Override
-	public void destroy(){
+	public void destroy() {
 		executorService.shutdown();
 		timer.cancel();
 		sendAddressMap.clear();
@@ -232,11 +243,13 @@ public class SmsImpl implements Sms{
 		}
 	}
 
+	// 测试时使用的方法
+
 	/**
 	 * 将sendAddressMap中的所有过期数据删除
 	 * 在测试时需要调用, 所以不能是private.
- 	 */
-	void cleanMobileMap(){
+	 */
+	void cleanMobileMap() {
 		long currentTime = System.currentTimeMillis() >> 10; // 大致相当于除1000
 		long expireSendTime = currentTime - sendInterval;
 
@@ -250,8 +263,6 @@ public class SmsImpl implements Sms{
 			}
 		}
 	}
-
-	// 测试时使用的get方法
 
 	Map<String, Long> getSendAddressMap() {
 		return Collections.unmodifiableMap(sendAddressMap);

@@ -88,7 +88,7 @@ public class SendEmailServiceImpl implements SendEmailService {
 			String emailContext = registerTemplate.replace("${username}", user.getName());
 			emailContext = emailContext.replace("${captcha}", emailValidate.getIdentityCode());
 			emailContext = emailContext.replace("${expireTime}", DateUtil.format(calendar.getTime(), "yyyy-MM-dd hh:mm:ss"));
-			emailContext = emailContext.replace("${currentTime}", DateUtil.getDate("yyyy-MM-dd hh:mm:ss"));
+			emailContext = emailContext.replace("${currentTime}", DateUtil.getNowDataToString("yyyy-MM-dd hh:mm:ss"));
 			emailContext = emailContext.replace("${registerTime}", DateUtil.format(user.getRegisterTime(), "yyyy-MM-dd hh:mm:ss"));
 			emailContext = emailContext.replace("${type}", EmailValidate.REGISTER_TYPE);
 
@@ -161,6 +161,15 @@ public class SendEmailServiceImpl implements SendEmailService {
 			logger.error("验证邮件验证码时发生错误!", e);
 		}
 		return user;
+	}
+
+	/**
+	 * 删除过期的邮件验证码
+	 */
+	public void deleteExpireCaptcha() {
+		logger.info("删除过期邮件验证码");
+		Date expireDate = DateUtil.getDate(Calendar.HOUR_OF_DAY, -EmailValidate.EXPIRE_TIME);
+		emailDao.deleteBeforeTime(expireDate);
 	}
 
 	@Override

@@ -22,4 +22,9 @@ import org.springframework.stereotype.Repository;
 @Repository("smsCountDao")
 public class SmsCountDaoImpl extends BaseDaoImpl<SmsCount> {
 
+	public void truncate(){
+		String hql = "truncate table sms_count";
+		updateEntityBySQL(hql);
+	}
+
 }

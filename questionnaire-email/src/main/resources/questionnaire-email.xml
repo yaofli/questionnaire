@@ -69,6 +69,25 @@
         <property name="templatePath" value="mailTemplate"/>
     </bean>
 
+    <bean id="emailDeleteExpireJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="mailService"/>
+        <property name="targetMethod" value="deleteExpireCaptcha"/>
+    </bean>
+
+    <bean id="emailCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="emailDeleteExpireJob"/>
+        <!-- 每个奇数月份的1号运行 -->
+        <property name="cronExpression" value="0 0 0 1 1/2 ?"/>
+    </bean>
+
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="emailCronTrigger"/>
+            </list>
+        </property>
+    </bean>
+
     <tx:advice id="mailTxAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="*" propagation="REQUIRED" isolation="DEFAULT"/>
@@ -79,6 +98,7 @@
 
     <aop:config>
         <aop:advisor advice-ref="mailTxAdvice"
-                     pointcut="execution(* git.lbk.questionnaire.email.SendEmailServiceImpl.sendRegisterMail(..)) or execution(* git.lbk.questionnaire.email.SendEmailServiceImpl.validateMailCaptcha(..))"/>
+                     pointcut="execution(* git.lbk.questionnaire.email.SendEmailService.*(..))"/>
     </aop:config>
+
 </beans>

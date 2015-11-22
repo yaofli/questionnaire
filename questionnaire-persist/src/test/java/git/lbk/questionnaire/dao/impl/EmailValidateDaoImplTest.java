@@ -16,12 +16,17 @@
 
 package git.lbk.questionnaire.dao.impl;
 
+import git.lbk.questionnaire.entity.EmailValidate;
 import git.lbk.questionnaire.entity.User;
+import git.lbk.questionnaire.util.DateUtil;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.*;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -43,5 +48,26 @@ public class EmailValidateDaoImplTest {
 
 		assertNotNull(emailValidateDao.getEntity("2"));
 		assertNotNull(emailValidateDao.getEntity("4"));
+	}
+
+	@Ignore("需要修改test-data.sql中的数据")
+	@Test
+	public void testDeleteBeforeTime(){
+		assertNotNull(emailValidateDao.getEntity("11"));
+		assertNotNull(emailValidateDao.getEntity("12"));
+		assertNotNull(emailValidateDao.getEntity("13"));
+		assertNotNull(emailValidateDao.getEntity("14"));
+		assertNotNull(emailValidateDao.getEntity("15"));
+		assertNotNull(emailValidateDao.getEntity("16"));
+
+		emailValidateDao.deleteBeforeTime(DateUtil.getDate(Calendar.HOUR_OF_DAY, -EmailValidate.EXPIRE_TIME));
+
+		assertNull(emailValidateDao.getEntity("11"));
+		assertNull(emailValidateDao.getEntity("13"));
+
+		assertNotNull(emailValidateDao.getEntity("12"));
+		assertNotNull(emailValidateDao.getEntity("14"));
+		assertNotNull(emailValidateDao.getEntity("15"));
+		assertNotNull(emailValidateDao.getEntity("16"));
 	}
 }

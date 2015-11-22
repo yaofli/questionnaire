@@ -76,6 +76,11 @@ public interface Sms {
 			throws FrequentlyException, SendManyDailyException;
 
 	/**
+	 * 清空发送短信计数表的数据
+	 */
+	void clearData();
+
+	/**
 	 * 释放资源
 	 */
 	void destroy();

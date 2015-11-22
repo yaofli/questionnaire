@@ -49,7 +49,26 @@
 
     <aop:config>
         <aop:advisor advice-ref="smsTxAdvice"
-                     pointcut="execution(* git.lbk.questionnaire.sms.SmsImpl.sendMessage(..))"/>
+                     pointcut="execution(* git.lbk.questionnaire.sms.Sms.sendMessage(..)) or execution(* git.lbk.questionnaire.sms.Sms.clearData())"/>
     </aop:config>
+
+    <bean id="truncateSmsCountJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="sms"/>
+        <property name="targetMethod" value="clearData"/>
+    </bean>
+
+    <bean id="smsSchedulerTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="truncateSmsCountJob"/>
+        <!-- 每天 00:00:00 运行-->
+        <property name="cronExpression" value="0 0 0 1 * ?"/>
+    </bean>
+
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="smsSchedulerTrigger"/>
+            </list>
+        </property>
+    </bean>
 
 </beans>

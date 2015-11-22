@@ -35,14 +35,24 @@
 
     <dependencies>
         <dependency>
-            <groupId>git.lbk</groupId>
-            <artifactId>questionnaire-persist</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
             <version>${springframework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>${quartz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz-jobs</artifactId>
+            <version>${quartz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>git.lbk</groupId>
+            <artifactId>questionnaire-persist</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

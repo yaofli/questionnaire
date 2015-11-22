@@ -24,7 +24,12 @@ import javax.validation.ConstraintValidatorContext;
 
 /**
  * 检验邮箱和手机号是否正确.
- * 只要邮箱和手机号有一个正确, 即视为正确
+ * 只要满足下面的条件就视为正确:
+ *  1. 用户对象为null.
+ *  或者
+ *  1. 邮箱和手机号至少有一个不为null.
+ *  2. 邮箱和手机号如果不为空, 则必须符合相应的规则.
+ * 否则, 视为不满足条件
  */
 public class CheckEmailPhoneValidator implements ConstraintValidator<CheckEmailPhone, User> {
 	@Override
@@ -37,11 +42,18 @@ public class CheckEmailPhoneValidator implements ConstraintValidator<CheckEmailP
 		if(user == null) {
 			return true;
 		}
-		if(StringUtil.verifyMobile(user.getMobile()) || StringUtil.verifyEmail(user.getEmail())) {
+		if(user.getMobile() == null && user.getEmail() == null) {
+			return false;
+		}
+
+		if(user.getMobile() != null && StringUtil.verifyMobile(user.getMobile())) {
+			return true;
+		}
+		if(user.getEmail() != null && StringUtil.verifyEmail(user.getEmail())) {
 			return true;
 		}
 		context.disableDefaultConstraintViolation();
-		context.buildConstraintViolationWithTemplate("手机号或者邮箱错误")
+		context.buildConstraintViolationWithTemplate("手机号或者邮箱格式错误")
 				.addConstraintViolation();
 		return false;
 	}

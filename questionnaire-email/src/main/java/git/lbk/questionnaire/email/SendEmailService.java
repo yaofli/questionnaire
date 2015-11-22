@@ -36,6 +36,11 @@ public interface SendEmailService {
 	 */
 	User validateMailCaptcha(String captcha, String type);
 
+	/**
+	 * 删除过期的邮件验证码
+	 */
+	void deleteExpireCaptcha();
+
 	void destroy();
 
 }

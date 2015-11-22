@@ -38,7 +38,7 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
  * 这里遇到的其他问题加到了question.md文件中
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:questionnaire-smsParallelTest.xml")
+@ContextConfiguration(locations = "classpath:parallel/questionnaire-smsParallelTest.xml")
 public class SmsImplParallelTest {
 
 	@Autowired
