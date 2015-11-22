@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2015 LBK
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="git.lbk.questionnaire.dao" />
+
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${jdbc.driverClass}" />
+        <property name="jdbcUrl" value="${jdbc.url}" />
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}" />
+
+        <property name="initialPoolSize" value="${c3p0.pool.size.initialPoolSize}" />
+        <property name="acquireIncrement" value="${c3p0.pool.size.increment}" />
+        <property name="minPoolSize" value="${c3p0.pool.size.minPoolSize}" />
+        <property name="maxPoolSize" value="${c3p0.pool.size.maxPoolSize}" />
+    </bean>
+
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:hibernate.cfg.xml"/>
+        <!--
+        fixme 这里如果使用 mappingDirectoryLocations 属性, 就会报错:
+         class path resource [git/lbk/questionnaire/entity] cannot be resolved to absolute file path because it does not reside in the file system: jar:file:(项目目录)/questionnaire-web/target/questionnaire-web-0.0.1-SNAPSHOT/WEB-INF/lib/questionnaire-persist-0.0.1-SNAPSHOT.jar!/git/lbk/questionnaire/entity/
+         但是, 打开那个jar包确实可以看到 git/lbk/questionnaire/entity 目录.
+         而且这个配置在测试时也没有错误. 现在不知道哪里错了
+        -->
+     <!--   <property name="mappingDirectoryLocations">
+            <list>
+                <value>classpath:git/lbk/questionnaire/entity</value>
+            </list>
+        </property>-->
+        <property name="mappingResources">
+            <list>
+                <value>git/lbk/questionnaire/entity/User.hbm.xml</value>
+                <value>git/lbk/questionnaire/entity/SmsCount.hbm.xml</value>
+                <value>git/lbk/questionnaire/entity/EmailValidate.hbm.xml</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+</beans>

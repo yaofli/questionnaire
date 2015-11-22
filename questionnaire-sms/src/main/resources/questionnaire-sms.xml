@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2015 LBK
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <bean id="sendSms" class="git.lbk.questionnaire.sms.SendSmsConsoleImpl">
+        <property name="maxTryNumber" value="${sms.maxTryNumber}"/>
+        <property name="account" value="${sms.account}"/>
+        <property name="password" value="${sms.password}"/>
+    </bean>
+
+    <bean id="sms" class="git.lbk.questionnaire.sms.SmsImpl" init-method="init" destroy-method="destroy">
+        <property name="sendInterval" value="${sms.sendInterval}"/>
+        <property name="ipDailyMaxSendCount" value="${sms.ipDailyMaxSendCount}"/>
+        <property name="mobileDailyMaxSendCount" value="${sms.mobileDailyMaxSendCount}"/>
+        <property name="clearMapInterval" value="${sms.clearMapInterval}"/>
+
+        <property name="sendSms" ref="sendSms"/>
+        <property name="smsDao" ref="smsCountDao"/>
+    </bean>
+
+    <bean id="smsService" class="git.lbk.questionnaire.sms.SmsServiceImpl">
+        <property name="sms" ref="sms"/>
+    </bean>
+
+    <tx:advice id="smsTxAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED" isolation="DEFAULT"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:config>
+        <aop:advisor advice-ref="smsTxAdvice"
+                     pointcut="execution(* git.lbk.questionnaire.sms.Sms.sendMessage(..)) or execution(* git.lbk.questionnaire.sms.Sms.clearData())"/>
+    </aop:config>
+
+    <bean id="truncateSmsCountJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="sms"/>
+        <property name="targetMethod" value="clearData"/>
+    </bean>
+
+    <bean id="smsSchedulerTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="truncateSmsCountJob"/>
+        <!-- 每天 00:00:00 运行-->
+        <property name="cronExpression" value="0 0 0 1 * ?"/>
+    </bean>
+
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="smsSchedulerTrigger"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>
