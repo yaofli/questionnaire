@@ -26,6 +26,10 @@ import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
+/**
+ * 所有Dao的抽象父类, 提供了基本的查询, 更新操作
+ * @param <T> Dao需要对哪个实体类进行操作
+ */
 public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 
 	@Autowired

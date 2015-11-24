@@ -1,5 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
-
+<?xml version='1.0' encoding='utf-8'?>
 <!--
   ~ Copyright 2015 LBK
   ~
@@ -17,16 +16,19 @@
   -->
 
 <!DOCTYPE hibernate-mapping PUBLIC
-        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping package="git.lbk.questionnaire.entity">
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
 
-    <class name="EmailValidate" table="email_validate">
-        <id name="identityCode" column="identity_code" type="java.lang.String">
-            <generator class="assigned"/>
+    <class name="git.lbk.questionnaire.entity.Page" table="page">
+        <id name="id" column="id">
+            <generator class="native"/>
         </id>
-        <many-to-one name="user" class="User" column="user_id"/>
-        <property name="createTime" column="create_time" type="java.util.Date"/>
-        <property name="type" column="type" type="java.lang.String"/>
+        <property name="title" column="title"/>
+        <property name="question" column="question"/>
+        <property name="questionCount" column="question_count"/>
+        <property name="questionStartId" column="question_start_id"/>
+        <property name="rank" column="rank"/>
+        <many-to-one name="survey" column="survey_id"/>
     </class>
 </hibernate-mapping>

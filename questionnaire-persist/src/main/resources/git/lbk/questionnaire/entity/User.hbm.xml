@@ -27,15 +27,15 @@
                 </id>
         <property name="name" column="name" type="java.lang.String"/>
         <property name="password" column="password" type="java.lang.String"/>
-        <property name="autoLogin" column="autoLogin" type="java.lang.String"/>
+        <property name="autoLogin" column="auto_login" type="java.lang.String"/>
         <property name="mobile" column="mobile" type="java.lang.String"/>
         <property name="email" column="email" type="java.lang.String"/>
         <property name="status" column="status" type="java.lang.Character"/>
         <property name="type" column="type" type="java.lang.Character"/>
-        <property name="registerTime" column="registerTime" type="java.util.Date"/>
-        <property name="lastLoginTime" column="lastLoginTime" type="java.util.Date"/>
-        <property name="lastLoginAddress" column="lastLoginAddress" type="java.lang.String"/>
-        <property name="lastLoginIp" column="lastLoginIP" type="java.lang.String"/>
+        <property name="registerTime" column="register_time" type="java.util.Date"/>
+        <property name="lastLoginTime" column="last_login_time" type="java.util.Date"/>
+        <property name="lastLoginAddress" column="last_login_address" type="java.lang.String"/>
+        <property name="lastLoginIp" column="last_login_ip" type="java.lang.String"/>
     </class>
 
 </hibernate-mapping>
