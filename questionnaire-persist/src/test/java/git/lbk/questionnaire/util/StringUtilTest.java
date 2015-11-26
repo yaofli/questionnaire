@@ -37,7 +37,7 @@ public class StringUtilTest {
 
 	@Test
 	public void testAnyNull(){
-		assertTrue("null 判定为非空", StringUtil.anyNull(null));
+		assertTrue("null 判定为非空", StringUtil.anyNull((String)null));
 		assertTrue("null 判定为非空", StringUtil.anyNull("123", null));
 		assertTrue("null 判定为非空", StringUtil.anyNull(null, "123"));
 		assertTrue("空字符串 判定为非空", StringUtil.anyNull(""));
@@ -60,6 +60,15 @@ public class StringUtilTest {
 		assertEquals("100F", StringUtil.hexBytesToString(new byte[]{0x10, (byte) 0x0f}));
 		assertEquals("", StringUtil.hexBytesToString(new byte[]{}));
 		assertEquals("", StringUtil.hexBytesToString(null));
+	}
+
+	@Test
+	public void testSubStringCount(){
+		String originStr = "12abc12jid.,122., 1212";
+		String subStr = "12";
+		assertEquals(5, StringUtil.subStringCount(originStr, subStr));
+		assertEquals(0, StringUtil.subStringCount("", subStr));
+		assertEquals(0, StringUtil.subStringCount("adasdfuejaksjd90883734lajd", subStr));
 	}
 
 }

@@ -22,8 +22,7 @@ import git.lbk.questionnaire.springmvc.controller.UserController;
 import git.lbk.questionnaire.util.CookieUtil;
 import git.lbk.questionnaire.util.NetUtil;
 import git.lbk.questionnaire.util.StringUtil;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,7 +31,7 @@ import javax.servlet.http.HttpSession;
 /**
  * 登录过滤拦截器. 目前只有进行自动登录.
  */
-public class UserLoginInterceptor implements HandlerInterceptor {
+public class UserLoginInterceptor extends HandlerInterceptorAdapter {
 
 	private UserService userService;
 
@@ -45,17 +44,6 @@ public class UserLoginInterceptor implements HandlerInterceptor {
 			throws Exception {
 		autoLogin(request, response);
 		return true;
-	}
-
-	@Override
-	public void postHandle(HttpServletRequest request, HttpServletResponse response,
-	                       Object handler, ModelAndView modelAndView) throws Exception {
-
-	}
-
-	@Override
-	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-
 	}
 
 	/**

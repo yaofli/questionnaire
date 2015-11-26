@@ -16,44 +16,27 @@
 
 package git.lbk.questionnaire.dao.impl;
 
-import git.lbk.questionnaire.entity.Survey;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.*;
-
-import static junit.framework.TestCase.assertFalse;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:questionnaire-persistTest.xml")
-public class SurveyDaoImplTest {
+public class AnswerDaoImplTest {
 
 	@Autowired
-	private SurveyDaoImpl surveyDao;
+	private AnswerDaoImpl answerDao;
 
 	@Test
-	public void testGetSurveyByUser() throws Exception {
-		List<Survey> surveys = surveyDao.getNormalSurveyByUser(4);
-		assertNotNull(surveys);
-		assertEquals(3, surveys.size());
-	}
-
-	@Test
-	public void testSurveyBelongUser(){
-		assertTrue(surveyDao.surveyBelongUser(1, 3));
-		assertFalse(surveyDao.surveyBelongUser(2, 5));
-	}
-
-	@Test
-	public void testUpdateSurveyStatus(){
-		surveyDao.updateSurveyStatus(1, Survey.DELETE_STATUS);
-		assertEquals(Survey.DELETE_STATUS, surveyDao.getEntity(1).getStatus());
+	public void testDeleteBySurveyId() throws Exception {
+		assertNotNull(answerDao.getEntity(1));
+		answerDao.deleteBySurveyId(5);
+		assertNull(answerDao.getEntity(1));
 	}
 
 }

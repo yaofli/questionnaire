@@ -16,6 +16,11 @@
 
 package git.lbk.questionnaire.entity;
 
+import git.lbk.questionnaire.util.StringUtil;
+
+import javax.validation.constraints.NotNull;
+import java.util.*;
+
 /**
  * 问卷调查的一个页面
  */
@@ -24,7 +29,7 @@ public class Page {
 	/**
 	 * 页面信息和问题的分割符.
 	 */
-	public static final String QUESTION_START= "\u0002";
+	public static final String QUESTION_START = "\u0002";
 
 	/**
 	 * 问题之间的分割符
@@ -39,15 +44,71 @@ public class Page {
 	/**
 	 * 模块中的子项目的分割符
 	 */
-	public static final String MODULE_EXCISION ="\u001F";
+	public static final String MODULE_EXCISION = "\u001F";
 
 	private Integer id;
+	@NotNull
 	private String title;
 	private String question;
 	private Integer questionCount;
-	private Integer questionStartId;
 	private Integer rank;
 	private Survey survey;
+
+	public Page() {
+	}
+
+	/**
+	 * 使用符合格式的字符串初始化page类
+	 * @param page 格式化的字符串
+	 * @throws IllegalArgumentException 如果字符串格式不正确
+	 */
+	public Page(String page) throws IllegalArgumentException {
+		setPage(page);
+	}
+
+	/**
+	 * 使用符合格式的字符串初始化page类
+	 *
+	 * @param page 格式化的字符串
+	 * @throws IllegalArgumentException 如果字符串格式不正确
+	 */
+	public void setPage(String page) throws IllegalArgumentException {
+		String[] split = page.split(QUESTION_START);
+		if(split.length != 2) {
+			throw new IllegalArgumentException("参数段数不正确: " + page);
+		}
+
+		String[] pageInfo = split[0].split(QUESTION_MODULE);
+		if(pageInfo.length < 2) {
+			throw new IllegalArgumentException("页面信息不完整: " + Arrays.toString(pageInfo));
+		}
+		try {
+			rank = Integer.valueOf(pageInfo[1]);
+		}
+		catch(NumberFormatException e) {
+			throw new IllegalArgumentException("页面次序不能转化成数字: " + pageInfo[1]);
+		}
+		title = pageInfo[0];
+		if(split[1].length() != 0) {
+			question = split[1];
+			questionCount = StringUtil.subStringCount(split[1], QUESTION_EXCISION);
+		}
+	}
+
+	/**
+	 * 获得本页面的字符串表示形式
+	 * @return 字符串表示形式
+	 */
+	public String getPage(){
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(title);
+		stringBuilder.append(QUESTION_MODULE);
+		stringBuilder.append(rank);
+		stringBuilder.append(QUESTION_MODULE);
+		stringBuilder.append(QUESTION_START);
+		stringBuilder.append(question);
+		return stringBuilder.toString();
+	}
 
 	public Integer getId() {
 		return id;
@@ -81,14 +142,6 @@ public class Page {
 		this.questionCount = questionCount;
 	}
 
-	public Integer getQuestionStartId() {
-		return questionStartId;
-	}
-
-	public void setQuestionStartId(Integer questionStartId) {
-		this.questionStartId = questionStartId;
-	}
-
 	public Integer getRank() {
 		return rank;
 	}
@@ -117,8 +170,6 @@ public class Page {
 		if(question != null ? !question.equals(page.question) : page.question != null) return false;
 		if(questionCount != null ? !questionCount.equals(page.questionCount) : page.questionCount != null) return
 				false;
-		if(questionStartId != null ? !questionStartId.equals(page.questionStartId) : page.questionStartId != null)
-			return false;
 		if(rank != null ? !rank.equals(page.rank) : page.rank != null) return false;
 
 		return true;
@@ -130,7 +181,6 @@ public class Page {
 		result = 31 * result + (title != null ? title.hashCode() : 0);
 		result = 31 * result + (question != null ? question.hashCode() : 0);
 		result = 31 * result + (questionCount != null ? questionCount.hashCode() : 0);
-		result = 31 * result + (questionStartId != null ? questionStartId.hashCode() : 0);
 		result = 31 * result + (rank != null ? rank.hashCode() : 0);
 		return result;
 	}
@@ -139,7 +189,6 @@ public class Page {
 	public String toString() {
 		return "Page{" +
 				"rank=" + rank +
-				", questionStartId=" + questionStartId +
 				", questionCount=" + questionCount +
 				", question='" + question + '\'' +
 				", title='" + title + '\'' +

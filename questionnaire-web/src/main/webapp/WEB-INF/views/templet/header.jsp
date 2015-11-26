@@ -33,13 +33,13 @@
                 <li><a href="<c:url value="/user/registerPage"/>">注册</a></li>
             </c:if>
             <c:if test="${sessionScope.userId != null}">
-                <li><a href="#">欢迎${sessionScope.userName}</a></li>
+                <li><a href="#"><span class="am-icon-user"></span>欢迎<c:out value="${sessionScope.userName}" escapeXml="true"/> </a></li>
+                <li><a href="survey/mySurvey">我的问卷</a></li>
                 <li class="am-dropdown" data-am-dropdown>
                     <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
                         <span class="am-icon-users"></span> 设置 <span class="am-icon-caret-down"></span>
                     </a>
                     <ul class="am-dropdown-content">
-                        <li><a href="#"><span class="am-icon-user"></span> 资料</a></li>
                         <li><a href="#"><span class="am-icon-cog"></span> 设置</a></li>
                         <li><a href="<c:url value="/user/logout"/>"><span class="am-icon-power-off"></span> 退出</a></li>
                     </ul>

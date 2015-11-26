@@ -24,12 +24,14 @@
         <id name="id" column="id">
             <generator class="native"/>
         </id>
-        <many-to-one name="user" column="user_id"/>
+        <property name="userId" column="user_id"/>
         <property name="title" column="title"/>
-        <property name="createTime" column="create_time"/>
+        <property name="detailDescribe" column="detail_describe"/>
+        <property name="createTime" column="create_time" update="false" insert="false"/>
         <property name="modifyTime" column="modify_time"/>
         <property name="designing" column="designing"/>
         <property name="pageCount" column="page_count"/>
+        <property name="status" column="survey_status"/>
         <set name="pages" inverse="true">
             <key>
                 <column name="survey_id"/>

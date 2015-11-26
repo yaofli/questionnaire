@@ -20,6 +20,7 @@ import git.lbk.questionnaire.entity.EmailValidate;
 import git.lbk.questionnaire.entity.User;
 import git.lbk.questionnaire.service.UserService;
 import git.lbk.questionnaire.util.*;
+import git.lbk.questionnaire.util.CaptchaUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

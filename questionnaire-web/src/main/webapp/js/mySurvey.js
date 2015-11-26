@@ -14,36 +14,18 @@
  * limitations under the License.
  */
 
-$(function(){
-	var oLogin = $('#userLogin');
-	var loginPage = '';
-	var loading;
-
-	oLogin.click(function (){
-		loading = layer.load(1, {
-			shade: [0.1, '#fff']
-		});
-
-		if(loginPage == ''){
-			$.get('/user/loginPage', function (content){
-				loginPage = content;
-				openLoginPage();
-			}, 'html');
+$(function (){
+	$(".deleteSurvey").click(function(){
+		var _this = $(this);
+		function confirm(){
+			var surveyId = _this.siblings().last().val();
+			$.get('/survey/deleteSurvey/' + surveyId, {}, function (){
+				layer.msg('删除成功', {time: 1500}, function (){
+					location.reload();
+				})
+			});
 		}
-		else{
-			openLoginPage();
-		}
+		layer.confirm("您确认删除该调查吗?",{btn:['确定', '取消']}, confirm, function(){});
 		return false;
 	});
-
-	function openLoginPage(){
-		layer.close(loading);
-		layer.open({
-			type: 1,
-			skin: 'layui-layer-rim',
-			area: ['450px', '350px'],
-			content: loginPage
-		});
-	}
-
 });

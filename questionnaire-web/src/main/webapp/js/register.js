@@ -194,7 +194,7 @@ $(function (){
 			}
 			else{
 				if( isMobile ){
-					window.location = "/WEB-INF/views/index.jsp";
+					window.location = "/";
 				}
 				else{
 					window.location = "/user/registerNotify?email=" + data['email'];
@@ -207,7 +207,7 @@ $(function (){
 
 	function checkInput(){
 		if( !accountIsValid ){
-			promptAccountError()
+			promptAccountError();
 			return false;
 		}
 		if( accountIsUsed ){

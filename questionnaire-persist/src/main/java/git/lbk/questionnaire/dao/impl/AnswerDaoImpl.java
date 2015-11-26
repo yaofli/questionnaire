@@ -21,4 +21,14 @@ import org.springframework.stereotype.Repository;
 
 @Repository("answerDao")
 public class AnswerDaoImpl extends BaseDaoImpl<Answer> {
+
+	/**
+	 * 删除所有和surveyId关联的回答
+	 * @param surveyId 调查id
+	 */
+	public void deleteBySurveyId(Integer surveyId){
+		String hql = "delete Answer where survey.id = ?";
+		updateEntityByHQL(hql, surveyId);
+	}
+
 }

@@ -40,10 +40,11 @@ public class StringUtil {
 
 	/**
 	 * 验证邮箱格式是否正确
+	 *
 	 * @param email 邮箱
 	 * @return 正确返回true, 否则返回false
 	 */
-	public static boolean verifyEmail(String email){
+	public static boolean verifyEmail(String email) {
 		return email != null && EMAIL_REGEX.matcher(email).matches();
 	}
 
@@ -88,7 +89,7 @@ public class StringUtil {
 	 * @return 数组的字符串形式
 	 */
 	public static String hexBytesToString(byte[] b) {
-		if(b==null){
+		if(b == null) {
 			return "";
 		}
 		int length = b.length;
@@ -98,6 +99,21 @@ public class StringUtil {
 			str.append(HEX_DIGITS[aB & 0xf]);
 		}
 		return str.toString();
+	}
+
+	/**
+	 * 计算一个字符串中出现子串的次数
+	 * @param originStr 原字符串
+	 * @param subStr 子字符串
+ 	 * @return 子字符串出现的次数
+	 */
+	public static int subStringCount(String originStr, String subStr) {
+		int count = 0;
+		int index = -1;
+		while((index = originStr.indexOf(subStr, index+1)) != -1) {
+			count += 1;
+		}
+		return count;
 	}
 
 }

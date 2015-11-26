@@ -14,36 +14,20 @@
  * limitations under the License.
  */
 
-$(function(){
-	var oLogin = $('#userLogin');
-	var loginPage = '';
-	var loading;
+package git.lbk.questionnaire.util.annotation;
 
-	oLogin.click(function (){
-		loading = layer.load(1, {
-			shade: [0.1, '#fff']
-		});
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-		if(loginPage == ''){
-			$.get('/user/loginPage', function (content){
-				loginPage = content;
-				openLoginPage();
-			}, 'html');
-		}
-		else{
-			openLoginPage();
-		}
-		return false;
-	});
+/**
+ * 防止重复提交注解，用于controller的方法上
+ */
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface CheckToken{
 
-	function openLoginPage(){
-		layer.close(loading);
-		layer.open({
-			type: 1,
-			skin: 'layui-layer-rim',
-			area: ['450px', '350px'],
-			content: loginPage
-		});
-	}
+	ErrorHandler returnInfo() default @ErrorHandler();
 
-});
+}
