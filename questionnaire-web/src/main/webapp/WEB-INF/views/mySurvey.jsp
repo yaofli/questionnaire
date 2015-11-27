@@ -61,7 +61,7 @@
                     <h3 class="am-fl am-panel-title am-margin-right-sm am-u-sm-8">
                         <c:out value="${survey.title}" escapeXml="true"/>
                     </h3>
-                    <a class="am-fl am-margin-horizontal-sm">
+                    <a href="#" class="am-fl am-margin-horizontal-sm reverseDesigning">
                         ${survey.designing ? "开放问卷" : "关闭问卷"}
                     </a>
                     <a class="am-margin-horizontal-sm">修改</a>

@@ -15,17 +15,32 @@
  */
 
 $(function (){
-	$(".deleteSurvey").click(function(){
+	$(".deleteSurvey").click(function (){
 		var _this = $(this);
+
 		function confirm(){
 			var surveyId = _this.siblings().last().val();
-			$.get('/survey/deleteSurvey/' + surveyId, {}, function (){
-				layer.msg('删除成功', {time: 1500}, function (){
+			$.post('/survey/' + surveyId, {_method: 'DELETE'}, function (){
+				layer.msg('删除成功', {time: 1500, closeBtn: 1}, function (){
 					location.reload();
 				})
 			});
 		}
-		layer.confirm("您确认删除该调查吗?",{btn:['确定', '取消']}, confirm, function(){});
+
+		layer.confirm("您确认删除该调查吗?", {btn: ['确定', '取消']}, confirm, function (){
+		});
 		return false;
 	});
+
+	$('.reverseDesigning').click(function (){
+		var _this = $(this);
+		var surveyId = _this.siblings().last().val();
+		$.post('/survey/reverseDesigning/' + surveyId, {_method: 'PUT'}, function (){
+			layer.msg('修改成功', {time: 1500, closeBtn: 1}, function (){
+				location.reload();
+			})
+		});
+		return false;
+	});
+
 });

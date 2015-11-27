@@ -182,6 +182,7 @@ $(function (){
 				else if( status == 'sms captcha error' ){
 					promptSmsCaptchaError();
 					$('smsCaptcha').val('');
+					captcha.getFlushHandler('#flushCaptcha img:first', 'imageCaptcha')
 				}
 				else if( status == 'captcha error' ){
 					promptImageCaptchaError();

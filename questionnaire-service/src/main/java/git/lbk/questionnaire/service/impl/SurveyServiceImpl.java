@@ -82,16 +82,19 @@ public class SurveyServiceImpl implements SurveyService {
 	}
 
 	/**
-	 * 获取指定id的调查对象以及其所关联的页面对象
+	 * 获取指定id的调查对象以及其所关联的页面对象. 如果该调查对象为删除状态, 则返回null
 	 *
 	 * @param id 调查id
 	 * @return 指定id的调查对象及其关联的page
 	 */
 	@Override
-	public Survey getSurveyAndPage(Integer id){
+	public Survey getNormalSurveyAndPage(Integer id){
 		Survey survey = null;
 		try {
 			survey = surveyDao.getEntity(id);
+			if(!survey.getStatus().equals(Survey.NORMAL_STATUS)){
+				return Survey.INVALID_SURVEY;
+			}
 			survey.getPages().size();
 		}
 		catch(Exception ex) {
@@ -135,19 +138,27 @@ public class SurveyServiceImpl implements SurveyService {
 		return false;
 	}
 
+
 	/**
 	 * 删除调查以及所关联页面和回答
 	 *
-	 * @param id 调查id
+	 * @param surveyId     调查id
+	 * @param userId 进行操作的用户id
+	 * @return 成功返回true, 否则返回false
 	 */
 	@Override
-	public void deleteSurvey(Integer id){
-		try{
-			surveyDao.updateSurveyStatus(id, Survey.DELETE_STATUS);
+	public boolean deleteSurvey(Integer surveyId, Integer userId){
+		try {
+			if(!surveyDao.surveyBelongUser(surveyId, userId)){
+				return false;
+			}
+			surveyDao.updateSurveyStatus(surveyId, Survey.DELETE_STATUS);
+			return true;
 		}
-		catch(Exception e){
+		catch(Exception e) {
 			logger.error("新建调查时发生错误", e);
 		}
+		return false;
 	}
 
 	/**
@@ -172,6 +183,30 @@ public class SurveyServiceImpl implements SurveyService {
 		}
 		catch(Exception e) {
 			logger.error("更新调查时发生错误", e);
+		}
+		return false;
+	}
+
+	/**
+	 * 反转调查设计状态
+	 *
+	 * @param surveyId 调查id
+	 * @param userId   进行操作的用户id
+	 * @return 成功返回true, 否则返回false
+	 */
+	@Override
+	public boolean reverseDesigning(Integer surveyId, Integer userId){
+		try {
+			Survey survey = surveyDao.getEntity(surveyId);
+			if(!survey.getUserId().equals(userId) || !survey.getStatus().equals(Survey.NORMAL_STATUS)){
+				return false;
+			}
+			survey.setDesigning(!survey.getDesigning());
+			surveyDao.updateEntity(survey);
+			return true;
+		}
+		catch(Exception e) {
+			logger.error("更新调查开放状态时发生错误", e);
 		}
 		return false;
 	}

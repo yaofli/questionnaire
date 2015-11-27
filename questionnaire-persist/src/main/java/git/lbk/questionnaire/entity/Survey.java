@@ -33,6 +33,25 @@ public class Survey {
 	 */
 	public static final Integer DELETE_STATUS = 1;
 
+	/**
+	 * 无效调查. id为-1.
+	 */
+	public static final Survey INVALID_SURVEY;
+
+	static {
+		INVALID_SURVEY = new Survey();
+		INVALID_SURVEY.setId(-1);
+		INVALID_SURVEY.setUserId(-1);
+		INVALID_SURVEY.setTitle("");
+		INVALID_SURVEY.setDetailDescribe("");
+		INVALID_SURVEY.setCreateTime(null);
+		INVALID_SURVEY.setModifyTime(null);
+		INVALID_SURVEY.setDesigning(true);
+		INVALID_SURVEY.setPageCount(0);
+		INVALID_SURVEY.setStatus(DELETE_STATUS);
+		INVALID_SURVEY.setPages(new HashSet<>(0));
+	}
+
 	private Integer id;
 	private Integer userId;
 	@NotNull

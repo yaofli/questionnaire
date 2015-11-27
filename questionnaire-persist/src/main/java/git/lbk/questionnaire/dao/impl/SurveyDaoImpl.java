@@ -51,7 +51,7 @@ public class SurveyDaoImpl extends BaseDaoImpl<Survey> {
 	 * @param status 最新的状态
 	 */
 	public void updateSurveyStatus(Integer id, Integer status){
-		String hql = "update Survey set status = ? where id = ?";
+		String hql = "update Survey set status = ?, modifyTime = CURRENT_TIME() where id = ?";
 		updateEntityByHQL(hql, status, id);
 	}
 

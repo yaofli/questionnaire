@@ -40,8 +40,10 @@ public class ErrorHandlerResolve {
 	 */
 	public boolean handleInvalidToken(HttpServletRequest request, HttpServletResponse response,
 	                                  ErrorHandler errorHandler) throws IOException, ServletException {
+		String basePath = request.getScheme() + "://" + request.getServerName() + ":"
+				+ request.getServerPort() +	request.getContextPath() + "/";
 		if(errorHandler == null) {
-			response.sendRedirect("/");
+			response.sendRedirect(basePath);
 			return false;
 		}
 		if(errorHandler.passAddAttribute()) {
@@ -51,7 +53,7 @@ public class ErrorHandlerResolve {
 
 		String returnValue = errorHandler.returnValue();
 		if(returnValue.startsWith(REDIRECT_PREFIX)) {
-			response.sendRedirect(returnValue.substring(REDIRECT_PREFIX.length()));
+			response.sendRedirect(basePath + returnValue.substring(REDIRECT_PREFIX.length()));
 		}
 		else if(returnValue.startsWith(DISPATCHER_PREFIX)) {
 			TokenHelper.addError(request);

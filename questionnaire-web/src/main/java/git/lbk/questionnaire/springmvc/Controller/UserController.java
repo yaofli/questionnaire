@@ -183,7 +183,7 @@ public class UserController {
 	 * @param map   用来返回注册邮箱对应的邮箱服务器url
 	 * @return 激活邮箱提示页
 	 */
-	@RequestMapping(value = "registerNotify", method = RequestMethod.GET)
+	@RequestMapping(value = "registerNotify")
 	public String toRegisterNotify(@RequestParam("email") String email, Map<String, Object> map) {
 		String domain = email.substring(email.indexOf("@") + 1);
 		map.put("emailUrl", mailMap.getProperty(domain, "http://mail." + domain));

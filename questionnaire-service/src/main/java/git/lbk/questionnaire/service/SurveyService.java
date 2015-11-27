@@ -39,11 +39,11 @@ public interface SurveyService {
 	Survey getSurvey(Integer id);
 
 	/**
-	 * 获取指定id的调查对象以及其所关联的页面对象
+	 * 获取指定id的调查对象以及其所关联的页面对象. 如果该调查对象为删除状态, 则返回null
 	 * @param id 调查id
 	 * @return 指定id的调查对象及其关联的page
 	 */
-	Survey getSurveyAndPage(Integer id);
+	Survey getNormalSurveyAndPage(Integer id);
 
 	/**
 	 * 获取某个调查问卷的所有页面
@@ -62,9 +62,11 @@ public interface SurveyService {
 	/**
 	 * 删除调查以及所关联页面和回答
 	 *
-	 * @param id 调查id
+	 * @param surveyId 调查id
+	 * @param userId 进行操作的用户id
+	 * @return 成功返回true, 否则返回false
 	 */
-	void deleteSurvey(Integer id);
+	boolean deleteSurvey(Integer surveyId, Integer userId);
 
 	/**
 	 * 更新一个调查问卷
@@ -73,4 +75,11 @@ public interface SurveyService {
 	 */
 	boolean updateSurvey(Survey survey);
 
+	/**
+	 * 反转调查设计状态
+	 * @param surveyId 调查id
+	 * @param userId 进行操作的用户id
+	 * @return 成功返回true, 否则返回false
+	 */
+	boolean reverseDesigning(Integer surveyId, Integer userId);
 }
