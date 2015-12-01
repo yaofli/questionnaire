@@ -59,14 +59,22 @@
             <section class="am-panel am-panel-default">
                 <header class="am-panel-hd am-cf">
                     <h3 class="am-fl am-panel-title am-margin-right-sm am-u-sm-8">
-                        <c:out value="${survey.title}" escapeXml="true"/>
+                        <c:out value="${survey.title}" escapeXml="true" />
                     </h3>
-                    <a href="#" class="am-fl am-margin-horizontal-sm reverseDesigning">
-                        ${survey.designing ? "开放问卷" : "关闭问卷"}
+                    <a href="/survey/reverseDesigning/${survey.id}"
+                       class="am-fl am-margin-horizontal-sm reverseDesigning">
+                            ${survey.designing ? "开放问卷" : "关闭问卷"}
                     </a>
-                    <a class="am-margin-horizontal-sm">修改</a>
-                    <a href="#" class="am-margin-horizontal-sm deleteSurvey">删除</a>
-                    <input type="hidden" value="${survey.id}"/>
+                    <li class="am-dropdown" data-am-dropdown>
+                        <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
+                            设计问卷<span class="am-icon-caret-down"></span>
+                        </a>
+                        <ul class="am-dropdown-content">
+                            <li><a href="/survey/design/${survey.id}">修改问卷</a></li>
+                            <li><a href="javascript:;">问卷设置</a></li>
+                        </ul>
+                    </li>
+                    <a href="/survey/${survey.id}" class="am-margin-horizontal-sm deleteSurvey">删除</a>
                 </header>
                 <div class="am-panel-bd">
                     <span class="am-u-sm-3">创建时间:
@@ -81,7 +89,7 @@
                 </div>
                 <div id="survey_${survey.id}" class="am-panel-collapse am-collapse">
                     <div class="am-panel-bd">
-                       <c:out value="${survey.detailDescribe}" escapeXml="true"/>
+                        <c:out value="${survey.detailDescribe}" escapeXml="true" />
                     </div>
                 </div>
             </section>

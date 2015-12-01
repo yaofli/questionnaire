@@ -33,6 +33,8 @@
                 <li><a href="<c:url value="/user/registerPage"/>">注册</a></li>
             </c:if>
             <c:if test="${sessionScope.userId != null}">
+                <script src="/js/layer/layer.js"></script>
+                <script src="/js/jquery.min.js"></script>
                 <li><a href="#"><span class="am-icon-user"></span>欢迎<c:out value="${sessionScope.userName}" escapeXml="true"/> </a></li>
                 <li><a href="survey/mySurvey">我的问卷</a></li>
                 <li class="am-dropdown" data-am-dropdown>

@@ -26,7 +26,6 @@
         </id>
         <property name="title" column="title"/>
         <property name="question" column="question"/>
-        <property name="questionCount" column="question_count"/>
         <property name="rank" column="rank"/>
         <many-to-one name="survey" column="survey_id"/>
     </class>

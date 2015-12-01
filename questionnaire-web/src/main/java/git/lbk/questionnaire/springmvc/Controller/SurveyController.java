@@ -50,7 +50,7 @@ public class SurveyController {
 		}
 	}
 
-	@RequestMapping("/mySurvey")
+	@RequestMapping(value = "/mySurvey", method = RequestMethod.GET)
 	public String mySurvey(Map<String, Object> map, @ModelAttribute(UserController.SESSION_USER_ID) Integer userId) {
 		map.put("surveyList", surveyService.getSurveyByUserId(userId));
 		return "mySurvey";
@@ -68,7 +68,7 @@ public class SurveyController {
 			response.sendRedirect("/error");
 		}
 		else {
-			response.sendRedirect("/survey/designSurveyPage/" + survey.getId());
+			response.sendRedirect("/survey/design/" + survey.getId());
 		}
 	}
 
@@ -107,6 +107,16 @@ public class SurveyController {
 	public boolean reverseSurveyDesigning(@PathVariable("surveyId")Integer id,
 	                                     @ModelAttribute(UserController.SESSION_USER_ID) Integer userId){
 		return surveyService.reverseDesigning(id, userId);
+	}
+
+	@RequestMapping(value = "/design/{surveyId}", method = RequestMethod.GET)
+	public String designSurvey(@PathVariable("surveyId")Integer id, Map<String, Object> map){
+		/*Survey survey = surveyService.getNormalSurveyAndPage(id);
+		if(survey == null){
+			return "404";
+		}
+		map.put("survey", survey);*/
+		return "designSurvey";
 	}
 
 }

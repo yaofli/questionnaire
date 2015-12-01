@@ -19,11 +19,9 @@ $(function (){
 		var _this = $(this);
 
 		function confirm(){
-			var surveyId = _this.siblings().last().val();
-			$.post('/survey/' + surveyId, {_method: 'DELETE'}, function (){
-				layer.msg('删除成功', {time: 1500, closeBtn: 1}, function (){
-					location.reload();
-				})
+			$.post(_this.attr('href'), {_method: 'DELETE'}, function (){
+				_this.parent().parent().remove();
+				layer.msg('删除成功', {time: 1500, closeBtn: 1});
 			});
 		}
 
@@ -34,11 +32,15 @@ $(function (){
 
 	$('.reverseDesigning').click(function (){
 		var _this = $(this);
-		var surveyId = _this.siblings().last().val();
-		$.post('/survey/reverseDesigning/' + surveyId, {_method: 'PUT'}, function (){
-			layer.msg('修改成功', {time: 1500, closeBtn: 1}, function (){
-				location.reload();
-			})
+		$.post(_this.attr('href'), {_method: 'PUT'}, function (){
+			var originText = _this.text();
+			if( originText.trim() == '开放问卷' ){
+				_this.text('关闭问卷');
+			}
+			else{
+				_this.text('开放问卷');
+			}
+			layer.msg('修改成功', {time: 1500, closeBtn: 1});
 		});
 		return false;
 	});
