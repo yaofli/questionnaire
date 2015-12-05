@@ -16,69 +16,27 @@
 
 package git.lbk.questionnaire.entity;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import git.lbk.questionnaire.entity.question.Question;
+
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * 问卷调查的一个页面
  */
 public class Page {
 
-	/**
-	 * 页面信息和问题的分割符.
-	 */
-	public static final String QUESTION_START = "\u0002";
-
-	/**
-	 * 问题之间的分割符
-	 */
-	public static final String QUESTION_EXCISION = "\u001D";
-
-	/**
-	 * 页面信息以及问题中各个模块之间的分割符
-	 */
-	public static final String QUESTION_MODULE = "\u001E";
-
-	/**
-	 * 模块中的子项目的分割符
-	 */
-	public static final String MODULE_EXCISION = "\u001F";
-
 	private Integer id;
 	@NotNull
 	private String title;
-	private String question;
+	private List<Question> questions;
 	private Integer rank;
 	private Survey survey;
 
 	public Page() {
-	}
-
-	/**
-	 * 使用符合格式的字符串初始化page类
-	 * @param page 格式化的字符串
-	 * @throws IllegalArgumentException 如果字符串格式不正确
-	 */
-	public Page(String page) throws IllegalArgumentException {
-		setPage(page);
-	}
-
-	/**
-	 * 使用符合格式的字符串初始化page类
-	 *
-	 * @param page 格式化的字符串
-	 * @throws IllegalArgumentException 如果字符串格式不正确
-	 */
-	public void setPage(String page) throws IllegalArgumentException {
-		//todo 添加解析page的代码
-	}
-
-	/**
-	 * 获得本页面的字符串表示形式
-	 * @return 字符串表示形式
-	 */
-	public String getPage(){
-		//todo 添加还原代码
-		return "";
 	}
 
 	public Integer getId() {
@@ -97,12 +55,31 @@ public class Page {
 		this.title = title;
 	}
 
-	public String getQuestion() {
-		return question;
+	public List<Question> getQuestions() {
+		return questions;
 	}
 
-	public void setQuestion(String question) {
-		this.question = question;
+	public void setQuestions(List<Question> questions) {
+		this.questions = questions;
+	}
+
+	public String getQuestionsStr() {
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			return objectMapper.writeValueAsString(questions);
+		}
+		catch(JsonProcessingException e) {}
+		return "[]";
+	}
+
+	public void setQuestionsStr(String question) {
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			this.questions = objectMapper.readValue(question, objectMapper.getTypeFactory().constructCollectionType(List.class, Question.class));
+		}
+		catch(IOException e) {
+			this.questions = new ArrayList<>(0);
+		}
 	}
 
 	public Integer getRank() {
@@ -130,7 +107,7 @@ public class Page {
 
 		if(id != null ? !id.equals(page.id) : page.id != null) return false;
 		if(title != null ? !title.equals(page.title) : page.title != null) return false;
-		if(question != null ? !question.equals(page.question) : page.question != null) return false;
+		if(questions != null ? !questions.equals(page.questions) : page.questions != null) return false;
 		return !(rank != null ? !rank.equals(page.rank) : page.rank != null);
 
 	}
@@ -139,7 +116,7 @@ public class Page {
 	public int hashCode() {
 		int result = id != null ? id.hashCode() : 0;
 		result = 31 * result + (title != null ? title.hashCode() : 0);
-		result = 31 * result + (question != null ? question.hashCode() : 0);
+		result = 31 * result + (questions != null ? questions.hashCode() : 0);
 		result = 31 * result + (rank != null ? rank.hashCode() : 0);
 		return result;
 	}
@@ -150,7 +127,7 @@ public class Page {
 		return "Page{" +
 				"id=" + id +
 				", title='" + title + '\'' +
-				", question='" + question + '\'' +
+				", question='" + questions + '\'' +
 				", rank=" + rank +
 				'}';
 	}

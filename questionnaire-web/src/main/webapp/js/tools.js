@@ -28,11 +28,29 @@
 		return new F();
 	}
 
-	function inheritPrototype(subType, superType){
+	/**
+	 * 使subType继承superType的原型
+	 * @param subType 子类
+	 * @param superType 父类
+	 */
+	window.tools.inheritPrototype = function(subType, superType){
 		var prototype = object(superType.prototype); //创建对象
 		prototype.constructor = subType; //增强对象
 		subType.prototype = prototype; //指定对象
-	}
-	window['tools']['inheritPrototype'] = inheritPrototype;
+	};
+
+	/**
+	 * 查找元素在数组中第一次出现的位置
+	 * @param {Array} array 数组
+	 * @param {*} element 需要查找的元素
+	 */
+	window.tools.indexOfArray = function(array, element){
+		for(var i=0; i<array.length; i++){
+			if(array[i] == element){
+				return i;
+			}
+		}
+		return -1;
+	};
 
 })();

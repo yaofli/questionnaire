@@ -16,6 +16,9 @@
 
 package git.lbk.questionnaire.springmvc.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import git.lbk.questionnaire.entity.Page;
 import git.lbk.questionnaire.entity.Survey;
 import git.lbk.questionnaire.service.SurveyService;
 import git.lbk.questionnaire.util.annotation.CheckToken;
@@ -40,15 +43,6 @@ public class SurveyController {
 
 	@Autowired
 	private SurveyService surveyService;
-
-	@ModelAttribute
-	public void surveyModel(@RequestParam(value = "id", required = false) Integer id,
-	                        Map<String, Object> map) {
-		if(id != null) {
-			Survey survey = surveyService.getNormalSurveyAndPage(id);
-			map.put("survey", survey);
-		}
-	}
 
 	@RequestMapping(value = "/mySurvey", method = RequestMethod.GET)
 	public String mySurvey(Map<String, Object> map, @ModelAttribute(UserController.SESSION_USER_ID) Integer userId) {
@@ -86,6 +80,33 @@ public class SurveyController {
 	}
 
 	/**
+	 * 更新调查对象. 为了保证url的一致性, 添加了冗余的路径surveyId
+	 * @param surveyStr 调查对象数据
+	 * @return 成功返回success
+	 */
+	@ResponseBody
+	@RequestMapping(value="/{surveyId}", method = RequestMethod.PUT)
+	public String updateSurvey(@RequestParam("survey")String surveyStr, @ModelAttribute(UserController
+			.SESSION_USER_ID) Integer userId){
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			Survey survey = objectMapper.readValue(surveyStr, Survey.class);
+			survey.setUserId(userId);
+			survey.setDesigning(true);
+			survey.setPageCount(survey.getPages().size());
+			for(Page page : survey.getPages()){
+				page.setSurvey(survey);
+			}
+			surveyService.updateSurvey(survey);
+		}
+		catch(IOException e) {
+			logger.warn("string to json error", e.getMessage());
+			return "fail";
+		}
+		return "success";
+	}
+
+	/**
 	 * 获得调查对象及其关联的页面对象
 	 * @param id 调查id
 	 * @param userId 登录的用户id
@@ -111,11 +132,20 @@ public class SurveyController {
 
 	@RequestMapping(value = "/design/{surveyId}", method = RequestMethod.GET)
 	public String designSurvey(@PathVariable("surveyId")Integer id, Map<String, Object> map){
-		/*Survey survey = surveyService.getNormalSurveyAndPage(id);
+		Survey survey = surveyService.getNormalSurveyAndPage(id);
 		if(survey == null){
 			return "404";
 		}
-		map.put("survey", survey);*/
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			for(Page page : survey.getPages()){
+				page.setSurvey(null);
+			}
+			map.put("survey", objectMapper.writeValueAsString(survey));
+		}
+		catch(JsonProcessingException e) {
+			e.printStackTrace();
+		}
 		return "designSurvey";
 	}
 

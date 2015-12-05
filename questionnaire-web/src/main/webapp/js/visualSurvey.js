@@ -41,10 +41,13 @@
 	/**
 	 * 所有问题的父类. 该类中可用的属性有
 	 * <ul>
-	 *     <li>oDiv: 用来容纳问题的 "div"</li>
-	 *     <li>json: 问题的json数据 </li>
-	 *     <li>*oBody: 答题区的div. 该属性在 createBody 方法中创建. 因此, 如果复写了 createBody 或者 freshen 方法, 将没有该对象</li>
+	 *     <li>oDiv: 用来容纳问题的 "div".</li>
+	 *     <li>json: 问题的json数据.</li>
+	 *     <li>*oNumber: 题号对应的html标签的引用. 该属性在 createTitle 方法中创建.</li>
+	 *     <li>*oTitle: 题目对应的html标签的引用. 该属性在 createTitle 方法中创建.</li>
+	 *     <li>*oBody: 答题区的div的引用. 该属性在 createBody 方法中创建.</li>
 	 * </ul>
+	 * 继承自该类的类需要重写 fillBody 方法来填充 问题的body 区域
 	 * @param selector 用来容纳问题的div
 	 * @param json 问题的json数据
 	 * @param number 问题的题号
@@ -53,7 +56,7 @@
 	function Question(selector, json, number){
 		this.oDiv = $(selector);
 		this.setJson(json);
-		this.setNumber(number);
+		this.number = number;
 	}
 
 	Question.prototype.setJson = function(json){
@@ -61,12 +64,13 @@
 	};
 	Question.prototype.setNumber = function (number){
 		this.number = number;
+		this.oNumber.text(number + '.');
 	};
 
 	/**
-	 * 初始化问题显示区
+	 * 重新填充该问题对应的区域
 	 */
-	Question.prototype.freshen = function (){
+	Question.prototype.reFill = function (){
 		this.oDiv.empty();
 		this.oDiv.removeClass().addClass("am-panel am-panel-default");
 		this.createTitle();
@@ -79,10 +83,10 @@
 	Question.prototype.createTitle = function (){
 		var oTitleAll = $('<div class="am-panel-hd am-cf">');
 
-		var oNumber = $('<span class="am-fl">' + this.number + ".</span>");
-		var oTitle = $('<h3 class="am-fl am-panel-title am-margin-horizontal-sm">' + this.json.title + '</h3>');
+		this.oNumber = $('<span class="am-fl">' + this.number + ".</span>");
+		this.oTitle = $('<h3 class="am-fl am-panel-title am-margin-horizontal-sm">' + this.json.title + '</h3>');
 
-		oTitleAll.append(oNumber).append(oTitle);
+		oTitleAll.append(this.oNumber).append(this.oTitle);
 
 		if( this.json.required ){
 			oTitleAll.append($('<span  class="am-fl am-text-lg am-text-danger">*</span>'));
@@ -91,21 +95,17 @@
 	};
 
 	/**
-	 * 初始化答题区. 该方法里会创建一个div, 并设置好class. 然后添加到this.oDiv中, 同时赋值给 this.oBody. 之后可以直接向 this.oBody中添加答题标签(如选项)
+	 * 初始化答题区. 该方法里会创建一个div, 并设置好class. 然后添加到this.oDiv中, 同时赋值给 this.oBody. 之后可以直接向 this.oBody中添加答题标签(如选项).
+	 * 该方法会调用 fillBody 方法
 	 */
 	Question.prototype.createBody = function (){
 		this.oBody = $('<div class="am-panel-bd"></div>');
 		this.oDiv.append(this.oBody);
 		this.fillBody();
 	};
-	/**
-	 * 填充 this.oBody 的回调方法
-	 */
-	Question.prototype.fillBody = function (){
-	};
 
 	/**
-	 * 选择题的公共父类
+	 * 选择题的公共父类. 继承自该类的类需要重写 getLabelClass 和 getInputType 方法
 	 * @param selector 用来容纳问题的div
 	 * @param json 问题的json数据
 	 * @param number 问题的题号
@@ -148,8 +148,15 @@
 			oUl.append(oLi);
 		}
 	};
+
+	/**
+	 * 获取选项对应的label的class
+	 */
 	SelectQuestion.prototype.getLabelClass = function (){
 	};
+	/**
+	 * 获取选项对应的input的class
+	 */
 	SelectQuestion.prototype.getInputType = function (){
 	};
 
@@ -162,7 +169,7 @@
 	 */
 	function RadioQuestion(selector, json, number){
 		SelectQuestion.call(this, selector, json, number);
-		this.freshen();
+		this.reFill();
 	}
 	tools.inheritPrototype(RadioQuestion, SelectQuestion);
 	visualSurvey.registeredQuestion.radio = RadioQuestion;
@@ -184,7 +191,7 @@
 	 */
 	function CheckboxQuestion(selector, json, number){
 		SelectQuestion.call(this, selector, json, number);
-		this.freshen();
+		this.reFill();
 	}
 	tools.inheritPrototype(CheckboxQuestion, SelectQuestion);
 	visualSurvey.registeredQuestion.checkbox = CheckboxQuestion;

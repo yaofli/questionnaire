@@ -25,7 +25,7 @@
             <generator class="native"/>
         </id>
         <property name="title" column="title"/>
-        <property name="question" column="question"/>
+        <property name="questionsStr" column="questions"/>
         <property name="rank" column="rank"/>
         <many-to-one name="survey" column="survey_id"/>
     </class>

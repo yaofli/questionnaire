@@ -39,7 +39,7 @@ VALUES
   (4, '4_2', '2015-11-29 20:34:23', '2015-11-29 10:34:23', 0, 0, 0),
   (4, '4_3', '2015-10-14 7:44:23', '2015-10-20 19:34:23', 0, 0, 0);
 
-INSERT INTO page(survey_id, title, question, question_count, rank)
+INSERT INTO page(survey_id, title, questions, question_count, rank)
 VALUES
   (2, '2_1', '2_1', 2, 1),
   (2, '2_2', '2_2', 1, 2),

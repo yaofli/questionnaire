@@ -49,9 +49,11 @@
 由于一个页面有多个问题, 所以这里说明一下传输、存储的格式:
 **survey**和**page**的传输、存储结构就是一个survey或者page对应的json格式.
 由于一个页面的多个问题存储在`Page`的`question`域中, 所以这里说一下`question`的格式:
-question以数组的格式进行传输、存储, 即
+question以如下格式进行传输、存储
 ```json
-question: [问题1, 问题2, ...]
+question: {
+    questions : [问题1, 问题2, ...]
+}
 ```
 其中问题的格式为:
 ```json
