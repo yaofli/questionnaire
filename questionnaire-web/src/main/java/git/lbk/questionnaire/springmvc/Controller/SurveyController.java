@@ -16,7 +16,6 @@
 
 package git.lbk.questionnaire.springmvc.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import git.lbk.questionnaire.entity.Page;
 import git.lbk.questionnaire.entity.Survey;
@@ -131,22 +130,20 @@ public class SurveyController {
 	}
 
 	@RequestMapping(value = "/design/{surveyId}", method = RequestMethod.GET)
-	public String designSurvey(@PathVariable("surveyId")Integer id, Map<String, Object> map){
+	public String toDesignSurveyPage(@PathVariable("surveyId")Integer id, Map<String, Object> map,
+	                                 @ModelAttribute(UserController.SESSION_USER_ID) Integer userId){
 		Survey survey = surveyService.getNormalSurveyAndPage(id);
 		if(survey == null){
-			return "404";
+			return "/404";
 		}
-		ObjectMapper objectMapper = new ObjectMapper();
-		try {
-			for(Page page : survey.getPages()){
-				page.setSurvey(null);
-			}
-			map.put("survey", objectMapper.writeValueAsString(survey));
+		if(!survey.getUserId().equals(userId)){
+			//todo 会显示userID
+			return "redirect:/index";
 		}
-		catch(JsonProcessingException e) {
-			e.printStackTrace();
-		}
+		map.put("survey", survey.toJson());
 		return "designSurvey";
 	}
+
+
 
 }

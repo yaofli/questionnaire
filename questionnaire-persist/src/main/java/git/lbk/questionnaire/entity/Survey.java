@@ -16,6 +16,9 @@
 
 package git.lbk.questionnaire.entity;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
@@ -143,6 +146,23 @@ public class Survey {
 
 	public void setPages(Set<Page> pages) {
 		this.pages = pages;
+	}
+
+	/**
+	 * 获取该对象的json字符串
+	 * @return 给对象的json字符串
+	 */
+	public String toJson() {
+		ObjectMapper objectMapper = new ObjectMapper();
+		for(Page page : this.pages) {
+			page.setSurvey(null);
+		}
+		try {
+			return objectMapper.writeValueAsString(this);
+		}
+		catch(JsonProcessingException e) {
+			return "{}";
+		}
 	}
 
 	@Override

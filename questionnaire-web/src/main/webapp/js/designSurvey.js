@@ -163,7 +163,9 @@
 		}
 		console.log(this.json);
 		this.saveSurvey(function (){
-			layer.msg('保存成功');
+			layer.msg('保存成功', function(){
+				window.location = "/survey/mySurvey";
+			});
 		}, function (){
 			layer.msg('保存失败');
 		}, true);
