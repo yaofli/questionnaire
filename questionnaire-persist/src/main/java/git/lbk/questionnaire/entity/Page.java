@@ -16,6 +16,7 @@
 
 package git.lbk.questionnaire.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import git.lbk.questionnaire.entity.question.Question;
@@ -63,6 +64,7 @@ public class Page {
 		this.questions = questions;
 	}
 
+	@JsonIgnore
 	public String getQuestionsStr() {
 		ObjectMapper objectMapper = new ObjectMapper();
 		try {
