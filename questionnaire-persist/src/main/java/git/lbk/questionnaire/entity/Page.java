@@ -92,6 +92,7 @@ public class Page {
 		this.rank = rank;
 	}
 
+	@JsonIgnore
 	public Survey getSurvey() {
 		return survey;
 	}

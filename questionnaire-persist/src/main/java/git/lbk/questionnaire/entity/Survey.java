@@ -154,9 +154,6 @@ public class Survey {
 	 */
 	public String toJson() {
 		ObjectMapper objectMapper = new ObjectMapper();
-		for(Page page : this.pages) {
-			page.setSurvey(null);
-		}
 		try {
 			return objectMapper.writeValueAsString(this);
 		}
