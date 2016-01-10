@@ -52,7 +52,7 @@ public class Survey {
 		INVALID_SURVEY.setDesigning(true);
 		INVALID_SURVEY.setPageCount(0);
 		INVALID_SURVEY.setStatus(DELETE_STATUS);
-		INVALID_SURVEY.setPages(new HashSet<>(0));
+		INVALID_SURVEY.setPages(new ArrayList<>(0));
 	}
 
 	private Integer id;
@@ -66,7 +66,7 @@ public class Survey {
 	private Integer pageCount;
 	private Integer status;
 
-	private Set<Page> pages = new HashSet<>(0);
+	private List<Page> pages = new ArrayList<>(0);
 
 	public Integer getId() {
 		return id;
@@ -140,11 +140,11 @@ public class Survey {
 		this.status = status;
 	}
 
-	public Set<Page> getPages() {
+	public List<Page> getPages() {
 		return pages;
 	}
 
-	public void setPages(Set<Page> pages) {
+	public void setPages(List<Page> pages) {
 		this.pages = pages;
 	}
 

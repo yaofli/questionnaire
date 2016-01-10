@@ -32,11 +32,12 @@
         <property name="designing" column="designing"/>
         <property name="pageCount" column="page_count"/>
         <property name="status" column="survey_status" update="false"/>
-        <set name="pages" inverse="true">
+        <list name="pages" inverse="true">
             <key>
                 <column name="survey_id"/>
             </key>
+            <index column="rank"></index>
             <one-to-many class="git.lbk.questionnaire.entity.Page"/>
-        </set>
+        </list>
     </class>
 </hibernate-mapping>
