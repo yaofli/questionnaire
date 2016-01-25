@@ -57,5 +57,6 @@
     <mvc:view-controller path="/user/loginPage" view-name="templet/loginPage"/>
 
     <mvc:view-controller path="/addSurveyPage" view-name="addSurvey"/>
+    <mvc:view-controller path="/participateSuccess" view-name="participateSuccess"/>
 
 </beans>

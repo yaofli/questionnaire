@@ -52,7 +52,7 @@
 <body>
 <jsp:include page="templet/header.jsp" />
 <div class="am-margin-lg">
-    <a href="addSurveyPage" class="am-btn am-btn-primary">创建新问卷</a>
+    <a href="/addSurveyPage" class="am-btn am-btn-primary">创建新问卷</a>
 
     <div id="surveys" class="am-panel-group am-margin-vertical-sm">
         <c:forEach items="${surveyList}" var="survey">

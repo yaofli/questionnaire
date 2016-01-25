@@ -144,6 +144,20 @@ public class SurveyController {
 		return "designSurvey";
 	}
 
+	@RequestMapping(value = "/participate/{surveyId}")
+	public String toParticipateSurveyPage(@PathVariable("surveyId") Integer id, Map<String, Object> map) {
+		Survey survey = surveyService.getNormalSurveyAndPage(id);
+		if(survey.getDesigning().equals(true)) {
+			return "/404";
+		}
+		map.put("survey", survey);
+		return "participateSurvey";
+	}
 
+	@ResponseBody
+	@RequestMapping(value="/commitAnswer/{surveyId}", method = RequestMethod.POST)
+	public boolean participateSurvey(@PathVariable("surveyId") Integer id, @RequestParam("answer") String answer){
+		return true;
+	}
 
 }

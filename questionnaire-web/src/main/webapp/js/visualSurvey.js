@@ -21,6 +21,151 @@
 	window.visualSurvey = window.visualSurvey || {};
 
 	/**
+	 * 调查对象
+	 * @param selector 用来容纳页面的div选择符 或者 引用
+	 * @param json 该调查对象的json数据
+	 * @constructor
+	 */
+	function Survey(selector, json){
+		this.oDiv = $(selector);
+		this.json = json;
+		this.pages = [];
+		this.init();
+	}
+
+	window.visualSurvey.Survey = Survey;
+
+	/**
+	 * 初始化页面
+	 */
+	Survey.prototype.init = function (){
+		this.oDiv.addClass('am-margin-horizontal');
+		$('<h1 class="am-text-center"></h1>').text(this.json.title).appendTo(this.oDiv);
+		$('<h2 class="am-text-center"></h2>').text(this.json.detailDescribe).appendTo(this.oDiv);
+		this.createPages();
+		this.createCommitButton();
+	};
+
+	/**
+	 * @private
+	 * 创建该调查的所有页面
+	 */
+	Survey.prototype.createPages = function(){
+		var iPageNum = this.json.pages.length;
+		var pageLinkWidth = 100;
+		var oBody = $('<div></div>');
+		this.oTabNav = $('<div class="am-btn-group am-center am-cf" style="width: '
+			+ pageLinkWidth * iPageNum + 'px"></div>');
+		this.oTabBody = $('<div></div>');
+		var iStartNum = 1;
+		for( var i = 0; i < this.json.pages.length; i++ ){
+			this.createPage(i, iStartNum);
+			iStartNum += this.pages[i].questions.length;
+		}
+		oBody.append(this.oTabBody).append(this.oTabNav).appendTo(this.oDiv);
+		this.oTabNav.find('button:first').click();
+	};
+
+	/**
+	 * @private
+	 * 创建页面
+	 */
+	Survey.prototype.createPage = function (index, iStartNum){
+		var _this = this;
+		var oPageDiv = $('<div></div>');
+		var oPageLink = $('<button class="am-btn am-margin-horizontal">第' + (index + 1) + '页</button>');
+		oPageLink.appendTo(this.oTabNav);
+		this.pages.push(new visualSurvey.Page(oPageDiv, this.json.pages[index], iStartNum));
+		oPageDiv.css('display', 'none').appendTo(this.oTabBody);
+		oPageLink.click(function (){
+			_this.oTabNav.children().removeClass('am-btn-primary').addClass('am-btn-default');
+			_this.oTabBody.children().css('display', 'none');
+			oPageLink.removeClass('am-btn-default').addClass('am-btn-primary');
+			oPageDiv.css('display', 'block');
+		});
+	};
+
+	/**
+	 * 创建提交按钮
+	 */
+	Survey.prototype.createCommitButton = function(){
+		var _this = this;
+		var oDiv = $('<div></div>');
+		var oCommitBtn = $('<button>提交</button>')
+			.addClass('am-btn am-btn-primary am-margin-vertical am-center')
+			.css('display', 'block');
+		oCommitBtn.click(function (){
+			_this.commit();
+		});
+		oDiv.append(oCommitBtn).appendTo(this.oDiv);
+	};
+
+	/**
+	 * 提交用户回答的答案
+	 */
+	Survey.prototype.commit = function(){
+		var strInput = this.json.id;
+		for(var i=0; i<this.pages.length; i++){
+			var pageInput = this.pages[i].getUserAnswer();
+			if(pageInput == ''){
+				layer.msg('请检查输入');
+			}
+			strInput += pageInput;
+		}
+		layer.load(1, {
+			shade: [0.1, '#fff']
+		});
+		$.post('/survey/commitAnswer/'+this.json.id, {answer: strInput}, function(){
+			window.location = "/participateSuccess";
+		});
+	};
+
+	/**
+	 * 页面对象
+	 * @param selector 用来容纳页面的div选择符 或 引用
+	 * @param json 该页面的json数据
+	 * @param startNumber 该页面问题的起始题号
+	 * @constructor
+	 */
+	function Page(selector, json, startNumber){
+		this.oDiv = $(selector);
+		this.json = json;
+		this.startNumber = startNumber;
+		this.questions = [];
+		this.init();
+	}
+
+	window.visualSurvey.Page = Page;
+
+	/**
+	 * 初始化页面对象, 并创建相应的页面元素
+	 */
+	Page.prototype.init = function (){
+		this.oDiv.removeClass().addClass("am-panel-group");
+		$('<h3></h3>').text(this.json.title).appendTo(this.oDiv);
+		for( var i = 0; i < this.json.questions.length; i++ ){
+			var oQuestionDiv = $('<div></div>');
+			this.questions.push(visualSurvey.createQuestion(oQuestionDiv, this.json.questions[i], this.startNumber + i));
+			this.oDiv.append(oQuestionDiv);
+		}
+	};
+
+	/**
+	 * 获得用户输入的内容. 如果有某几项输入不合法, 则返回undefined
+	 */
+	Page.prototype.getUserAnswer = function(){
+		var userAnswer = String.fromCharCode(2) + this.json.rank;
+		for(var i=0; i<this.questions.length; i++){
+			var questionAnswer = this.questions[i].getUserAnswer();
+			if( questionAnswer == ''){
+				return '';
+			}
+			userAnswer += questionAnswer;
+		}
+		return userAnswer;
+	};
+
+	/**
 	 * 用于子类注册, 之后用户可以使用 createQuestion 来创建 Question 对象
 	 * @type {{}} 键为可以处理的问题类型. 值为构造方法
 	 */
@@ -48,6 +193,7 @@
 	 *     <li>*oBody: 答题区的div的引用. 该属性在 createBody 方法中创建.</li>
 	 * </ul>
 	 * 继承自该类的类需要重写 fillBody 方法来填充 问题的body 区域
+	 * 覆写getUserInput方法. 获得用户输入的字符串形式, 如果用户输入不合法, 返回undefined.
 	 * @param selector 用来容纳问题的div
 	 * @param json 问题的json数据
 	 * @param number 问题的题号
@@ -59,7 +205,7 @@
 		this.number = number;
 	}
 
-	Question.prototype.setJson = function(json){
+	Question.prototype.setJson = function (json){
 		this.json = json;
 	};
 	Question.prototype.setNumber = function (number){
@@ -103,6 +249,17 @@
 		this.oDiv.append(this.oBody);
 		this.fillBody();
 	};
+	/**
+	 * 获得用户输入的内容以及题号组成的字符串.
+	 * @returns {string} 用户输入和题号, 如果用户输入不合法, 则返回空.
+	 */
+	Question.prototype.getUserAnswer = function(){
+		var userInput = this.getUserInput();
+		if(userInput == undefined){
+			return '';
+		}
+		return String.fromCharCode(30) + this.number + String.fromCharCode(31) + userInput;
+	};
 
 	/**
 	 * 选择题的公共父类. 继承自该类的类需要重写 getLabelClass 和 getInputType 方法
@@ -113,6 +270,7 @@
 	 */
 	function SelectQuestion(selector, json, number){
 		Question.call(this, selector, json, number);
+		this.aInput = [];
 	}
 
 	tools.inheritPrototype(SelectQuestion, Question);
@@ -129,35 +287,25 @@
 			oUl.addClass('am-avg-sm-' + style);
 		}
 		this.oBody.append(oUl);
-		if(!options){
+		if( !options ){
 			return;
 		}
 		for( var i = 0; i < options.length; i++ ){
 			var oLi = $('<li style="list-style: none"></li>').addClass('am-padding-left-0');
-			if(style == 0){
+			if( style == 0 ){
 				oLi.addClass(this.getLabelClass());
 			}
 			var oLabel = $('<label></label>').addClass(this.getLabelClass());
 			var oInput = $('<input/>').attr({
 				type: this.getInputType(),
-				id: 'q'+number + '_' + i,
+				id: 'q' + number + '_' + i,
 				value: i,
-				name: 'q'+number
+				name: 'q' + number
 			});
+			this.aInput.push(oInput);
 			oLabel.text(options[i].option).append(oInput).appendTo(oLi);
 			oUl.append(oLi);
 		}
-	};
-
-	/**
-	 * 获取选项对应的label的class
-	 */
-	SelectQuestion.prototype.getLabelClass = function (){
-	};
-	/**
-	 * 获取选项对应的input的class
-	 */
-	SelectQuestion.prototype.getInputType = function (){
 	};
 
 	/**
@@ -171,6 +319,7 @@
 		SelectQuestion.call(this, selector, json, number);
 		this.reFill();
 	}
+
 	tools.inheritPrototype(RadioQuestion, SelectQuestion);
 	visualSurvey.registeredQuestion.radio = RadioQuestion;
 
@@ -179,6 +328,16 @@
 	};
 	RadioQuestion.prototype.getInputType = function (){
 		return "radio";
+	};
+	RadioQuestion.prototype.getUserInput = function(){
+		for(var i=0; i< this.aInput.length; i++){
+			if(this.aInput[i].prop('checked')){
+				return i+'';
+			}
+		}
+		if(!this.json.required){
+			return '';
+		}
 	};
 	window.visualSurvey.RadioQuestion = RadioQuestion;
 
@@ -193,6 +352,7 @@
 		SelectQuestion.call(this, selector, json, number);
 		this.reFill();
 	}
+
 	tools.inheritPrototype(CheckboxQuestion, SelectQuestion);
 	visualSurvey.registeredQuestion.checkbox = CheckboxQuestion;
 
@@ -201,6 +361,18 @@
 	};
 	CheckboxQuestion.prototype.getInputType = function (){
 		return "checkbox";
+	};
+	CheckboxQuestion.prototype.getUserInput = function (){
+		var select = [];
+		for( var i = 0; i < this.aInput.length; i++ ){
+			if( this.aInput[i].prop('checked') ){
+				select.push(i);
+			}
+		}
+		if(select.length == 0 && this.json.required){
+			return undefined;
+		}
+		return select.join(',');
 	};
 	window.visualSurvey.CheckboxQuestion = CheckboxQuestion;
 
