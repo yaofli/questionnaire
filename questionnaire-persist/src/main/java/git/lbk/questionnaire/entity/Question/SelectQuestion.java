@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 LBK
+ * Copyright 2016 LBK
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-package git.lbk.questionnaire.entity.question.select;
-
-import git.lbk.questionnaire.entity.question.Option;
-import git.lbk.questionnaire.entity.question.Question;
+package git.lbk.questionnaire.entity.question;
 
 import java.util.*;
 

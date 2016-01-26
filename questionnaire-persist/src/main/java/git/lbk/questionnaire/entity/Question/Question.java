@@ -18,8 +18,6 @@ package git.lbk.questionnaire.entity.question;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import git.lbk.questionnaire.entity.question.select.RadioSelectQuestion;
-import git.lbk.questionnaire.entity.question.select.MultiplySelectQuestion;
 
 /**
  * 所有调查问题的公共父类, 包含公有的属性
@@ -27,7 +25,7 @@ import git.lbk.questionnaire.entity.question.select.MultiplySelectQuestion;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY,
 		property = "type", visible = true)
 @JsonSubTypes(value={
-		@JsonSubTypes.Type(value = RadioSelectQuestion.class, name="radio"),
+		@JsonSubTypes.Type(value = SingleSelectQuestion.class, name="radio"),
 		@JsonSubTypes.Type(value = MultiplySelectQuestion.class, name = "checkbox")
 })
 public abstract class Question {

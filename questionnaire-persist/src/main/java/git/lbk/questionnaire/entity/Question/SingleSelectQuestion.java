@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 LBK
+ * Copyright 2016 LBK
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package git.lbk.questionnaire.entity.question.select;
+package git.lbk.questionnaire.entity.question;
 
-public class MultiplySelectQuestion extends SelectQuestion {
+public class SingleSelectQuestion extends SelectQuestion {
 }
