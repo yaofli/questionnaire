@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import git.lbk.questionnaire.entity.Page;
 import git.lbk.questionnaire.entity.Survey;
 import git.lbk.questionnaire.service.SurveyService;
+import git.lbk.questionnaire.util.NetUtil;
 import git.lbk.questionnaire.util.annotation.CheckToken;
 import git.lbk.questionnaire.util.annotation.ErrorHandler;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -156,8 +158,8 @@ public class SurveyController {
 
 	@ResponseBody
 	@RequestMapping(value="/commitAnswer/{surveyId}", method = RequestMethod.POST)
-	public boolean participateSurvey(@PathVariable("surveyId") Integer id, @RequestParam("answer") String answer){
-		return true;
+	public boolean participateSurvey(@PathVariable("surveyId") Integer id, @RequestParam("answer") String answer, HttpServletRequest request){
+		return surveyService.saveAnswer(id, answer, NetUtil.getRealIP(request));
 	}
 
 }

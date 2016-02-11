@@ -104,19 +104,25 @@
 	 * 提交用户回答的答案
 	 */
 	Survey.prototype.commit = function(){
-		var strInput = this.json.id;
+		var strInput = '';
 		for(var i=0; i<this.pages.length; i++){
 			var pageInput = this.pages[i].getUserAnswer();
 			if(pageInput == ''){
 				layer.msg('请检查输入');
+				return;
 			}
 			strInput += pageInput;
 		}
-		layer.load(1, {
+		var loading = layer.load(1, {
 			shade: [0.1, '#fff']
 		});
-		$.post('/survey/commitAnswer/'+this.json.id, {answer: strInput}, function(){
-			window.location = "/participateSuccess";
+		$.post('/survey/commitAnswer/'+this.json.id, {answer: strInput}, function(data){
+			if(data){
+				window.location = "/participateSuccess";
+				return;
+			}
+			layer.close(loading);
+			layer.msg('输入有误, 请重新输入');
 		});
 	};
 
@@ -154,7 +160,7 @@
 	 * 获得用户输入的内容. 如果有某几项输入不合法, 则返回undefined
 	 */
 	Page.prototype.getUserAnswer = function(){
-		var userAnswer = String.fromCharCode(2) + this.json.rank;
+		var userAnswer = '';
 		for(var i=0; i<this.questions.length; i++){
 			var questionAnswer = this.questions[i].getUserAnswer();
 			if( questionAnswer == ''){
@@ -372,7 +378,7 @@
 		if(select.length == 0 && this.json.required){
 			return undefined;
 		}
-		return select.join(',');
+		return ',' + select.join(',') + ',';
 	};
 	window.visualSurvey.CheckboxQuestion = CheckboxQuestion;
 

@@ -19,9 +19,13 @@ package git.lbk.questionnaire.service.impl;
 import git.lbk.questionnaire.dao.impl.AnswerDaoImpl;
 import git.lbk.questionnaire.dao.impl.PageDaoImpl;
 import git.lbk.questionnaire.dao.impl.SurveyDaoImpl;
+import git.lbk.questionnaire.entity.Answer;
 import git.lbk.questionnaire.entity.Page;
 import git.lbk.questionnaire.entity.Survey;
+import git.lbk.questionnaire.entity.answer.QuestionAnswer;
+import git.lbk.questionnaire.entity.answer.QuestionAnswerFactory;
 import git.lbk.questionnaire.service.SurveyService;
+import git.lbk.questionnaire.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,11 +58,11 @@ public class SurveyServiceImpl implements SurveyService {
 	 * @return 该用户的所有调查问卷
 	 */
 	@Override
-	public List<Survey> getSurveyByUserId(Integer userId){
+	public List<Survey> getSurveyByUserId(Integer userId) {
 		try {
 			return surveyDao.getNormalSurveyByUser(userId);
 		}
-		catch(RuntimeException ex){
+		catch(RuntimeException ex) {
 			logger.error("获取用户所有调查问卷时发生错误! userId: " + userId, ex);
 		}
 		return new ArrayList<>(0);
@@ -71,12 +75,12 @@ public class SurveyServiceImpl implements SurveyService {
 	 * @return 指定id的调查对象
 	 */
 	@Override
-	public Survey getSurvey(Integer id){
-		try{
+	public Survey getSurvey(Integer id) {
+		try {
 			return surveyDao.getEntity(id);
 		}
-		catch(RuntimeException ex){
-			logger.error("获取调查对象时发生错误! surveyId: " +id, ex);
+		catch(RuntimeException ex) {
+			logger.error("获取调查对象时发生错误! surveyId: " + id, ex);
 		}
 		return null;
 	}
@@ -88,11 +92,11 @@ public class SurveyServiceImpl implements SurveyService {
 	 * @return 指定id的调查对象及其关联的page
 	 */
 	@Override
-	public Survey getNormalSurveyAndPage(Integer id){
+	public Survey getNormalSurveyAndPage(Integer id) {
 		Survey survey = null;
 		try {
 			survey = surveyDao.getEntity(id);
-			if(!survey.getStatus().equals(Survey.NORMAL_STATUS)){
+			if(!survey.getStatus().equals(Survey.NORMAL_STATUS)) {
 				return Survey.INVALID_SURVEY;
 			}
 			survey.getPages().size();
@@ -110,11 +114,11 @@ public class SurveyServiceImpl implements SurveyService {
 	 * @return 该调查问卷的所有页面
 	 */
 	@Override
-	public List<Page> getPageBySurveyId(Integer surveyId){
-		try{
+	public List<Page> getPageBySurveyId(Integer surveyId) {
+		try {
 			return pageDao.getPagesBySurveyId(surveyId);
 		}
-		catch(RuntimeException ex){
+		catch(RuntimeException ex) {
 			logger.error("获取调查问卷的所有页面时发生错误! surveyId: " + surveyId, ex);
 		}
 		return new ArrayList<>(0);
@@ -127,13 +131,13 @@ public class SurveyServiceImpl implements SurveyService {
 	 * @return 成功返回true, 否则返回false
 	 */
 	@Override
-	public boolean createSurvey(Survey survey){
+	public boolean createSurvey(Survey survey) {
 		try {
 			surveyDao.saveEntity(survey);
 			return true;
 		}
 		catch(Exception e) {
-			logger.error("新建调查时发生错误" , e);
+			logger.error("新建调查时发生错误", e);
 		}
 		return false;
 	}
@@ -142,14 +146,14 @@ public class SurveyServiceImpl implements SurveyService {
 	/**
 	 * 删除调查以及所关联页面和回答
 	 *
-	 * @param surveyId     调查id
-	 * @param userId 进行操作的用户id
+	 * @param surveyId 调查id
+	 * @param userId   进行操作的用户id
 	 * @return 成功返回true, 否则返回false
 	 */
 	@Override
-	public boolean deleteSurvey(Integer surveyId, Integer userId){
+	public boolean deleteSurvey(Integer surveyId, Integer userId) {
 		try {
-			if(!surveyDao.surveyBelongUser(surveyId, userId)){
+			if(!surveyDao.surveyBelongUser(surveyId, userId)) {
 				return false;
 			}
 			surveyDao.updateSurveyStatus(surveyId, Survey.DELETE_STATUS);
@@ -168,9 +172,9 @@ public class SurveyServiceImpl implements SurveyService {
 	 * @return 成功返回true, 否则返回false
 	 */
 	@Override
-	public boolean updateSurvey(Survey survey){
+	public boolean updateSurvey(Survey survey) {
 		try {
-			if(!surveyDao.surveyBelongUser(survey.getId(), survey.getUserId())){
+			if(!surveyDao.surveyBelongUser(survey.getId(), survey.getUserId())) {
 				return false;
 			}
 			survey.setModifyTime(new Date());
@@ -196,10 +200,10 @@ public class SurveyServiceImpl implements SurveyService {
 	 * @return 成功返回true, 否则返回false
 	 */
 	@Override
-	public boolean reverseDesigning(Integer surveyId, Integer userId){
+	public boolean reverseDesigning(Integer surveyId, Integer userId) {
 		try {
 			Survey survey = surveyDao.getEntity(surveyId);
-			if(!survey.getUserId().equals(userId) || !survey.getStatus().equals(Survey.NORMAL_STATUS)){
+			if(!survey.getUserId().equals(userId) || !survey.getStatus().equals(Survey.NORMAL_STATUS)) {
 				return false;
 			}
 			survey.setDesigning(!survey.getDesigning());
@@ -210,6 +214,47 @@ public class SurveyServiceImpl implements SurveyService {
 			logger.error("更新调查开放状态时发生错误", e);
 		}
 		return false;
+	}
+
+	/**
+	 * 保存用户提交的回答数据
+	 * @param surveyId   调查id
+	 * @param userAnswer 用户的回答数据
+	 * @param ip 回答问题的用户的ip
+	 * @return 如果答案合法则返回true, 并保存到数据库, 否则返回false
+	 */
+	public boolean saveAnswer(Integer surveyId, String userAnswer, String ip) {
+		Survey survey = surveyDao.getEntity(surveyId);
+		String answerStr = rigUpAnswerString(survey, userAnswer);
+		if(StringUtil.isNull(answerStr)){
+			return false;
+		}
+		Answer answer = new Answer();
+		answer.setAnswer(answerStr);
+		answer.setAnswerTime(new Date());
+		answer.setSurvey(survey);
+		answer.setIp(ip);
+		answerDao.saveEntity(answer);
+		return true;
+	}
+
+	/**
+	 * 配凑出存储的答案字符串
+	 * @param survey 相应的调查对象
+	 * @param userAnswer 用户回答的答案
+	 * @return 如果所有的答案都合法, 则返回答案字符串. 否则返回空字符串
+	 */
+	private String rigUpAnswerString(Survey survey, String userAnswer){
+		List<QuestionAnswer> questionAnswers = QuestionAnswerFactory.createQuestionAnswers(survey, userAnswer);
+		StringBuilder stringBuilder = new StringBuilder();
+		for(QuestionAnswer questionAnswer : questionAnswers) {
+			if(!questionAnswer.isValidate()) {
+				return "";
+			}
+			stringBuilder.append(questionAnswer.getFormatNumberAndAnswer());
+		}
+		stringBuilder.append(QuestionAnswerFactory.getSentry(questionAnswers.size()));
+		return stringBuilder.toString();
 	}
 
 }

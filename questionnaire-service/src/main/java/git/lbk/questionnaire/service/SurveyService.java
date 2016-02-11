@@ -82,4 +82,14 @@ public interface SurveyService {
 	 * @return 成功返回true, 否则返回false
 	 */
 	boolean reverseDesigning(Integer surveyId, Integer userId);
+
+	/**
+	 * 保存用户提交的回答数据
+	 *
+	 * @param surveyId   调查id
+	 * @param userAnswer 用户的回答数据
+	 * @param ip         回答问题的用户的ip
+	 * @return 如果答案合法则返回true, 并保存到数据库, 否则返回false
+	 */
+	boolean saveAnswer(Integer surveyId, String userAnswer, String ip);
 }
