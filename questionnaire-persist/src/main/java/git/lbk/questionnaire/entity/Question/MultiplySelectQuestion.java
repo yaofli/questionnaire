@@ -17,4 +17,11 @@
 package git.lbk.questionnaire.entity.question;
 
 public class MultiplySelectQuestion extends SelectQuestion {
+
+	public static final String TYPE = "checkbox";
+
+	@Override
+	public String getType() {
+		return TYPE;
+	}
 }

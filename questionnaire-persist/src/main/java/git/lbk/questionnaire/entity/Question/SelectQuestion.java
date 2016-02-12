@@ -18,7 +18,7 @@ package git.lbk.questionnaire.entity.question;
 
 import java.util.*;
 
-public class SelectQuestion extends Question {
+public abstract class SelectQuestion extends Question {
 
 	private List<Option> options;
 	private Integer style;

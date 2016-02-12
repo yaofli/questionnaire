@@ -23,24 +23,21 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  * 所有调查问题的公共父类, 包含公有的属性
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY,
-		property = "type", visible = true)
-@JsonSubTypes(value={
-		@JsonSubTypes.Type(value = SingleSelectQuestion.class, name="radio"),
-		@JsonSubTypes.Type(value = MultiplySelectQuestion.class, name = "checkbox")
+		property = "type")
+@JsonSubTypes(value = {
+		@JsonSubTypes.Type(value = SingleSelectQuestion.class, name = SingleSelectQuestion.TYPE),
+		@JsonSubTypes.Type(value = MultiplySelectQuestion.class, name = MultiplySelectQuestion.TYPE)
 })
 public abstract class Question {
 
-	private String type;
 	private boolean required;
 	private String title;
 
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
+	/**
+	 * 获取该类型的标识码. 每个子类的返回值, 需要与上面JsonSubTypes.Type注解中的一致
+	 * @return 该类型的标识码
+	 */
+	public abstract String getType();
 
 	public boolean isRequired() {
 		return required;
@@ -66,15 +63,13 @@ public abstract class Question {
 		Question question = (Question) o;
 
 		if(required != question.required) return false;
-		if(type != null ? !type.equals(question.type) : question.type != null) return false;
 		return !(title != null ? !title.equals(question.title) : question.title != null);
 
 	}
 
 	@Override
 	public int hashCode() {
-		int result = type != null ? type.hashCode() : 0;
-		result = 31 * result + (required ? 1 : 0);
+		int result = (required ? 1 : 0);
 		result = 31 * result + (title != null ? title.hashCode() : 0);
 		return result;
 	}
@@ -82,8 +77,7 @@ public abstract class Question {
 	@Override
 	public String toString() {
 		return "Question{" +
-				"type='" + type + '\'' +
-				", required=" + required +
+				"required=" + required +
 				", title='" + title + '\'' +
 				'}';
 	}

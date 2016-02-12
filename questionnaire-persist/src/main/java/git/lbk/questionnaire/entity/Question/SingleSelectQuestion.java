@@ -17,4 +17,11 @@
 package git.lbk.questionnaire.entity.question;
 
 public class SingleSelectQuestion extends SelectQuestion {
+
+	public static final String TYPE = "radio";
+
+	@Override
+	public String getType() {
+		return TYPE;
+	}
 }
