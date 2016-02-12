@@ -34,8 +34,9 @@
 <body>
 <jsp:include page="templet/header.jsp"/>
 
-感谢您参与该问卷调查!
-
+<div>
+    <p class="am-text-center am-text-xl">感谢您参与该问卷调查!</p>
+</div>
 <jsp:include page="templet/footer.jsp"/>
 </body>
 </html>
