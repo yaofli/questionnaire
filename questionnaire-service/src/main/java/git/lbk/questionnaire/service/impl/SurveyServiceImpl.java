@@ -178,8 +178,8 @@ public class SurveyServiceImpl implements SurveyService {
 				return false;
 			}
 			survey.setModifyTime(new Date());
-			surveyDao.updateEntity(survey);
 			pageDao.deletePageBySurveyId(survey.getId());
+			surveyDao.updateEntity(survey);
 			// 由于一般的调查问卷并没有太多的页面, 所以这里就不使用批量更新了, 直接一个一个的加进去
 			for(Page page : survey.getPages()) {
 				pageDao.saveEntity(page);
