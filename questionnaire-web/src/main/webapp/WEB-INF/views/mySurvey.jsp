@@ -58,14 +58,30 @@
         <c:forEach items="${surveyList}" var="survey">
             <section class="am-panel am-panel-default">
                 <header class="am-panel-hd am-cf">
-                    <h3 class="am-fl am-panel-title am-margin-right-sm am-u-sm-8">
+                    <h3 class="am-fl am-panel-title am-margin-right-sm am-u-sm-6">
                         <c:out value="${survey.title}" escapeXml="true" />
                     </h3>
+                    <div class="am-dropdown am-margin-horizontal-sm" data-am-dropdown>
+                        <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
+                            回收问卷<span class="am-icon-caret-down"></span>
+                        </a>
+                        <ul class="am-dropdown-content">
+                            <li><a href="/survey/participate/${survey.id}">问卷链接</a></li>
+                        </ul>
+                    </div>
+                    <div class="am-dropdown am-margin-horizontal-sm" data-am-dropdown>
+                        <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
+                            分析下载<span class="am-icon-caret-down"></span>
+                        </a>
+                        <ul class="am-dropdown-content">
+                            <li><a href="/survey/statistics/${survey.id}">统计&amp;分析</a></li>
+                        </ul>
+                    </div>
                     <a href="/survey/reverseDesigning/${survey.id}"
-                       class="am-fl am-margin-horizontal-sm reverseDesigning">
+                       class="am-margin-horizontal-sm reverseDesigning">
                             ${survey.designing ? "开放问卷" : "关闭问卷"}
                     </a>
-                    <li class="am-dropdown" data-am-dropdown>
+                    <div class="am-dropdown am-margin-horizontal-sm" data-am-dropdown>
                         <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
                             设计问卷<span class="am-icon-caret-down"></span>
                         </a>
@@ -73,8 +89,9 @@
                             <li><a href="/survey/design/${survey.id}">修改问卷</a></li>
                             <li><a href="javascript:;">问卷设置</a></li>
                         </ul>
-                    </li>
-                    <a href="/survey/${survey.id}" class="am-margin-horizontal-sm deleteSurvey">删除</a>
+                    </div>
+                    <a href="/survey/${survey.id}"
+                       class="am-margin-horizontal-sm deleteSurvey">删除</a>
                 </header>
                 <div class="am-panel-bd">
                     <span class="am-u-sm-3">创建时间:

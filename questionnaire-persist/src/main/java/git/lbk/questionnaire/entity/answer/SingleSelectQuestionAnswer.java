@@ -38,6 +38,14 @@ public class SingleSelectQuestionAnswer extends AbstractQuestionAnswer {
 		}
 	}
 
+	/**
+	 * 返回用户回答的答案.
+	 * @return 用户回答的答案. 如果答案无效, 则返回{@link #EMPTY_ANSWER}
+	 */
+	public Integer getAnswer(){
+		return answer;
+	}
+
 	@Override
 	public boolean isEmpty() {
 		return EMPTY_ANSWER.equals(answer);

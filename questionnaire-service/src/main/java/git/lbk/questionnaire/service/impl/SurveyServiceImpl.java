@@ -25,6 +25,8 @@ import git.lbk.questionnaire.entity.Survey;
 import git.lbk.questionnaire.entity.answer.QuestionAnswer;
 import git.lbk.questionnaire.entity.answer.QuestionAnswerFactory;
 import git.lbk.questionnaire.service.SurveyService;
+import git.lbk.questionnaire.statistics.QuestionStatistics;
+import git.lbk.questionnaire.statistics.QuestionStatisticsFactory;
 import git.lbk.questionnaire.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -255,6 +257,23 @@ public class SurveyServiceImpl implements SurveyService {
 		}
 		stringBuilder.append(QuestionAnswerFactory.getSentry(questionAnswers.size()));
 		return stringBuilder.toString();
+	}
+
+	/**
+	 * 获得指定调查对象的回答的统计信息
+	 *
+	 * @param surveyId 调查id
+	 * @param userId   用户id, 用于权限判断
+	 * @return 指定调查问卷的回答的统计信息
+	 */
+	@Override
+	public List<? extends QuestionStatistics> getSurveyStatistics(Integer surveyId, Integer userId){
+		Survey survey = surveyDao.getEntity(surveyId);
+		if(survey==null || !survey.getUserId().equals(userId)){
+			return Collections.emptyList();
+		}
+		List<Answer> answers = answerDao.getBySurveyId(surveyId);
+		return QuestionStatisticsFactory.createSurveyStatisticsByAnswer(survey, answers);
 	}
 
 }

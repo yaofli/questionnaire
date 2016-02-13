@@ -19,6 +19,8 @@ package git.lbk.questionnaire.dao.impl;
 import git.lbk.questionnaire.entity.Answer;
 import org.springframework.stereotype.Repository;
 
+import java.util.*;
+
 @Repository("answerDao")
 public class AnswerDaoImpl extends BaseDaoImpl<Answer> {
 
@@ -29,6 +31,16 @@ public class AnswerDaoImpl extends BaseDaoImpl<Answer> {
 	public void deleteBySurveyId(Integer surveyId){
 		String hql = "delete Answer where survey.id = ?";
 		updateEntityByHQL(hql, surveyId);
+	}
+
+	/**
+	 * 获得所有和surveyId关联的回答
+	 * @param surveyId 调查id
+	 * @return 所有和surveyId关联的回答
+	 */
+	public List<Answer> getBySurveyId(Integer surveyId){
+		String sql = "from Answer where survey.id = ?";
+		return findEntityByHQL(sql, surveyId);
 	}
 
 }

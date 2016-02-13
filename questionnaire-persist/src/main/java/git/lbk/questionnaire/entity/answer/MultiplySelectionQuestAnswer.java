@@ -34,6 +34,14 @@ public class MultiplySelectionQuestAnswer extends AbstractQuestionAnswer {
 		}
 	}
 
+	/**
+	 * 获得用户回答的答案.
+	 * @return 用户回答的答案.
+	 */
+	public Set<Integer> getAnswer(){
+		return answer;
+	}
+
 	@Override
 	public boolean isEmpty() {
 		return answer.isEmpty();

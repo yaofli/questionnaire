@@ -13,12 +13,6 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   --%>
-
-<%--
-  User: 李冰凯
-  Date: 2015/11/25
-  Time: 12:45
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="l" uri="/WEB-INF/lbktags.tld"%>

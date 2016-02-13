@@ -18,6 +18,7 @@ package git.lbk.questionnaire.service;
 
 import git.lbk.questionnaire.entity.Page;
 import git.lbk.questionnaire.entity.Survey;
+import git.lbk.questionnaire.statistics.QuestionStatistics;
 
 import java.util.*;
 
@@ -92,4 +93,13 @@ public interface SurveyService {
 	 * @return 如果答案合法则返回true, 并保存到数据库, 否则返回false
 	 */
 	boolean saveAnswer(Integer surveyId, String userAnswer, String ip);
+
+	/**
+	 * 获得指定调查对象的回答的统计信息
+	 * @param surveyId 调查id
+	 * @param userId 用户id, 用于权限判断
+	 * @return 指定调查问卷的回答的统计信息
+	 */
+	List<? extends QuestionStatistics> getSurveyStatistics(Integer surveyId, Integer userId);
+
 }

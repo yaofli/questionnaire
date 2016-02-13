@@ -27,5 +27,16 @@
         <tag-class>git.lbk.questionnaire.tag.TokenTag</tag-class>
         <body-content>empty</body-content>
     </tag>
+    <tag>
+        <name>statisticsTable</name>
+        <tag-class>git.lbk.questionnaire.tag.QuestionStatisticsTableTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <description>统计对象的可迭代集合</description>
+            <name>statistics</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
 
 </taglib>

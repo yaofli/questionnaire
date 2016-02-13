@@ -162,4 +162,12 @@ public class SurveyController {
 		return surveyService.saveAnswer(id, answer, NetUtil.getRealIP(request));
 	}
 
+	@RequestMapping(value="/statistics/{surveyId}")
+	public String answerStatistics(@PathVariable("surveyId") Integer surveyId,
+	                               Map<String, Object> map,
+	                               @ModelAttribute(UserController.SESSION_USER_ID) Integer userId){
+		map.put("statistics", surveyService.getSurveyStatistics(surveyId, userId));
+		return "answerStatistics";
+	}
+
 }
