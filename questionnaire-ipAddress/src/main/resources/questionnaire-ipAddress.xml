@@ -29,8 +29,7 @@
     <!--<bean id="ipActualAddress" class="git.lbk.questionnaire.ipAddress.IpActualAddressImpl">
         <property name="apiKey" value="${baidu.apikey}"/>
         <property name="httpUrl" value="${ip.url}"/>-->
-        <!--fixme 这里有没有方法把列表存到properties文件里, 比如用","分割,
-         然后在这里(spring bean配置文件)中转成list, 注入到bean里 -->
+        <!--fixme 这里有没有方法把列表存到properties文件里, 比如用","分割, 然后在这里(spring bean配置文件)中转成list, 注入到bean里 -->
     <!--    <property name="unknownData">
             <list>
                 <value>None</value>

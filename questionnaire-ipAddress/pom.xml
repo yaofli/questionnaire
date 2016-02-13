@@ -29,8 +29,6 @@
 
     <properties>
         <json-lib.version>2.3</json-lib.version>
-        <org.json.version>20150729</org.json.version>
-        <jackson.version>2.6.2</jackson.version>
     </properties>
 
     <dependencies>

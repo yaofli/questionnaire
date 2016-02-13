@@ -32,11 +32,18 @@
         <property name="ipActualAddressService" ref="ipAddressService"/>
     </bean>
 
+    <bean id="surveyService" class="git.lbk.questionnaire.service.impl.SurveyServiceImpl">
+        <property name="surveyDao" ref="surveyDao"/>
+        <property name="pageDao" ref="pageDao"/>
+        <property name="answerDao" ref="answerDao"/>
+    </bean>
+
     <tx:advice id="ipTxAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <!-- 读操作 -->
             <tx:method name="is*" propagation="REQUIRED" isolation="DEFAULT" read-only="true"/>
             <tx:method name="validate*" propagation="REQUIRED" isolation="DEFAULT" read-only="true"/>
+            <tx:method name="get*" propagation="REQUIRED" isolation="DEFAULT" read-only="true"/>
 
             <tx:method name="*" propagation="REQUIRED" isolation="DEFAULT"/>
         </tx:attributes>

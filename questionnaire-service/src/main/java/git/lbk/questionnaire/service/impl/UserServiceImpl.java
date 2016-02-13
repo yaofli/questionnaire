@@ -34,8 +34,6 @@ public class UserServiceImpl implements UserService {
 	private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 	private static final Random RAND = new SecureRandom();
 
-	// fixme 这里直接使用UserDaoImpl类, 而不是它的父接口, 那么依赖注入的优势是不是就基本上没有了? 可是如果使用BaseDao的话, 那么像注册, 登录等功能就得写sql或者hql语句. 难道为每一个Dao都创建一个对应的接口吗?
-	// 可是这不是dao层应该做的事吗?
 	private UserDaoImpl userDao;
 	private SendEmailService emailService;
 	private IpActualAddressService ipActualAddressService;

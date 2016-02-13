@@ -18,48 +18,67 @@ package git.lbk.questionnaire.util;
 
 import org.junit.Test;
 
+import static git.lbk.questionnaire.util.StringUtil.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
+
 
 public class StringUtilTest {
 
 	@Test
 	public void testVerifyMobile() throws Exception {
-		assertTrue("验证手机号失败", StringUtil.verifyMobile("12345678901"));
-		assertTrue("验证手机号失败", StringUtil.verifyMobile("123 4567 8901"));
-		assertTrue("验证手机号失败", StringUtil.verifyMobile("123-4567-8901"));
+		assertTrue("验证手机号失败: 12345678901", verifyMobile("12345678901"));
 
-		assertFalse("验证手机号失败", StringUtil.verifyMobile("1245678901"));
-		assertFalse("验证手机号失败", StringUtil.verifyMobile(null));
-		assertFalse("验证手机号失败", StringUtil.verifyMobile("2245678901"));
+		assertFalse("验证手机号失败: 1245678901", verifyMobile("1245678901"));
+		assertFalse("验证手机号失败: null", verifyMobile(null));
+		assertFalse("验证手机号失败: 2245678901", verifyMobile("2245678901"));
+	}
+
+	@Test
+	public void testVerifyEmail() throws Exception {
+		assertTrue("验证邮箱失败: i.am.t.lbk@gmail.com", verifyEmail("i.am.t.lbk@gmail.com"));
+		assertTrue("验证邮箱失败: 12345@qq.com", verifyEmail("12345@qq.com"));
+		assertTrue("验证邮箱失败: ksj@163.com", verifyEmail("ksj@163.com"));
+
+		assertFalse("验证邮箱失败: @163.com", verifyEmail("@163.com"));
+		assertFalse("验证邮箱失败: ksj@", verifyEmail("ksj@"));
 	}
 
 	@Test
 	public void testAnyNull(){
-		assertTrue("null 判定为非空", StringUtil.anyNull(null));
-		assertTrue("null 判定为非空", StringUtil.anyNull("123", null));
-		assertTrue("null 判定为非空", StringUtil.anyNull(null, "123"));
-		assertTrue("空字符串 判定为非空", StringUtil.anyNull(""));
-		assertTrue("空字符串 判定为非空", StringUtil.anyNull("abc", "", "123"));
+		assertTrue("null 判定为非空", anyNull((String)null));
+		assertTrue("null 判定为非空", anyNull("123", null));
+		assertTrue("null 判定为非空", anyNull(null, "123"));
+		assertTrue("空字符串 判定为非空", anyNull(""));
+		assertTrue("空字符串 判定为非空", anyNull("abc", "", "123"));
 
-		assertFalse("非空字符串判定为空", StringUtil.anyNull("abc", "1234"));
+		assertFalse("非空字符串判定为空", anyNull("abc", "1234"));
 	}
 
 	@Test
 	public void testIsNull(){
-		assertTrue("空字符串判定失败: null", StringUtil.isNull(null));
-		assertTrue("空字符串判定失败: \"\"", StringUtil.isNull(""));
+		assertTrue("空字符串判定失败: null", isNull(null));
+		assertTrue("空字符串判定失败: \"\"", isNull(""));
 
-		assertFalse("空字符串判定失败: abc", StringUtil.isNull("abc"));
+		assertFalse("空字符串判定失败: abc", isNull("abc"));
 	}
 
 	@Test
 	public void testHexBytesToString(){
-		assertEquals("1D9F", StringUtil.hexBytesToString(new byte[]{0x1d, (byte) 0x9f}));
-		assertEquals("100F", StringUtil.hexBytesToString(new byte[]{0x10, (byte) 0x0f}));
-		assertEquals("", StringUtil.hexBytesToString(new byte[]{}));
-		assertEquals("", StringUtil.hexBytesToString(null));
+		assertEquals("1D9F", hexBytesToString(new byte[]{0x1d, (byte) 0x9f}));
+		assertEquals("100F", hexBytesToString(new byte[]{0x10, (byte) 0x0f}));
+		assertEquals("", hexBytesToString(new byte[]{}));
+		assertEquals("", hexBytesToString(null));
+	}
+
+	@Test
+	public void testSubStringCount(){
+		String originStr = "12abc12jid.,122., 1212";
+		String subStr = "12";
+		assertEquals(5, subStringCount(originStr, subStr));
+		assertEquals(0, subStringCount("", subStr));
+		assertEquals(0, subStringCount("adasdfuejaksjd90883734lajd", subStr));
 	}
 
 }

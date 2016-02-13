@@ -182,6 +182,7 @@ $(function (){
 				else if( status == 'sms captcha error' ){
 					promptSmsCaptchaError();
 					$('smsCaptcha').val('');
+					captcha.getFlushHandler('#flushCaptcha img:first', 'imageCaptcha')
 				}
 				else if( status == 'captcha error' ){
 					promptImageCaptchaError();
@@ -194,7 +195,7 @@ $(function (){
 			}
 			else{
 				if( isMobile ){
-					window.location = "/WEB-INF/views/index.jsp";
+					window.location = "/";
 				}
 				else{
 					window.location = "/user/registerNotify?email=" + data['email'];
@@ -207,7 +208,7 @@ $(function (){
 
 	function checkInput(){
 		if( !accountIsValid ){
-			promptAccountError()
+			promptAccountError();
 			return false;
 		}
 		if( accountIsUsed ){

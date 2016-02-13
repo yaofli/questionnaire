@@ -36,17 +36,27 @@
     <mvc:default-servlet-handler/>
     <mvc:annotation-driven/>
 
-    <mvc:interceptors>
+    <bean id="errorHandlerResolve" class="git.lbk.questionnaire.util.annotationResolve.ErrorHandlerResolve"/>
 
+    <mvc:interceptors>
+        <bean class="git.lbk.questionnaire.springmvc.interceptors.CheckTokenInterceptor">
+            <property name="errorResolve" ref="errorHandlerResolve"/>
+        </bean>
         <bean class="git.lbk.questionnaire.springmvc.interceptors.UserLoginInterceptor">
             <property name="userService" ref="userService"/>
         </bean>
     </mvc:interceptors>
 
     <mvc:view-controller path="/" view-name="index"/>
-    <mvc:view-controller path="/index.jsp" view-name="index"/>
+    <mvc:view-controller path="/index" view-name="index"/>
+    <mvc:view-controller path="/error" view-name="error"/>
+    <mvc:view-controller path="/404" view-name="404"/>
+
     <mvc:view-controller path="/user/registerPage" view-name="registerPage"/>
     <mvc:view-controller path="/user/actionAccountPage" view-name="actionAccount"/>
-    <mvc:view-controller path="loginPage" view-name="templet/loginPage"/>
+    <mvc:view-controller path="/user/loginPage" view-name="templet/loginPage"/>
+
+    <mvc:view-controller path="/addSurveyPage" view-name="addSurvey"/>
+    <mvc:view-controller path="/participateSuccess" view-name="participateSuccess"/>
 
 </beans>

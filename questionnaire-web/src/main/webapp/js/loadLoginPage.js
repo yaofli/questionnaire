@@ -25,7 +25,7 @@ $(function(){
 		});
 
 		if(loginPage == ''){
-			$.get('/loginPage', function (content){
+			$.get('/user/loginPage', function (content){
 				loginPage = content;
 				openLoginPage();
 			}, 'html');

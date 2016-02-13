@@ -101,10 +101,10 @@
                 <label for="smsCaptcha" class="am-u-sm-3 am-form-label">手机验证码</label>
 
                 <div class="am-u-sm-6">
-                    <input type="number" id="smsCaptcha" placeholder="手机验证码" />
+                    <input type="number" name="__smsCaptcha__" id="smsCaptcha" placeholder="手机验证码" />
                 </div>
                 <div class="am-u-sm-3">
-                    <input type="button" class="am-btn" id="getSmsCaptcha" name="__smsCaptcha__" value="获取手机验证码"/>
+                    <input type="button" class="am-btn" id="getSmsCaptcha" value="获取手机验证码"/>
                 </div>
             </div>
 

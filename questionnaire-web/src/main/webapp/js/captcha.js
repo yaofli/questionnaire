@@ -65,15 +65,20 @@
 	/**
 	 * 获取手机短信验证码, 同时禁用发送短信的按钮. 默认请求成功时显示提示层提醒用户
 	 * @param mobile 手机号
-	 * @param button 触发事件的按钮 或者 选择器
-	 * @param captcha 图片验证码
 	 * @param type 验证码类型
+	 * @param captcha 图片验证码
+	 * @param button 触发事件的按钮 或者 选择器
 	 * @param captchaError 图片验证码错误时的回调函数, 在回调之前会提醒用户.
 	 *              如果想获得更多的自由度, 请使用getSmsCaptcha(mobile, type, captcha, success)
+	 * @return
 	 */
 	function getSmsCaptchaAndDisableButton(mobile, type, captcha, button, captchaError){
-		getSmsCaptcha(mobile, type, captcha, handelReturnMessage(captchaError));
-		disableButtonCycle($(button), 60);
+		var restore = disableButtonCycle($(button), 60);
+		getSmsCaptcha(mobile, type, captcha, handelReturnMessage(function(){
+			restore();
+			captchaError();
+		}));
+		return restore;
 	}
 
 	window['sms']['getSmsCaptchaAndDisableButton'] = getSmsCaptchaAndDisableButton;
@@ -94,7 +99,7 @@
 			type: type,
 			__answer__: captcha
 		};
-		$.get('/sms/sendCaptcha', data, success, 'json');
+		$.get('/sms', data, success, 'json');
 	}
 
 	window['sms']['getSmsCaptcha'] = getSmsCaptcha;
@@ -141,16 +146,19 @@
 		button.attr('disabled', 'disabled');
 		button.val('60');
 		var timer = setInterval(function (){
-
 			if( time == 0 ){
-				clearInterval(timer);
-				button.val(originText);
-				button.removeAttr('disabled');
+				restore();
 			}
 			else{
 				time -= 1;
 				$('#getSmsCaptcha').val(time);
 			}
 		}, 1000);
+		function restore(){
+			clearInterval(timer);
+			button.val(originText);
+			button.removeAttr('disabled');
+		}
+		return restore;
 	}
 })();

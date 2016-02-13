@@ -22,11 +22,11 @@
 <hibernate-mapping package="git.lbk.questionnaire.entity">
 
     <class name="EmailValidate" table="email_validate">
-        <id name="identityCode" column="identityCode" type="java.lang.String">
+        <id name="identityCode" column="identity_code" type="java.lang.String">
             <generator class="assigned"/>
         </id>
-        <many-to-one name="user" class="User" column="userId"/>
-        <property name="createTime" column="createTime" type="java.util.Date"/>
+        <many-to-one name="user" class="User" column="user_id"/>
+        <property name="createTime" column="create_time" type="java.util.Date"/>
         <property name="type" column="type" type="java.lang.String"/>
     </class>
 </hibernate-mapping>

@@ -46,9 +46,9 @@
          但是, 打开那个jar包确实可以看到 git/lbk/questionnaire/entity 目录.
          而且这个配置在测试时也没有错误. 现在不知道哪里错了
         -->
-     <!--   <property name="mappingDirectoryLocations">
+       <!-- <property name="mappingDirectoryLocations">
             <list>
-                <value>classpath:git/lbk/questionnaire/entity</value>
+                <value>git/lbk/questionnaire/entity</value>
             </list>
         </property>-->
         <property name="mappingResources">
@@ -56,6 +56,10 @@
                 <value>git/lbk/questionnaire/entity/User.hbm.xml</value>
                 <value>git/lbk/questionnaire/entity/SmsCount.hbm.xml</value>
                 <value>git/lbk/questionnaire/entity/EmailValidate.hbm.xml</value>
+
+                <value>git/lbk/questionnaire/entity/Survey.hbm.xml</value>
+                <value>git/lbk/questionnaire/entity/Page.hbm.xml</value>
+                <value>git/lbk/questionnaire/entity/Answer.hbm.xml</value>
             </list>
         </property>
     </bean>
