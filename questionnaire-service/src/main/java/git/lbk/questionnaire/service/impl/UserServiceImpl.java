@@ -23,15 +23,12 @@ import git.lbk.questionnaire.entity.User;
 import git.lbk.questionnaire.ipAddress.IpActualAddressService;
 import git.lbk.questionnaire.security.MessageDigestUtil;
 import git.lbk.questionnaire.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.security.SecureRandom;
 import java.util.*;
 
 public class UserServiceImpl implements UserService {
 
-	private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 	private static final Random RAND = new SecureRandom();
 
 	private UserDaoImpl userDao;
@@ -58,13 +55,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public boolean isRegister(String account) {
-		User user = null;
-		try {
-			user = getUserByAccount(account);
-		}
-		catch(Exception e){
-			logger.error("获取用户信息时发生错误! ", e);
-		}
+		User user = getUserByAccount(account);
 		return user != null;
 	}
 
@@ -73,10 +64,9 @@ public class UserServiceImpl implements UserService {
 	 *
 	 * @param user 用户实体对象
 	 * @param ip   用户ip
-	 * @return 成功返回SUCCESS, 如果邮箱/手机号已经注册, 则返回IDENTITY_USED
 	 */
 	@Override
-	public int register(User user, String ip) {
+	public void register(User user, String ip) {
 		user.setPassword(MessageDigestUtil.SHA256(user.getPassword()));
 		setAutoLoginInfo(user);
 		if(user.getMobile() != null) {
@@ -86,20 +76,13 @@ public class UserServiceImpl implements UserService {
 			user.setStatus(User.NOT_VERIFIED);
 		}
 
-		try {
-			userDao.saveEntity(user);
-			if(user.getEmail()!=null) {
-				emailService.sendRegisterMail(user);
-			}
-			else {
-				loginSuccessHandle(user, ip);
-			}
+		userDao.saveEntity(user);
+		if(user.getEmail() != null) {
+			emailService.sendRegisterMail(user);
 		}
-		catch(Exception e) {
-			logger.warn(e.getMessage());
-			return IDENTITY_USED;
+		else {
+			loginHandle(user, ip);
 		}
-		return SUCCESS;
 	}
 
 	/**
@@ -112,15 +95,9 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public User validateLoginInfo(String account, String password, String ip) {
-		try {
-			password = MessageDigestUtil.SHA256(password);
-			User user = userDao.validateLoginInfo(account, password);
-			return loginSuccessHandle(user, ip);
-		}
-		catch(Exception e){
-			logger.error("验证用户登录信息时发生错误", e);
-		}
-		return null;
+		password = MessageDigestUtil.SHA256(password);
+		User user = userDao.validateLoginInfo(account, password);
+		return loginHandle(user, ip);
 	}
 
 	/**
@@ -132,14 +109,8 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public User validateAutoLoginInfo(String identity, String ip) {
-		try {
-			User user = userDao.validateAutoLoginInfo(identity);
-			return loginSuccessHandle(user, ip);
-		}
-		catch(Exception e){
-			logger.error("验证用户自动登录信息时发生错误", e);
-		}
-		return null;
+		User user = userDao.validateAutoLoginInfo(identity);
+		return loginHandle(user, ip);
 	}
 
 	/**
@@ -155,14 +126,15 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/**
-	 * 验证用户是否激活, 如果已经激活, 则记录最后登录信息. 如果没有激活但还在有效期, 则不记录最后登录信息.
-	 *  否则, 删除该用户信息
+	 * 验证用户是否激活, 如果已经激活, 则记录最后登录信息.
+	 * 如果没有激活但还在有效期, 则不记录最后登录信息.
+	 * 否则, 删除该用户信息
 	 *
 	 * @param user 用户对象
 	 * @param ip   ip地址
 	 * @return 如果已经激活 或者 还在有效期内 则返回user, 否则返回null
 	 */
-	private User loginSuccessHandle(User user, String ip) {
+	private User loginHandle(User user, String ip) {
 		user = validateUser(user);
 		if(user == null) {
 			return null;
@@ -218,16 +190,8 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public boolean registerEmailSend(String email) {
-		User user = null;
-
-		try {
-			user = getUserByAccount(email);
-		}
-		catch(Exception e){
-			logger.error("获取用户信息时发生错误! ", e);
-		}
-
-		if(user == null || user.getStatus()!=User.NOT_VERIFIED) {
+		User user = getUserByAccount(email);
+		if(user == null || user.getStatus() != User.NOT_VERIFIED) {
 			return false;
 		}
 		emailService.sendRegisterMail(user);
@@ -238,25 +202,19 @@ public class UserServiceImpl implements UserService {
 	 * 通过邮箱验证码激活账号. 该方法返回之后, 如果验证码正确, 则emailValidate里会的用户信息会被设置为该验证码的用户
 	 *
 	 * @param mailCaptcha 邮箱验证码信息
-	 * @param ip ip地址
+	 * @param ip          ip地址
 	 * @return 该验证码关联的用户信息
 	 */
 	@Override
-	public User activeAccount(String mailCaptcha, String ip){
+	public User activeAccount(String mailCaptcha, String ip) {
 		User user = emailService.validateMailCaptcha(mailCaptcha, EmailValidate.REGISTER_TYPE);
 		if(user == null) {
 			return null;
 		}
 		user.setStatus(User.NORMAL_STATUS);
 		user.setLastLoginIp(ip);
-		try {
-			userDao.updateEntity(user);
-			ipActualAddressService.saveIpActualInfo(user);
-		}
-		catch(Exception e){
-			logger.error("更新用户信息时发生错误!", e);
-			user = null;
-		}
+		userDao.updateEntity(user);
+		ipActualAddressService.saveIpActualInfo(user);
 		return user;
 	}
 

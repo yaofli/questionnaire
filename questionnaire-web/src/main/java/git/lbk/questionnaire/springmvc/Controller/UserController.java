@@ -100,12 +100,13 @@ public class UserController {
 		}
 		user.setType(User.COMMON);
 		user.setRegisterTime(new Date());
-		if(userService.register(user, NetUtil.getRealIP(request)) == UserService.SUCCESS) {
+		try {
+			userService.register(user, NetUtil.getRealIP(request));
 			saveUserToSession(user, request.getSession());
 			map.put("status", "success");
 			CookieUtil.setAutoLoginCookie(request, response, user.getAutoLogin());
 		}
-		else {
+		catch(Exception e) {
 			map.put("status", "repeat register");
 		}
 		return map;
@@ -115,19 +116,19 @@ public class UserController {
 	@RequestMapping("/login")
 	public Map<String, Object> login(HttpServletRequest request, HttpServletResponse response) {
 		Map<String, Object> map = new HashMap<>();
-		if(!CaptchaUtil.validateImageCpatcha(request)){
+		if(!CaptchaUtil.validateImageCpatcha(request)) {
 			map.put("status", "captcha error");
 			return map;
 		}
 		String account = request.getParameter("account");
 		String password = request.getParameter("password");
 		if((StringUtil.verifyEmail(account) && StringUtil.verifyMobile(account))
-				|| StringUtil.isNull(password) || password.length()<6){
+				|| StringUtil.isNull(password) || password.length() < 6) {
 			map.put("status", "message error");
 			return map;
 		}
 		User user = userService.validateLoginInfo(account, password, NetUtil.getRealIP(request));
-		if(user == null){
+		if(user == null) {
 			map.put("status", "password error");
 			return map;
 		}
@@ -136,7 +137,7 @@ public class UserController {
 		map.put("lastLoginTime", DateUtil.format(user.getLastLoginTime(), "yyyy-MM-dd HH:mm"));
 		map.put("lastLoginIp", user.getLastLoginIp());
 		map.put("lastLoginAddress", user.getLastLoginAddress());
-		if("true".equals(request.getParameter("autoLogin"))){
+		if("true".equals(request.getParameter("autoLogin"))) {
 			CookieUtil.setAutoLoginCookie(request, response, user.getAutoLogin());
 		}
 		return map;
@@ -153,7 +154,7 @@ public class UserController {
 	}
 
 	@RequestMapping("/logout")
-	public String logout(HttpServletRequest request, HttpServletResponse response){
+	public String logout(HttpServletRequest request, HttpServletResponse response) {
 		request.getSession().invalidate();
 		CookieUtil.deleteAutoLoginCookie(response);
 		return "redirect:/";

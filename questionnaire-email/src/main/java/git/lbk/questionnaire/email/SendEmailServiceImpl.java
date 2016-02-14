@@ -66,7 +66,7 @@ public class SendEmailServiceImpl implements SendEmailService {
 			return FileCopyUtils.copyToString(new EncodedResource(resource, "UTF-8").getReader());
 		}
 		catch(IOException e) {
-			e.printStackTrace();
+			logger.warn("加载邮件模板文件时出错", e);
 		}
 		return "";
 	}
@@ -74,39 +74,36 @@ public class SendEmailServiceImpl implements SendEmailService {
 	/**
 	 * 发送注册验证邮件
 	 *
-	 * @param user      用户实体
+	 * @param user 用户实体
 	 */
 	@Override
 	public void sendRegisterMail(User user) {
-		try {
-			EmailValidate emailValidate = createEmailValidate(user, EmailValidate.REGISTER_TYPE);
-			emailValidate.setCreateTime(user.getRegisterTime());
+		EmailValidate emailValidate = createEmailValidate(user, EmailValidate.REGISTER_TYPE);
+		emailValidate.setCreateTime(user.getRegisterTime());
 
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(user.getRegisterTime());
-			calendar.add(Calendar.HOUR_OF_DAY, EmailValidate.EXPIRE_TIME);
-			String emailContext = registerTemplate.replace("${username}", user.getName());
-			emailContext = emailContext.replace("${captcha}", emailValidate.getIdentityCode());
-			emailContext = emailContext.replace("${expireTime}", DateUtil.format(calendar.getTime(), "yyyy-MM-dd HH:mm:ss"));
-			emailContext = emailContext.replace("${currentTime}", DateUtil.getNowDataToString("yyyy-MM-dd HH:mm:ss"));
-			emailContext = emailContext.replace("${registerTime}", DateUtil.format(user.getRegisterTime(), "yyyy-MM-dd HH:mm:ss"));
-			emailContext = emailContext.replace("${type}", EmailValidate.REGISTER_TYPE);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(user.getRegisterTime());
+		calendar.add(Calendar.HOUR_OF_DAY, EmailValidate.EXPIRE_TIME);
+		String emailContext = registerTemplate.replace("${username}", user.getName());
+		emailContext = emailContext.replace("${captcha}", emailValidate.getIdentityCode());
+		emailContext = emailContext.replace("${expireTime}", DateUtil.format(calendar.getTime(), "yyyy-MM-dd " +
+				"HH:mm:ss"));
+		emailContext = emailContext.replace("${currentTime}", DateUtil.getNowDataToString("yyyy-MM-dd HH:mm:ss"));
+		emailContext = emailContext.replace("${registerTime}", DateUtil.format(user.getRegisterTime(), "yyyy-MM-dd " +
+				"HH:mm:ss"));
+		emailContext = emailContext.replace("${type}", EmailValidate.REGISTER_TYPE);
 
-
-			EmailMessage emailMessage = new EmailMessage();
-			emailMessage.setMessage(emailContext);
-			emailMessage.setTo(user.getEmail());
-			emailMessage.setSubject("XX账号-账号激活");
-			asyncSendMail.asynchronousSendMail(emailMessage);
-			emailDao.saveEntity(emailValidate);
-		}
-		catch(Exception e) {
-			logger.error("发送邮件时发生错误", e);
-		}
+		EmailMessage emailMessage = new EmailMessage();
+		emailMessage.setMessage(emailContext);
+		emailMessage.setTo(user.getEmail());
+		emailMessage.setSubject("XX账号-账号激活");
+		asyncSendMail.asynchronousSendMail(emailMessage);
+		emailDao.saveEntity(emailValidate);
 	}
 
 	/**
 	 * 创建一个{@link EmailValidate}对象
+	 *
 	 * @param user 与该EmailValidate对象关联的User对象
 	 * @param type 该对象的类型
 	 * @return EmailValidate对象
@@ -122,9 +119,10 @@ public class SendEmailServiceImpl implements SendEmailService {
 
 	/**
 	 * 生成邮件验证码
-	 * @param userId 用户id
+	 *
+	 * @param userId   用户id
 	 * @param userName 用户名
-	 * @param email 用户邮箱
+	 * @param email    用户邮箱
 	 * @return 验证码
 	 */
 	private String createCaptcha(int userId, String userName, String email) {
@@ -139,28 +137,21 @@ public class SendEmailServiceImpl implements SendEmailService {
 	 * @return 如果正确, 则返回与之关联的用户实体, 否则返回null
 	 */
 	@Override
-	public User validateMailCaptcha(String captcha, String type){
-		User user = null;
-		try {
-			EmailValidate validate = emailDao.getEntity(captcha);
-			if(validate == null) {
-				return null;
-			}
-			emailDao.deleteByUserIDAndType(validate.getUser(), validate.getType());
-			if(!validate.getType().equals(type)) {
-				return null;
-			}
-			Calendar calendar = Calendar.getInstance();
-			calendar.add(Calendar.HOUR_OF_DAY, -EmailValidate.EXPIRE_TIME);
-			if(calendar.getTime().after(validate.getCreateTime())) {
-				return null;
-			}
-			user = validate.getUser();
+	public User validateMailCaptcha(String captcha, String type) {
+		EmailValidate validate = emailDao.getEntity(captcha);
+		if(validate == null) {
+			return null;
 		}
-		catch(Exception e){
-			logger.error("验证邮件验证码时发生错误!", e);
+		emailDao.deleteByUserIDAndType(validate.getUser(), validate.getType());
+		if(!validate.getType().equals(type)) {
+			return null;
 		}
-		return user;
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.HOUR_OF_DAY, -EmailValidate.EXPIRE_TIME);
+		if(calendar.getTime().after(validate.getCreateTime())) {
+			return null;
+		}
+		return validate.getUser();
 	}
 
 	/**

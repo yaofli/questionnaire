@@ -64,7 +64,7 @@ public class SmsServiceImpl implements SmsService {
 			register = properties.getProperty("register");
 		}
 		catch(IOException e) {
-			logger.error("更新短信模板时发生错误", e);
+			logger.warn("更新短信模板时发生错误", e);
 		}
 	}
 
