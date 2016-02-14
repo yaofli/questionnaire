@@ -54,7 +54,7 @@ public class SurveyServiceImpl implements SurveyService {
 	}
 
 	/**
-	 * 获取某个用户的所有调查问卷的基本信息
+	 * 获取某个用户的所有 正常状态 或者 设计状态 的调查问卷的基本信息
 	 *
 	 * @param userId 用户id
 	 * @return 该用户的所有调查问卷
@@ -62,45 +62,46 @@ public class SurveyServiceImpl implements SurveyService {
 	@Override
 	public List<Survey> getSurveyByUserId(Integer userId) {
 		try {
-			return surveyDao.getNormalSurveyByUser(userId);
+			return surveyDao.getSurveyByUser(userId);
 		}
 		catch(RuntimeException ex) {
 			logger.error("获取用户所有调查问卷时发生错误! userId: " + userId, ex);
 		}
-		return new ArrayList<>(0);
+		return Collections.emptyList();
 	}
 
 	/**
-	 * 获取指定id的调查对象. 注意使用这种方法获取的调查对象中的pages并没有加载, 所以不能使用
+	 * 获取指定id的 未删除 调查对象. 注意使用这种方法获取的调查对象中的pages并没有加载, 所以不能使用
 	 *
 	 * @param id 调查id
-	 * @return 指定id的调查对象
+	 * @return 指定id的调查对象. 如果没有指定的调查对象 或者 调查对象为删除状态 则返回{@link Survey#INVALID_SURVEY}
 	 */
 	@Override
 	public Survey getSurvey(Integer id) {
 		try {
-			return surveyDao.getEntity(id);
+			Survey survey = surveyDao.getEntity(id);
+			if(survey==null || survey.isDelete()){
+				return Survey.INVALID_SURVEY;
+			}
+			return survey;
 		}
 		catch(RuntimeException ex) {
 			logger.error("获取调查对象时发生错误! surveyId: " + id, ex);
 		}
-		return null;
+		return Survey.INVALID_SURVEY;
 	}
 
 	/**
-	 * 获取指定id的调查对象以及其所关联的页面对象. 如果该调查对象为删除状态, 则返回null
+	 * 获取指定id的调查对象以及其所关联的页面对象.
 	 *
 	 * @param id 调查id
-	 * @return 指定id的调查对象及其关联的page
+	 * @return 指定id的调查对象及其关联的page如果该调查对象为删除状态, 则返回{@link Survey#INVALID_SURVEY}
 	 */
 	@Override
-	public Survey getNormalSurveyAndPage(Integer id) {
-		Survey survey = null;
+	public Survey getSurveyAndPage(Integer id) {
+		Survey survey = Survey.INVALID_SURVEY;
 		try {
-			survey = surveyDao.getEntity(id);
-			if(!survey.getStatus().equals(Survey.NORMAL_STATUS)) {
-				return Survey.INVALID_SURVEY;
-			}
+			survey = getSurvey(id);
 			survey.getPages().size();
 		}
 		catch(Exception ex) {
@@ -123,7 +124,7 @@ public class SurveyServiceImpl implements SurveyService {
 		catch(RuntimeException ex) {
 			logger.error("获取调查问卷的所有页面时发生错误! surveyId: " + surveyId, ex);
 		}
-		return new ArrayList<>(0);
+		return Collections.emptyList();
 	}
 
 	/**
@@ -146,7 +147,7 @@ public class SurveyServiceImpl implements SurveyService {
 
 
 	/**
-	 * 删除调查以及所关联页面和回答
+	 * 将该调查的状态置为删除状态
 	 *
 	 * @param surveyId 调查id
 	 * @param userId   进行操作的用户id
@@ -162,7 +163,7 @@ public class SurveyServiceImpl implements SurveyService {
 			return true;
 		}
 		catch(Exception e) {
-			logger.error("新建调查时发生错误", e);
+			logger.error("删除调查时发生错误", e);
 		}
 		return false;
 	}
@@ -180,6 +181,9 @@ public class SurveyServiceImpl implements SurveyService {
 				return false;
 			}
 			survey.setModifyTime(new Date());
+			//fixme 注释的两行原本执行没有问题, 但是前几天执行却突然报错: object references an unsaved transient instance. 这是怎么回事?
+			// surveyDao.updateEntity(survey);
+			// pageDao.deletePageBySurveyId(survey.getId());
 			pageDao.deletePageBySurveyId(survey.getId());
 			surveyDao.updateEntity(survey);
 			// 由于一般的调查问卷并没有太多的页面, 所以这里就不使用批量更新了, 直接一个一个的加进去
@@ -205,11 +209,11 @@ public class SurveyServiceImpl implements SurveyService {
 	public boolean reverseDesigning(Integer surveyId, Integer userId) {
 		try {
 			Survey survey = surveyDao.getEntity(surveyId);
-			if(!survey.getUserId().equals(userId) || !survey.getStatus().equals(Survey.NORMAL_STATUS)) {
+			if(!survey.getUserId().equals(userId) || survey.isDelete()) {
 				return false;
 			}
-			survey.setDesigning(!survey.getDesigning());
-			surveyDao.updateEntity(survey);
+			survey.reverseDesign();
+			surveyDao.updateSurveyStatus(surveyId, survey.getStatus());
 			return true;
 		}
 		catch(Exception e) {

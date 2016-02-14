@@ -54,9 +54,10 @@ public class SurveyController {
 	//fixme 其实这里原本是直接返回字符串的, 但是重定向的url中有userId参数. 然后我试了试ModelAndView、不用@ModelAttribute, 但是还是有参数, 所以这里暂时先直接使用重定向吧...
 	@CheckToken(returnInfo = @ErrorHandler(returnValue = "redirect:/survey/mySurvey"))
 	@RequestMapping(value = "", method = RequestMethod.POST)
-	public void addSurvey(@Valid Survey survey, @ModelAttribute(UserController.SESSION_USER_ID) Integer userId,
+	public void addSurvey(@Valid Survey survey,
+	                      @ModelAttribute(UserController.SESSION_USER_ID) Integer userId,
 	                      HttpServletResponse response) throws IOException {
-		survey.setDesigning(true);
+		survey.setStatus(Survey.DESIGN_STATUS);
 		survey.setPageCount(0);
 		survey.setUserId(userId);
 		if(!surveyService.createSurvey(survey)) {
@@ -87,13 +88,13 @@ public class SurveyController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/{surveyId}", method = RequestMethod.PUT)
-	public String updateSurvey(@RequestParam("survey")String surveyStr, @ModelAttribute(UserController
-			.SESSION_USER_ID) Integer userId){
+	public String updateSurvey(@RequestParam("survey")String surveyStr,
+	                           @ModelAttribute(UserController.SESSION_USER_ID) Integer userId){
 		ObjectMapper objectMapper = new ObjectMapper();
 		try {
 			Survey survey = objectMapper.readValue(surveyStr, Survey.class);
 			survey.setUserId(userId);
-			survey.setDesigning(true);
+			survey.setStatus(Survey.DESIGN_STATUS);
 			survey.setPageCount(survey.getPages().size());
 			for(Page page : survey.getPages()){
 				page.setSurvey(survey);
@@ -117,8 +118,8 @@ public class SurveyController {
 	@RequestMapping(value = "/{surveyId}", method = RequestMethod.GET)
 	public Survey getSurvey(@PathVariable("surveyId") Integer id,
 	                        @ModelAttribute(UserController.SESSION_USER_ID)	Integer userId) {
-		Survey survey = surveyService.getNormalSurveyAndPage(id);
-		if(!survey.getUserId().equals(userId) && survey.getDesigning().equals(true)){
+		Survey survey = surveyService.getSurveyAndPage(id);
+		if(!survey.getUserId().equals(userId) && !survey.isNormal()){
 			return Survey.INVALID_SURVEY;
 		}
 		return survey;
@@ -132,9 +133,10 @@ public class SurveyController {
 	}
 
 	@RequestMapping(value = "/design/{surveyId}", method = RequestMethod.GET)
-	public String toDesignSurveyPage(@PathVariable("surveyId")Integer id, Map<String, Object> map,
+	public String toDesignSurveyPage(@PathVariable("surveyId")Integer id,
+	                                 Map<String, Object> map,
 	                                 @ModelAttribute(UserController.SESSION_USER_ID) Integer userId){
-		Survey survey = surveyService.getNormalSurveyAndPage(id);
+		Survey survey = surveyService.getSurveyAndPage(id);
 		if(survey == null){
 			return "/404";
 		}
@@ -148,8 +150,8 @@ public class SurveyController {
 
 	@RequestMapping(value = "/participate/{surveyId}")
 	public String toParticipateSurveyPage(@PathVariable("surveyId") Integer id, Map<String, Object> map) {
-		Survey survey = surveyService.getNormalSurveyAndPage(id);
-		if(survey.getDesigning().equals(true)) {
+		Survey survey = surveyService.getSurveyAndPage(id);
+		if(survey.isDesign()) {
 			return "/404";
 		}
 		map.put("survey", survey);

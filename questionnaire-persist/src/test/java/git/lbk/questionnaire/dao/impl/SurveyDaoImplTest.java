@@ -39,7 +39,7 @@ public class SurveyDaoImplTest {
 
 	@Test
 	public void testGetSurveyByUser() throws Exception {
-		List<Survey> surveys = surveyDao.getNormalSurveyByUser(4);
+		List<Survey> surveys = surveyDao.getSurveyByUser(4);
 		assertNotNull(surveys);
 		assertEquals(3, surveys.size());
 	}

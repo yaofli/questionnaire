@@ -79,7 +79,7 @@
                     </div>
                     <a href="/survey/reverseDesigning/${survey.id}"
                        class="am-margin-horizontal-sm reverseDesigning">
-                            ${survey.designing ? "开放问卷" : "关闭问卷"}
+                            ${survey.isDesign() ? "开放问卷" : "关闭问卷"}
                     </a>
                     <div class="am-dropdown am-margin-horizontal-sm" data-am-dropdown>
                         <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
