@@ -21,12 +21,12 @@ import git.lbk.questionnaire.entity.question.Question;
 /**
  * 问题统计的抽象模型
  */
-public interface QuestionStatistics {
+public interface QuestionStatistics<T extends Question> {
 
 	/**
 	 * 获得与之关联的问题
 	 */
-	Question getQuestion();
+	T getQuestion();
 
 	/**
 	 * 获得参与回答的人数

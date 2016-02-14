@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package git.lbk.questionnaire.entity.answer;
+package git.lbk.questionnaire.answer;
 
 import git.lbk.questionnaire.entity.Page;
 import git.lbk.questionnaire.entity.Survey;
@@ -46,13 +46,13 @@ public class QuestionAnswerFactory {
 	 * @return 对应的QuestionAnswer对象
 	 * @throws IllegalArgumentException 如果参数详细类型未知
 	 */
-	public static QuestionAnswer createQuestionAnswer(Question question) throws IllegalArgumentException {
-		QuestionAnswer questionAnswer;
+	public static <T extends Question> QuestionAnswer<T> createQuestionAnswer(T question) throws IllegalArgumentException {
+		QuestionAnswer<T> questionAnswer;
 		if(question instanceof SingleSelectQuestion) {
-			questionAnswer = new SingleSelectQuestionAnswer();
+			questionAnswer = (QuestionAnswer<T>) new SingleSelectQuestionAnswer();
 		}
 		else if(question instanceof MultiplySelectQuestion) {
-			questionAnswer = new MultiplySelectionQuestAnswer();
+			questionAnswer = (QuestionAnswer<T>) new MultiplySelectionQuestAnswer();
 		}
 		else {
 			throw new IllegalArgumentException("未知的参数类型");

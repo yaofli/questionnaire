@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package git.lbk.questionnaire.entity.answer;
+package git.lbk.questionnaire.answer;
 
 import org.junit.Test;
 

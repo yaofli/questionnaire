@@ -16,19 +16,19 @@
 
 package git.lbk.questionnaire.statistics;
 
-import git.lbk.questionnaire.entity.answer.QuestionAnswer;
+import git.lbk.questionnaire.answer.QuestionAnswer;
 import git.lbk.questionnaire.entity.question.Question;
 
 /**
  * 实现了部分统计功能, 并增加了
  */
-public abstract class QuestionStatisticsAbstract implements QuestionStatistics {
+public abstract class AbstractQuestionStatistics<T extends Question> implements QuestionStatistics<T> {
 
-	private Question question;
+	private T question;
 	private Integer noneAnswerCount;
 	private Integer answerPeopleCount;
 
-	public QuestionStatisticsAbstract(Question question) {
+	public AbstractQuestionStatistics(T question) {
 		this.question = question;
 		noneAnswerCount = 0;
 		answerPeopleCount = 0;
@@ -38,7 +38,7 @@ public abstract class QuestionStatisticsAbstract implements QuestionStatistics {
 	 * 获得与之关联的问题
 	 */
 	@Override
-	public Question getQuestion() {
+	public T getQuestion() {
 		return question;
 	}
 
@@ -77,6 +77,9 @@ public abstract class QuestionStatisticsAbstract implements QuestionStatistics {
 	 */
 	@Override
 	public Double getNoneAnswerPercentage() {
+		if(answerPeopleCount == 0){
+			return 0.0;
+		}
 		return noneAnswerCount.doubleValue() / answerPeopleCount;
 	}
 

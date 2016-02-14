@@ -19,8 +19,8 @@ package git.lbk.questionnaire.statistics;
 import git.lbk.questionnaire.entity.Answer;
 import git.lbk.questionnaire.entity.Page;
 import git.lbk.questionnaire.entity.Survey;
-import git.lbk.questionnaire.entity.answer.QuestionAnswer;
-import git.lbk.questionnaire.entity.answer.QuestionAnswerFactory;
+import git.lbk.questionnaire.answer.QuestionAnswer;
+import git.lbk.questionnaire.answer.QuestionAnswerFactory;
 import git.lbk.questionnaire.entity.question.MultiplySelectQuestion;
 import git.lbk.questionnaire.entity.question.Question;
 import git.lbk.questionnaire.entity.question.SelectQuestion;
@@ -51,10 +51,10 @@ public class QuestionStatisticsFactory {
 	 * @return 一个调查的所有统计数据. 按题号排序
 	 */
 	public static List<? extends QuestionStatistics> createSurveyStatistics(Survey survey, List<String> answers){
-		List<QuestionStatisticsAbstract> questionStatisticsList = new ArrayList<>();
+		List<AbstractQuestionStatistics> questionStatisticsList = new ArrayList<>();
 		for(Page page : survey.getPages()) {
 			for(Question question : page.getQuestions()) {
-				QuestionStatisticsAbstract questionStatistics = (QuestionStatisticsAbstract) createQuestionStatistics(question);
+				AbstractQuestionStatistics questionStatistics = (AbstractQuestionStatistics) createQuestionStatistics(question);
 				questionStatisticsList.add(questionStatistics);
 			}
 		}

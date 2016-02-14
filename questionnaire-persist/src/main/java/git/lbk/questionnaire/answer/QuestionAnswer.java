@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package git.lbk.questionnaire.entity.answer;
+package git.lbk.questionnaire.answer;
 
 import git.lbk.questionnaire.entity.question.Question;
 
-public interface QuestionAnswer {
+public interface QuestionAnswer <T extends Question> {
 	/**
 	 * 回答中新题目开始的标记
 	 */
@@ -32,9 +32,9 @@ public interface QuestionAnswer {
 
 	void setNumber(int number);
 
-	Question getQuestion();
+	T getQuestion();
 
-	void setQuestion(Question question);
+	void setQuestion(T question);
 
 	/**
 	 * 设置用户的回答

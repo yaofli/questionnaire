@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package git.lbk.questionnaire.entity.answer;
+package git.lbk.questionnaire.answer;
 
 import git.lbk.questionnaire.entity.question.MultiplySelectQuestion;
-import git.lbk.questionnaire.entity.question.Question;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class MultiplySelectionQuestAnswer extends AbstractQuestionAnswer {
+public class MultiplySelectionQuestAnswer extends AbstractQuestionAnswer<MultiplySelectQuestion> {
 
 	private Set<Integer> answer = new HashSet<>();
 
 	@Override
 	public void setAnswer(String answer){
+		if(answer == null){
+			return;
+		}
 		String[] answers = answer.split(",");
 		for(int i=1; i<answers.length; i++){
 			this.answer.add(Integer.valueOf(answers[i]));
@@ -57,12 +59,7 @@ public class MultiplySelectionQuestAnswer extends AbstractQuestionAnswer {
 
 	@Override
 	protected boolean validateRequiredAnswer() {
-		Question question = getQuestion();
-		if(!(question instanceof MultiplySelectQuestion)){
-			return false;
-		}
-		MultiplySelectQuestion multiplySelectQuestion = (MultiplySelectQuestion) question;
-		int questionNumber = multiplySelectQuestion.getOptions().size();
+		int questionNumber = getQuestion().getOptions().size();
 		return !answer.stream().anyMatch(sel -> sel<0 || sel>=questionNumber);
 	}
 }

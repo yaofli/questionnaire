@@ -40,11 +40,13 @@ public class QuestionStatisticsTableTag extends SimpleTagSupport {
 	public void doTag() throws JspException, IOException {
 		JspWriter out = getJspContext().getOut();
 		out.print("<div class=\"statistics am-panel-group\">");
-		if(statistics.size() == 0){
+		if(statistics.isEmpty() || statistics.get(0).getAnswerPeopleCount()==0){
 			out.println("<p class=\"am-text-center am-text-xl\">暂没有人回答问卷, 请过段时间再查看</p>");
 		}
-		for(QuestionStatistics statistic : statistics) {
-			out.print(StatisticsToHtml.getInstance(statistic).getHtmlString());
+		else {
+			for(QuestionStatistics statistic : statistics) {
+				out.print(StatisticsToHtml.getInstance(statistic).getHtmlString());
+			}
 		}
 		out.print("</div>");
 	}

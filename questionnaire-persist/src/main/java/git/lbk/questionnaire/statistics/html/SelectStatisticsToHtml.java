@@ -17,14 +17,13 @@
 package git.lbk.questionnaire.statistics.html;
 
 import git.lbk.questionnaire.entity.question.Option;
-import git.lbk.questionnaire.entity.question.SelectQuestion;
 import git.lbk.questionnaire.statistics.QuestionStatistics;
 import git.lbk.questionnaire.statistics.SelectStatistics;
 
 import java.text.NumberFormat;
 import java.util.*;
 
-public class SelectStatisticsToHtml extends StatisticsToHtmlAbstract {
+public class SelectStatisticsToHtml extends AbstractStatisticsToHtml {
 
 
 	private static final String TRS_PLACEHOLDER = "${trs}";
@@ -62,7 +61,7 @@ public class SelectStatisticsToHtml extends StatisticsToHtmlAbstract {
 	}
 
 	private String getMainPart(){
-		List<Option> options = ((SelectQuestion) selectStatistics.getQuestion()).getOptions();
+		List<Option> options = (selectStatistics.getQuestion()).getOptions();
 		StringBuilder trsHtml = new StringBuilder();
 		for(int i = 0; i < options.size(); i++) {
 			trsHtml.append(TR_TEMPLATE

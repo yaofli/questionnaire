@@ -18,7 +18,7 @@ package git.lbk.questionnaire.statistics.html;
 
 import git.lbk.questionnaire.statistics.QuestionStatistics;
 
-public abstract class StatisticsToHtmlAbstract implements StatisticsToHtml {
+public abstract class AbstractStatisticsToHtml implements StatisticsToHtml {
 
 	private static final String TITLE_PLACEHOLDER = "${title}";
 	private static final String CONTENT_PLACEHOLDER = "${content}";

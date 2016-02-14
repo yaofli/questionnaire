@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package git.lbk.questionnaire.entity.answer;
+package git.lbk.questionnaire.answer;
 
 import git.lbk.questionnaire.entity.question.Question;
 
 /**
  * 代表问题答案的抽象父类
  */
-public abstract class AbstractQuestionAnswer implements QuestionAnswer {
+public abstract class AbstractQuestionAnswer<T extends Question> implements QuestionAnswer<T> {
 
 	private int number;
-	private Question question;
+	private T question;
 
 	@Override
 	public int getNumber() {
@@ -41,12 +41,12 @@ public abstract class AbstractQuestionAnswer implements QuestionAnswer {
 	}
 
 	@Override
-	public Question getQuestion() {
+	public T getQuestion() {
 		return question;
 	}
 
 	@Override
-	public void setQuestion(Question question){
+	public void setQuestion(T question){
 		this.question = question;
 	}
 

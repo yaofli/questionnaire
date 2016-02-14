@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package git.lbk.questionnaire.entity.answer;
+package git.lbk.questionnaire.answer;
 
-import git.lbk.questionnaire.entity.question.Question;
 import git.lbk.questionnaire.entity.question.SingleSelectQuestion;
 
-public class SingleSelectQuestionAnswer extends AbstractQuestionAnswer {
+public class SingleSelectQuestionAnswer extends AbstractQuestionAnswer<SingleSelectQuestion> {
 
 	/**
 	 * 空白答案
@@ -58,12 +57,7 @@ public class SingleSelectQuestionAnswer extends AbstractQuestionAnswer {
 
 	@Override
 	protected boolean validateRequiredAnswer() {
-		Question question = getQuestion();
-		if(!(question instanceof SingleSelectQuestion)) {
-			return false;
-		}
-		SingleSelectQuestion selectQuestion = (SingleSelectQuestion) question;
-		int optionsNumber = selectQuestion.getOptions().size();
+		int optionsNumber = getQuestion().getOptions().size();
 		return (answer >= 0 && answer < optionsNumber);
 	}
 }
