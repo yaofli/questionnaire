@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 LBK
+ * Copyright 2016 LBK
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,26 @@
 
 package git.lbk.questionnaire.sms;
 
-public class SendManyDailyException extends RuntimeException {
-	public SendManyDailyException() {
-	}
+/**
+ * 过滤短信的接口. 如果要发送的短信符合一定的规则, 则放行; 否则, 不能发送
+ */
+public interface SmsFilter {
 
-	public SendManyDailyException(String message) {
-		super(message);
-	}
+	/**
+	 * 初始化该过滤器
+	 */
+	void init();
 
-	public SendManyDailyException(String message, Throwable cause) {
-		super(message, cause);
-	}
+	/**
+	 * 判断短信是否可以发送. 如果不能发送, 则抛出异常
+	 * @param smsMessage 将要发送的短信内容
+	 * @throws SendSmsFailException 如果不可发送短信, 则抛出异常.
+	 */
+	void filter(SmsMessage smsMessage) throws SendSmsFailException;
 
-	public SendManyDailyException(Throwable cause) {
-		super(cause);
-	}
+	/**
+	 * 销毁该过滤器
+	 */
+	void destroy();
 
-	public SendManyDailyException(String message, Throwable cause, boolean enableSuppression, boolean
-			writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
 }

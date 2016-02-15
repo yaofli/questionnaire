@@ -19,35 +19,14 @@ package git.lbk.questionnaire.sms;
 /**
  * 由于只剩几次发送短信的机会了, 所以这里使用一个类来模拟发送短信. 该类只是简单的把短信打印到控制台上
  */
-public class SendSmsConsoleImpl implements SendSms{
-
-	/**
-	 * 发送失败时的最大尝试次数
-	 */
-	private volatile int maxTryNumber = 1;
-
-	private String account;
-	private String password;
-
-	public void setAccount(String account) {
-		this.account = account;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
+public class Sms2ConsoleImpl implements Sms {
 
 	/**
 	 * 设置发送失败时的最大尝试次数
 	 * @param maxTryNumber 发送失败时的最大尝试次数
 	 */
 	@Override
-	public void setMaxTryNumber(int maxTryNumber) {
-		if(maxTryNumber < 1){
-			return;
-		}
-		this.maxTryNumber = maxTryNumber;
-	}
+	public void setMaxTryNumber(int maxTryNumber) {}
 
 	/**
 	 * 向mobile发送message消息

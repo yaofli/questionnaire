@@ -29,12 +29,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class SendSmsTest {
 
 	@Autowired
-	private SendSms sendSms;
+	private Sms sms;
 
 	@Ignore("只剩四次体验机会..., 如果测试, 记得把手机号补全")
 	@Test
 	public void testRun() throws Exception {
-		Assert.assertTrue("发送验证码失败!", sendSms.sendMessage("",
+		Assert.assertTrue("发送验证码失败!", sms.sendMessage("",
 				"您的验证码是：123456。请不要把验证码泄露给其他人。") == -1);
 	}
 }

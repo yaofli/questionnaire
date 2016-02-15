@@ -67,17 +67,45 @@ public class DateUtil {
 	}
 
 	/**
+	 * 获得相对于指定时间指定偏移量的时间
+	 * @param date 起始时间
+	 * @param field Calendar中的日历字段常量数组
+	 * @param amount 为字段添加的日期或时间量数组
+	 * @return 指定偏移量的日期
+	 */
+	public static Date getExcursionDate(Date date, int field, int amount){
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(field, amount);
+		return calendar.getTime();
+	}
+
+	/**
 	 * 获取当前时间特定偏移量的Date对象.
 	 *
 	 * @param field  Calendar中的日历字段常量数组
 	 * @param amount 为字段添加的日期或时间量数组
 	 * @return 指定偏移量的日期
 	 */
-	public static Date getDate(int field, int amount) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(new Date());
-		calendar.add(field, amount);
-		return calendar.getTime();
+	public static Date getExcursionDateByNow(int field, int amount) {
+		return getExcursionDate(new Date(), field, amount);
+	}
+
+	/**
+	 * 判断 timestamp1 是否在 timestamp2 之前
+	 * @return timestamp1 在 timestamp2 之前返回true. 否则返回false
+	 */
+	public static boolean isBefore(long timestamp1, long timestamp2){
+		return timestamp1 < timestamp2;
+	}
+
+	/**
+	 * 判断 timestamp1 是否在 timestamp2 之前 或者 相等
+	 *
+	 * @return timestamp1 在 timestamp2 之前或者相等, 则返回true. 否则返回false
+	 */
+	public static boolean isBeforeOrEqual(long timestamp1, long timestamp2) {
+		return timestamp1 <= timestamp2;
 	}
 
 }

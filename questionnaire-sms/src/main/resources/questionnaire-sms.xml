@@ -21,26 +21,35 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <bean id="sendSms" class="git.lbk.questionnaire.sms.SendSmsConsoleImpl">
+    <bean id="sms" class="git.lbk.questionnaire.sms.Sms2ConsoleImpl">
         <property name="maxTryNumber" value="${sms.maxTryNumber}"/>
-        <property name="account" value="${sms.account}"/>
-        <property name="password" value="${sms.password}"/>
     </bean>
 
-    <bean id="sms" class="git.lbk.questionnaire.sms.SmsImpl" init-method="init" destroy-method="destroy">
+    <bean id="asyncSms" class="git.lbk.questionnaire.sms.AsyncSmsImpl">
+        <property name="sendSms" ref="sms"/>
+    </bean>
+
+    <bean id="frequencyFilter" class="git.lbk.questionnaire.sms.FrequencyFilter">
+        <property name="cleanMapInterval" value="${sms.cleanMapInterval}"/>
         <property name="sendInterval" value="${sms.sendInterval}"/>
+    </bean>
+
+    <bean id="dailyCountFilter" class="git.lbk.questionnaire.sms.DailyCountFilter">
         <property name="ipDailyMaxSendCount" value="${sms.ipDailyMaxSendCount}"/>
         <property name="mobileDailyMaxSendCount" value="${sms.mobileDailyMaxSendCount}"/>
-        <property name="clearMapInterval" value="${sms.clearMapInterval}"/>
-
-        <property name="sendSms" ref="sendSms"/>
         <property name="smsDao" ref="smsCountDao"/>
     </bean>
 
     <bean id="smsService" class="git.lbk.questionnaire.sms.SmsServiceImpl">
-        <property name="sms" ref="sms"/>
+        <property name="filters">
+            <list>
+                <ref bean="frequencyFilter"/>
+                <ref bean="dailyCountFilter"/>
+            </list>
+        </property>
+        <property name="sms" ref="asyncSms"/>
     </bean>
-
+    
     <tx:advice id="smsTxAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="*" propagation="REQUIRED" isolation="DEFAULT"/>
@@ -49,18 +58,18 @@
 
     <aop:config>
         <aop:advisor advice-ref="smsTxAdvice"
-                     pointcut="execution(* git.lbk.questionnaire.sms.Sms.sendMessage(..)) or execution(* git.lbk.questionnaire.sms.Sms.clearData())"/>
+                     pointcut="execution(* git.lbk.questionnaire.sms.SmsService.sendCaptcha(..))"/>
     </aop:config>
 
     <bean id="truncateSmsCountJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-        <property name="targetObject" ref="sms"/>
+        <property name="targetObject" ref="dailyCountFilter"/>
         <property name="targetMethod" value="clearData"/>
     </bean>
 
     <bean id="smsSchedulerTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="truncateSmsCountJob"/>
         <!-- 每天 00:00:00 运行-->
-        <property name="cronExpression" value="0 0 0 1 * ?"/>
+        <property name="cronExpression" value="0 0 0 * * ?"/>
     </bean>
 
     <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">

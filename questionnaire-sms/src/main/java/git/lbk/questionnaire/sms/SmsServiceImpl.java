@@ -16,7 +16,6 @@
 
 package git.lbk.questionnaire.sms;
 
-import git.lbk.questionnaire.entity.SmsMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -33,35 +32,35 @@ public class SmsServiceImpl implements SmsService {
 
 	private static final Logger logger = LoggerFactory.getLogger(SmsServiceImpl.class);
 
-	private volatile SmsImpl sms;
+	private Sms sms;
+	private List<SmsFilter> filters;
 
 	/**
-	 * 注册时发送短信的模板
+	 * 短信模板
 	 */
-	private volatile String register;
+	private volatile Properties template;
 
-	public SmsServiceImpl(){
-		updateTemplet();
+	public SmsServiceImpl() {
+		updateTemplate();
 	}
 
-	public SmsImpl getSms() {
-		return sms;
-	}
-
-	public void setSms(SmsImpl sms) {
+	public void setSms(Sms sms) {
 		this.sms = sms;
+	}
+
+	public void setFilters(List<SmsFilter> filters) {
+		this.filters = filters;
 	}
 
 	/**
 	 * 更新模板内容
-	 * fixme 为了提高性能, 这里没有加锁, 但是会导致更新的同时会有部分用户使用的还是旧的 模板 和 用户名/密码, 那么, 是否何以牺牲一定的正确性, 来换取性能呢? 如果加锁, 这里使用读写锁应该更合适吧: 大多数时间都是在读, 偶尔写一次.
 	 */
 	@Override
-	public void updateTemplet(){
+	public void updateTemplate() {
 		Properties properties = new Properties();
-		try (InputStream inputStream = new ClassPathResource("smsTemplet.properties").getInputStream()){
+		try(InputStream inputStream = new ClassPathResource("smsTemplate.properties").getInputStream()) {
 			properties.load(inputStream);
-			register = properties.getProperty("register");
+			template = properties;
 		}
 		catch(IOException e) {
 			logger.warn("更新短信模板时发生错误", e);
@@ -72,17 +71,18 @@ public class SmsServiceImpl implements SmsService {
 	 * 发送验证码
 	 *
 	 * @param smsMessage 发送短信的基本数据
-	 * @throws FrequentlyException    如果发送过于频繁
-	 * @throws SendManyDailyException 如果超过了一天发送的最大次数
-	 * @throws UnknownTypeException    如果发送的验证码类型不存在
+	 * @throws SendSmsFailException 发送失败时抛出该异常, 比如过于频繁, 发送次数过多等.
 	 */
 	@Override
 	public void sendCaptcha(SmsMessage smsMessage)
-			throws FrequentlyException, SendManyDailyException, UnknownTypeException {
-		if(SmsMessage.REGISTER.equals(smsMessage.getType())){
+			throws SendSmsFailException {
+		for(SmsFilter filter : filters) {
+			filter.filter(smsMessage);
+		}
+		if(SmsMessage.REGISTER.equals(smsMessage.getType())) {
 			sendRegisterSms(smsMessage);
 		}
-		else{
+		else {
 			throw new UnknownTypeException("未知的验证码类型: " + smsMessage.getType());
 		}
 	}
@@ -91,14 +91,10 @@ public class SmsServiceImpl implements SmsService {
 	 * 发送注册验证码
 	 *
 	 * @param smsMessage 发送短信的基本数据
-	 * @throws FrequentlyException    如果发送过于频繁
-	 * @throws SendManyDailyException 如果超过了一天发送的最大次数
 	 */
-	private void sendRegisterSms(SmsMessage smsMessage)
-			throws FrequentlyException, SendManyDailyException{
+	private void sendRegisterSms(SmsMessage smsMessage) {
 		sms.sendMessage(smsMessage.getMobile(),
-				register.replace("{captcha}", smsMessage.getCaptcha()),
-				smsMessage.getIp());
+				template.getProperty("register").replace("{captcha}", smsMessage.getCaptcha()));
 	}
 
 }

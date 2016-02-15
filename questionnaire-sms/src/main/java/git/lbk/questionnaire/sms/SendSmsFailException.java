@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 LBK
+ * Copyright 2016 LBK
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,28 @@
 
 package git.lbk.questionnaire.sms;
 
-public class FrequentlyException extends SendSmsFailException{
-	private static final long serialVersionUID = 7228789187251088297L;
+/**
+ * 发送短信失败
+ */
+public class SendSmsFailException extends RuntimeException {
+	private static final long serialVersionUID = -7470549739901104324L;
 
-	public FrequentlyException() {
+	public SendSmsFailException() {
 	}
 
-	public FrequentlyException(String message) {
+	public SendSmsFailException(String message) {
 		super(message);
 	}
 
-	public FrequentlyException(String message, Throwable cause) {
+	public SendSmsFailException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	public FrequentlyException(Throwable cause) {
+	public SendSmsFailException(Throwable cause) {
 		super(cause);
 	}
 
-	public FrequentlyException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+	public SendSmsFailException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
 }

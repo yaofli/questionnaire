@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 LBK
+ * Copyright 2016 LBK
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package git.lbk.questionnaire.entity;
+package git.lbk.questionnaire.sms;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 /**
- * 该实体类并没有与之对应的数据表. 只是用来接受参数, 以及调用时传递参数用的
+ * 短信内容
  */
 public class SmsMessage {
 

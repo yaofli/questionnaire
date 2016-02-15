@@ -16,26 +16,26 @@
 
 package git.lbk.questionnaire.sms;
 
-/**
- * 负责发送短信的类.
- * 该类不负责限制发送次数, 频率等问题, 只是简单的把信息发送出去
- */
-public interface SendSms {
+public class DailySendMuchException extends SendSmsFailException {
+	private static final long serialVersionUID = -4361863106523241032L;
 
-	/**
-	 * 设置发送失败时的最大尝试次数
-	 *
-	 * @param maxTryNumber 发送失败时的最大尝试次数
-	 */
-	void setMaxTryNumber(int maxTryNumber);
+	public DailySendMuchException() {
+	}
 
-	/**
-	 * 向mobile发送message消息
-	 *
-	 * @param mobile  手机号
-	 * @param message 短信内容
-	 * @return 成功返回-1, 否则返回其他值
-	 */
-	int sendMessage(String mobile, String message);
+	public DailySendMuchException(String message) {
+		super(message);
+	}
 
+	public DailySendMuchException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public DailySendMuchException(Throwable cause) {
+		super(cause);
+	}
+
+	public DailySendMuchException(String message, Throwable cause, boolean enableSuppression, boolean
+			writableStackTrace) {
+		super(message, cause, enableSuppression, writableStackTrace);
+	}
 }

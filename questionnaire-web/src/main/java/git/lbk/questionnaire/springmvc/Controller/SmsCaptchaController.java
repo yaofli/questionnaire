@@ -16,9 +16,9 @@
 
 package git.lbk.questionnaire.springmvc.controller;
 
-import git.lbk.questionnaire.entity.SmsMessage;
+import git.lbk.questionnaire.sms.SmsMessage;
 import git.lbk.questionnaire.sms.FrequentlyException;
-import git.lbk.questionnaire.sms.SendManyDailyException;
+import git.lbk.questionnaire.sms.DailySendMuchException;
 import git.lbk.questionnaire.sms.SmsService;
 import git.lbk.questionnaire.sms.UnknownTypeException;
 import git.lbk.questionnaire.util.CaptchaUtil;
@@ -96,7 +96,7 @@ public class SmsCaptchaController {
 		catch(FrequentlyException ex){
 			map.put("status", "frequently");
 		}
-		catch(SendManyDailyException ex){
+		catch(DailySendMuchException ex){
 			map.put("status", "exceed limit");
 		}
 		catch(UnknownTypeException ex){

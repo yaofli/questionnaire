@@ -19,7 +19,9 @@ package git.lbk.questionnaire.sms;
 /**
  * 未知的验证码类型异常
  */
-public class UnknownTypeException extends RuntimeException {
+public class UnknownTypeException extends SendSmsFailException {
+	private static final long serialVersionUID = -2628225647455363848L;
+
 	public UnknownTypeException() {
 	}
 
