@@ -18,28 +18,17 @@ package git.lbk.questionnaire.email;
 
 import org.springframework.mail.javamail.JavaMailSender;
 
-import javax.mail.MessagingException;
+public interface Email {
 
-/**
- * 由于经常没有没网, 所以创建这个模拟类来模拟发送邮件
- */
-public class SendEmailToConsole implements SendEmail {
+	void setSender(JavaMailSender sender);
 
+	void setFrom(String from);
 
-	@Override
-	public void setSender(JavaMailSender sender) {
-
-	}
-
-	@Override
-	public void setFrom(String from) {
-
-	}
-
-	@Override
-	public void sendMail(EmailMessage emailMessage) throws MessagingException {
-		System.out.println("send email to: " + emailMessage.getTo());
-		System.out.println("subject: " + emailMessage.getSubject());
-		System.out.println("message: " + emailMessage.getMessage());
-	}
+	/**
+	 * 向to邮箱发送邮件
+	 * @param emailMessage 邮件信息
+	 *
+	 * @return 成功返回true, 否则返回false
+	 */
+	boolean sendMail(EmailMessage emailMessage);
 }

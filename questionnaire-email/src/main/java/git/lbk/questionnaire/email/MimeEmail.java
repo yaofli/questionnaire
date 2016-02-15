@@ -26,7 +26,7 @@ import java.util.*;
 /**
  * 发送mime类型的邮件
  */
-public class SendMimeEmail implements SendEmail {
+public class MimeEmail implements Email {
 
 	private JavaMailSender sender;
 	private String from;
@@ -42,14 +42,20 @@ public class SendMimeEmail implements SendEmail {
 	}
 
 	@Override
-	public void sendMail(EmailMessage mail) throws MessagingException {
-		MimeMessage msg = sender.createMimeMessage();
-		MimeMessageHelper helper = new MimeMessageHelper(msg, false, "utf-8");
-		helper.setFrom(from);
-		helper.setTo(mail.getTo());
-		helper.setSubject(mail.getSubject());
-		helper.setSentDate(new Date());
-		helper.setText(mail.getMessage(), true);
-		sender.send(msg);
+	public boolean sendMail(EmailMessage emailMessage){
+		try {
+			MimeMessage msg = sender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(msg, false, "utf-8");
+			helper.setFrom(from);
+			helper.setTo(emailMessage.getTo());
+			helper.setSubject(emailMessage.getSubject());
+			helper.setSentDate(new Date());
+			helper.setText(emailMessage.getMessage(), true);
+			sender.send(msg);
+		}
+		catch(MessagingException e) {
+			return false;
+		}
+		return true;
 	}
 }

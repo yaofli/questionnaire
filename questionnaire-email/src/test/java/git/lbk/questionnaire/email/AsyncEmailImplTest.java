@@ -17,53 +17,54 @@
 package git.lbk.questionnaire.email;
 
 import com.icegreen.greenmail.util.GreenMail;
-import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
+import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import javax.mail.Message;
+public class AsyncEmailImplTest {
 
-import static org.junit.Assert.assertEquals;
-
-public class SendMimeEmailTest {
-
-	private SendEmail sendMimeMail;
 	private GreenMail greenMail;
+
+	private AsyncEmailImpl asyncEmail;
+	private EmailMessage emailMessage;
+
+	private Email email = EasyMock.createMock(Email.class);
 
 	@Before
 	public void setUp(){
+		emailMessage = new EmailMessage();
+		emailMessage.setTo("test@gmail.com");
+		emailMessage.setSubject("主题");
+		emailMessage.setMessage("测试邮件");
+
+		// 启动greenMail保证JavaMailSenderImpl可以和服务器连接
 		greenMail = new GreenMail(ServerSetup.SMTP);
 		greenMail.setUser("test@gamil.com", "123456");
 		greenMail.start();
 
 		ApplicationContext ctx = new ClassPathXmlApplicationContext("questionnaire-emailTest.xml");
-		sendMimeMail = (SendEmail) ctx.getBean("sendMimeMail");
+		asyncEmail = (AsyncEmailImpl) ctx.getBean("asyncEmail");
+		asyncEmail.setSendMail(email);
 	}
 
 	@Test
-	public void testSendMail() throws Exception {
-		EmailMessage emailMessage = new EmailMessage();
-		emailMessage.setTo("1424420612@qq.com");
-		emailMessage.setSubject("subject");
-		emailMessage.setMessage("test message");
-		sendMimeMail.sendMail(emailMessage);
+	public void testAsynchronousSendMail() throws Exception {
+		EasyMock.expect(email.sendMail(emailMessage)).andReturn(true);
 
+		EasyMock.replay(email);
+
+		asyncEmail.sendMail(emailMessage);
 		greenMail.waitForIncomingEmail(2000, 1);
 
-		Message[] msgs = greenMail.getReceivedMessages();
-
-		assertEquals("test@gmail.com", msgs[0].getFrom()[0].toString());
-		assertEquals(emailMessage.getSubject(), msgs[0].getSubject());
-		assertEquals(emailMessage.getMessage(), GreenMailUtil.getBody(msgs[0]).trim());
+		EasyMock.verify(email);
 	}
 
 	@After
 	public void tearDown(){
 		greenMail.stop();
 	}
-
 }

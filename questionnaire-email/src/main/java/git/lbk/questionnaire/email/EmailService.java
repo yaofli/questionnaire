@@ -16,21 +16,31 @@
 
 package git.lbk.questionnaire.email;
 
-import org.springframework.mail.javamail.JavaMailSender;
+import git.lbk.questionnaire.entity.User;
 
-import javax.mail.MessagingException;
+public interface EmailService {
 
-public interface SendEmail {
-
-	void setSender(JavaMailSender sender);
-
-	void setFrom(String from);
+	void init() throws Exception;
 
 	/**
-	 * 向to邮箱发送邮件
-	 * @param emailMessage 邮件信息
-	 *
-	 * @return 成功返回-1, 否则返回其他值
+	 * 发送注册验证邮件
+	 * @param user 用户实体
 	 */
-	void sendMail(EmailMessage emailMessage) throws MessagingException;
+	void sendRegisterMail(User user);
+
+	/**
+	 * 根据 验证码 和 类型检验邮箱验证码, 如果正确, 则返回与之关联的用户实体, 否则返回null
+	 * @param captcha 验证码
+	 * @param type 类型
+	 * @return 如果正确, 则返回与之关联的用户实体, 否则返回null
+	 */
+	User validateMailCaptcha(String captcha, String type);
+
+	/**
+	 * 删除过期的邮件验证码
+	 */
+	void deleteExpireCaptcha();
+
+	void destroy();
+
 }

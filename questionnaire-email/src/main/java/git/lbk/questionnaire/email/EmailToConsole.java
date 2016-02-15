@@ -16,31 +16,29 @@
 
 package git.lbk.questionnaire.email;
 
-import git.lbk.questionnaire.entity.User;
+import org.springframework.mail.javamail.JavaMailSender;
 
-public interface SendEmailService {
+/**
+ * 由于经常没有没网, 所以创建这个模拟类来模拟发送邮件
+ */
+public class EmailToConsole implements Email {
 
-	void init() throws Exception;
 
-	/**
-	 * 发送注册验证邮件
-	 * @param user 用户实体
-	 */
-	void sendRegisterMail(User user);
+	@Override
+	public void setSender(JavaMailSender sender) {
 
-	/**
-	 * 根据 验证码 和 类型检验邮箱验证码, 如果正确, 则返回与之关联的用户实体, 否则返回null
-	 * @param captcha 验证码
-	 * @param type 类型
-	 * @return 如果正确, 则返回与之关联的用户实体, 否则返回null
-	 */
-	User validateMailCaptcha(String captcha, String type);
+	}
 
-	/**
-	 * 删除过期的邮件验证码
-	 */
-	void deleteExpireCaptcha();
+	@Override
+	public void setFrom(String from) {
 
-	void destroy();
+	}
 
+	@Override
+	public boolean sendMail(EmailMessage emailMessage){
+		System.out.println("send email to: " + emailMessage.getTo());
+		System.out.println("subject: " + emailMessage.getSubject());
+		System.out.println("message: " + emailMessage.getMessage());
+		return true;
+	}
 }

@@ -28,20 +28,20 @@ import java.util.*;
 
 import static org.easymock.EasyMock.expectLastCall;
 
-public class SendEmailServiceImplTest {
+public class EmailServiceImplTest {
 
-	private SendEmailService emailService;
-	private AsyncSendEmail asyncSendMail;
+	private EmailService emailService;
+	private AsyncEmailImpl asyncMail;
 	private EmailValidateDaoImpl baseDao;
 
 	@Before
 	public void setUp() throws Exception {
-		asyncSendMail = EasyMock.createMock(AsyncSendEmail.class);
+		asyncMail = EasyMock.createMock(AsyncEmailImpl.class);
 		baseDao = EasyMock.createMock(EmailValidateDaoImpl.class);
 
-		SendEmailServiceImpl emailService = new SendEmailServiceImpl();
+		EmailServiceImpl emailService = new EmailServiceImpl();
 		emailService.setTemplatePath("mailTemplate");
-		emailService.setAsyncSendMail(asyncSendMail);
+		emailService.setEmail(asyncMail);
 		emailService.setEmailDao(baseDao);
 		emailService.init();
 		this.emailService = emailService;
@@ -52,7 +52,7 @@ public class SendEmailServiceImplTest {
 		EmailMessage emailMessage = new EmailMessage();
 		emailMessage.setTo("test@gmail.com");
 		emailMessage.setSubject("XX账号-账号激活");
-		asyncSendMail.asynchronousSendMail(EasyMock.cmp(emailMessage, new Comparator<EmailMessage>() {
+		asyncMail.sendMail(EasyMock.cmp(emailMessage, new Comparator<EmailMessage>() {
 			@Override
 			public int compare(EmailMessage o1, EmailMessage o2) {
 				if(!o1.getTo().equals(o2.getTo())) {
@@ -64,7 +64,7 @@ public class SendEmailServiceImplTest {
 		baseDao.saveEntity(EasyMock.isA(EmailValidate.class));
 		expectLastCall().once();
 
-		EasyMock.replay(asyncSendMail, baseDao);
+		EasyMock.replay(asyncMail, baseDao);
 
 		User user = new User();
 		user.setId(1);
@@ -72,6 +72,6 @@ public class SendEmailServiceImplTest {
 		emailService.sendRegisterMail(user);
 
 		Thread.sleep(1000);
-		EasyMock.verify(asyncSendMail, baseDao);
+		EasyMock.verify(asyncMail, baseDao);
 	}
 }

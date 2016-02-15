@@ -47,23 +47,23 @@
     </bean>
 
     <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
-        <property name="corePoolSize" value="3"/>
-        <property name="maxPoolSize" value="10"/>
+        <property name="corePoolSize" value="2"/>
+        <property name="maxPoolSize" value="5"/>
     </bean>
 
-    <bean id="sendMimeMail" class="git.lbk.questionnaire.email.SendMimeEmail">
+    <bean id="email" class="git.lbk.questionnaire.email.MimeEmail">
         <property name="sender" ref="sender"/>
         <property name="from" value="${email.username}"/>
     </bean>
 
-    <bean id="asyncSendMail" class="git.lbk.questionnaire.email.AsyncSendEmailImpl">
-        <property name="sendMail" ref="sendMimeMail"/>
+    <bean id="asyncEmail" class="git.lbk.questionnaire.email.AsyncEmailImpl">
+        <property name="sendMail" ref="email"/>
         <property name="taskExecutor" ref="taskExecutor"/>
     </bean>
 
-    <bean id="mailService" class="git.lbk.questionnaire.email.SendEmailServiceImpl"
+    <bean id="mailService" class="git.lbk.questionnaire.email.EmailServiceImpl"
           init-method="init">
-        <property name="asyncSendMail" ref="asyncSendMail"/>
+        <property name="email" ref="email"/>
         <property name="templatePath" value="mailTemplate"/>
     </bean>
 

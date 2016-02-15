@@ -17,7 +17,7 @@
 package git.lbk.questionnaire.service.impl;
 
 import git.lbk.questionnaire.dao.impl.UserDaoImpl;
-import git.lbk.questionnaire.email.SendEmailService;
+import git.lbk.questionnaire.email.EmailService;
 import git.lbk.questionnaire.entity.EmailValidate;
 import git.lbk.questionnaire.entity.User;
 import git.lbk.questionnaire.ipAddress.IpActualAddressService;
@@ -32,14 +32,14 @@ public class UserServiceImpl implements UserService {
 	private static final Random RAND = new SecureRandom();
 
 	private UserDaoImpl userDao;
-	private SendEmailService emailService;
+	private EmailService emailService;
 	private IpActualAddressService ipActualAddressService;
 
 	public void setUserDao(UserDaoImpl userDao) {
 		this.userDao = userDao;
 	}
 
-	public void setEmailService(SendEmailService emailService) {
+	public void setEmailService(EmailService emailService) {
 		this.emailService = emailService;
 	}
 

@@ -32,19 +32,21 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.*;
 
-public class SendEmailServiceImpl implements SendEmailService {
+import static git.lbk.questionnaire.util.DateUtil.getExcursionDate;
 
-	private static final Logger logger = LoggerFactory.getLogger(SendEmailServiceImpl.class);
+public class EmailServiceImpl implements EmailService {
+
+	private static final Logger logger = LoggerFactory.getLogger(EmailServiceImpl.class);
 	private static final Random RAND = new SecureRandom();
 
 	private EmailValidateDaoImpl emailDao;
-	private AsyncSendEmail asyncSendMail;
+	private Email email;
 	private String templatePath;
 
 	private String registerTemplate;
 
-	public void setAsyncSendMail(AsyncSendEmail asyncSendMail) {
-		this.asyncSendMail = asyncSendMail;
+	public void setEmail(Email email) {
+		this.email = email;
 	}
 
 	public void setTemplatePath(String templatePath) {
@@ -60,15 +62,9 @@ public class SendEmailServiceImpl implements SendEmailService {
 		registerTemplate = loadFile("registerUser.html");
 	}
 
-	private String loadFile(String fileName) {
+	private String loadFile(String fileName) throws IOException {
 		ClassPathResource resource = new ClassPathResource(templatePath + File.separator + fileName);
-		try {
-			return FileCopyUtils.copyToString(new EncodedResource(resource, "UTF-8").getReader());
-		}
-		catch(IOException e) {
-			logger.warn("加载邮件模板文件时出错", e);
-		}
-		return "";
+		return FileCopyUtils.copyToString(new EncodedResource(resource, "UTF-8").getReader());
 	}
 
 	/**
@@ -81,23 +77,20 @@ public class SendEmailServiceImpl implements SendEmailService {
 		EmailValidate emailValidate = createEmailValidate(user, EmailValidate.REGISTER_TYPE);
 		emailValidate.setCreateTime(user.getRegisterTime());
 
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(user.getRegisterTime());
-		calendar.add(Calendar.HOUR_OF_DAY, EmailValidate.EXPIRE_TIME);
+		Date expireTime = getExcursionDate(user.getRegisterTime(), Calendar.HOUR_OF_DAY, EmailValidate.EXPIRE_TIME);
 		String emailContext = registerTemplate.replace("${username}", user.getName());
-		emailContext = emailContext.replace("${captcha}", emailValidate.getIdentityCode());
-		emailContext = emailContext.replace("${expireTime}", DateUtil.format(calendar.getTime(), "yyyy-MM-dd " +
-				"HH:mm:ss"));
-		emailContext = emailContext.replace("${currentTime}", DateUtil.getNowDataToString("yyyy-MM-dd HH:mm:ss"));
-		emailContext = emailContext.replace("${registerTime}", DateUtil.format(user.getRegisterTime(), "yyyy-MM-dd " +
-				"HH:mm:ss"));
-		emailContext = emailContext.replace("${type}", EmailValidate.REGISTER_TYPE);
+		emailContext = emailContext.replace("${captcha}", emailValidate.getIdentityCode())
+				.replace("${expireTime}", DateUtil.format(expireTime, "yyyy-MM-dd HH:mm:ss"))
+				.replace("${currentTime}", DateUtil.getNowDataToString("yyyy-MM-dd HH:mm:ss"))
+				.replace("${registerTime}",
+						DateUtil.format(user.getRegisterTime(), "yyyy-MM-dd HH:mm:ss"))
+				.replace("${type}", EmailValidate.REGISTER_TYPE);
 
 		EmailMessage emailMessage = new EmailMessage();
 		emailMessage.setMessage(emailContext);
 		emailMessage.setTo(user.getEmail());
 		emailMessage.setSubject("XX账号-账号激活");
-		asyncSendMail.asynchronousSendMail(emailMessage);
+		email.sendMail(emailMessage);
 		emailDao.saveEntity(emailValidate);
 	}
 
@@ -159,7 +152,7 @@ public class SendEmailServiceImpl implements SendEmailService {
 	 */
 	public void deleteExpireCaptcha() {
 		logger.info("删除过期邮件验证码");
-		Date expireDate = DateUtil.getDate(Calendar.HOUR_OF_DAY, -EmailValidate.EXPIRE_TIME);
+		Date expireDate = DateUtil.getExcursionDateByNow(Calendar.HOUR_OF_DAY, -EmailValidate.EXPIRE_TIME);
 		emailDao.deleteBeforeTime(expireDate);
 	}
 
