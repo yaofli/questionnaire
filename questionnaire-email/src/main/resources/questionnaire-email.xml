@@ -51,14 +51,15 @@
 
     <bean id="sendMimeMail" class="git.lbk.questionnaire.email.EmailToConsole"/>
 
-    <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+    <bean id="asyncSendExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <property name="threadGroupName" value="asyncSendEmail"/>
         <property name="corePoolSize" value="3"/>
         <property name="maxPoolSize" value="10"/>
     </bean>
 
     <bean id="asyncMail" class="git.lbk.questionnaire.email.AsyncEmailImpl">
         <property name="sendMail" ref="sendMimeMail"/>
-        <property name="taskExecutor" ref="taskExecutor"/>
+        <property name="taskExecutor" ref="asyncSendExecutor"/>
     </bean>
 
     <bean id="mailService" class="git.lbk.questionnaire.email.EmailServiceImpl"

@@ -18,15 +18,12 @@ package git.lbk.questionnaire.ipAddress;
 
 import git.lbk.questionnaire.dao.impl.UserDaoImpl;
 import git.lbk.questionnaire.entity.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * 好吧, 这个类已经没用了, 我还是决定在{@link UserDaoImpl#updateLastLoginInfo(User)}方法上增加事务了
+ * 这个类基本上没有用, 但是如果没有这个类就没法用事务.
  */
-public class UpdateUserLastLogin {
+public class AddressMessageService {
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	private UserDaoImpl userDao;
 
 	public void setUserDao(UserDaoImpl userDao) {
@@ -35,14 +32,10 @@ public class UpdateUserLastLogin {
 
 	/**
 	 * 更新用户最后登录信息
+	 *
 	 * @param user 用户对象
 	 */
 	public void updateUserLastLoginIp(User user) {
-		try {
-			userDao.updateLastLoginInfo(user);
-		}
-		catch(Exception e) {
-			logger.error("更新用户最后登录信息时发生错误", e);
-		}
+		userDao.updateLastLoginInfo(user);
 	}
 }

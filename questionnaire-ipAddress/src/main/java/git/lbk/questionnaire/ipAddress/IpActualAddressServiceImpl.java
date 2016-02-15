@@ -16,7 +16,6 @@
 
 package git.lbk.questionnaire.ipAddress;
 
-import git.lbk.questionnaire.dao.impl.UserDaoImpl;
 import git.lbk.questionnaire.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,14 +34,14 @@ public class IpActualAddressServiceImpl implements IpActualAddressService {
 
 	private IpActualAddress ipActualAddress;
 	private ExecutorService executorService;
-	private UserDaoImpl userDao;
+	private AddressMessageService userLastLoginService;
 
 	public void setIpActualAddress(IpActualAddress ipActualAddress) {
 		this.ipActualAddress = ipActualAddress;
 	}
 
-	public void setUserDao(UserDaoImpl userDao) {
-		this.userDao = userDao;
+	public void setUserLastLoginService(AddressMessageService userLastLoginService) {
+		this.userLastLoginService = userLastLoginService;
 	}
 
 	@Override
@@ -64,7 +63,7 @@ public class IpActualAddressServiceImpl implements IpActualAddressService {
 		u.setLastLoginTime(new Date());
 		executorService.submit(()->{
 			u.setLastLoginAddress(ipActualAddress.getIpActualAddress(u.getLastLoginIp()));
-			userDao.updateLastLoginInfo(u);
+			userLastLoginService.updateUserLastLoginIp(u);
 		});
 	}
 

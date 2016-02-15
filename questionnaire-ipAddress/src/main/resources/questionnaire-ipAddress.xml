@@ -39,10 +39,14 @@
     </bean>-->
     <bean id="ipActualAddress" class="git.lbk.questionnaire.ipAddress.IpActualAddressImitateImpl"/>
 
+    <bean id="lastLoginService" class="git.lbk.questionnaire.ipAddress.AddressMessageService">
+        <property name="userDao" ref="userDao"/>
+    </bean>
+
     <bean id="ipAddressService" class="git.lbk.questionnaire.ipAddress.IpActualAddressServiceImpl"
           init-method="init" destroy-method="destroy">
         <property name="ipActualAddress" ref="ipActualAddress"/>
-        <property name="userDao" ref="userDao"/>
+        <property name="userLastLoginService" ref="lastLoginService"/>
     </bean>
 
     <tx:advice id="ipTxAdvice" transaction-manager="transactionManager">
@@ -51,11 +55,8 @@
         </tx:attributes>
     </tx:advice>
 
-    <!--
-    fixme 这里貌似相当不好, 跨层添加事务, 可能导致那一层产生的莫名的bug. 当然, 由于类中使用的本来就是类本身, 而不是接口, 所以这里应该就不算是暴漏实现类了吧, 反正在类里已经暴漏过了...可是, 如果单独建一个类封装的就太狠了吧: 就像 UpdateUserLastLogin 类
-    -->
     <aop:config>
-        <aop:advisor advice-ref="ipTxAdvice" pointcut="execution(* git.lbk.questionnaire.dao.impl.UserDaoImpl.updateLastLoginInfo(..))" />
+        <aop:advisor advice-ref="ipTxAdvice" pointcut="execution(* git.lbk.questionnaire.ipAddress.AddressMessageService.*(..))" />
     </aop:config>
 
 </beans>
