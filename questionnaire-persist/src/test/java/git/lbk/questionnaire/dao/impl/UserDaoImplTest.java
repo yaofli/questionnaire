@@ -17,11 +17,11 @@
 package git.lbk.questionnaire.dao.impl;
 
 import git.lbk.questionnaire.entity.User;
-import org.hibernate.hql.internal.ast.QuerySyntaxException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate4.HibernateQueryException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -176,9 +176,9 @@ public class UserDaoImplTest {
 		userDao.updateEntity(user);
 	}
 
-	@Test(expected = QuerySyntaxException.class)
+	@Test(expected = HibernateQueryException.class)
 	public void testUpdateEntityByHQLError() throws Exception {
-		String hql = "update user u set u.name = ? where u.id = ?";
+		String hql = "update user u set u.name = ? where u.id = ?"; // User 写成了 user
 		userDao.updateEntityByHQL(hql, user.getName(), user.getId());
 	}
 
