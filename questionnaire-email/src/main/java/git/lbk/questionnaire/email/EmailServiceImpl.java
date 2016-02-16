@@ -19,7 +19,7 @@ package git.lbk.questionnaire.email;
 import git.lbk.questionnaire.dao.impl.EmailValidateDaoImpl;
 import git.lbk.questionnaire.entity.EmailValidate;
 import git.lbk.questionnaire.entity.User;
-import git.lbk.questionnaire.security.MessageDigestUtil;
+import git.lbk.questionnaire.util.MessageDigestUtil;
 import git.lbk.questionnaire.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

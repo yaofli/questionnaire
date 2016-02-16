@@ -17,6 +17,7 @@
 package git.lbk.questionnaire.dao.impl;
 
 import git.lbk.questionnaire.entity.User;
+import git.lbk.questionnaire.util.ORMUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,10 +60,9 @@ public class UserDaoImplTest {
 		user.setRegisterTime(dateFormat.parse("2014-02-06 22:08:30"));
 	}
 
-	// 由于事务是加在Dao上的, 离开Dao的loadEntity方法时就会关闭session, 导致LazyInitializationException异常,
-	// 所以无法测试LoadEntity方法, 因此只能测试getEntity方法
 	@Test
 	public void testLoadEntity() throws Exception {
+		assertFalse("load方法懒加载失效", ORMUtil.isInitialized(userDao.loadEntity(user.getId())));
 	}
 
 	@Test

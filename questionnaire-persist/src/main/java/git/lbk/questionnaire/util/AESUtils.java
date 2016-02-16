@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 LBK
+ * Copyright 2016 LBK
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package git.lbk.questionnaire.security;
+package git.lbk.questionnaire.util;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;

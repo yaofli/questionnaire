@@ -16,12 +16,17 @@
 
 package git.lbk.questionnaire.entity;
 
+import git.lbk.questionnaire.util.ORMUtil;
+
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * 问卷调查答题记录
  */
-public class Answer {
+public class Answer implements Serializable{
+	private static final long serialVersionUID = -8456675848535563837L;
+
 	private Integer id;
 	private Survey survey;
 	private Date answerTime;
@@ -93,10 +98,10 @@ public class Answer {
 	public String toString() {
 		return "Answer{" +
 				"id=" + id +
+				", survey=" + ORMUtil.toString(survey) +
 				", answerTime=" + answerTime +
 				", ip='" + ip + '\'' +
 				", answer='" + answer + '\'' +
 				'}';
 	}
-
 }

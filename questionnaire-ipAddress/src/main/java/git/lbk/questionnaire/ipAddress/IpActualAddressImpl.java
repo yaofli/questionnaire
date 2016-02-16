@@ -136,10 +136,10 @@ public class IpActualAddressImpl implements IpActualAddress {
 
 		StringBuilder stringBuilder = new StringBuilder();
 		Map<String, String> retData = (Map<String, String>) map.get("retData");
-		stringBuilder.append(deleteUnknowData(retData.get(COUNTRY)));
-		stringBuilder.append(deleteUnknowData(retData.get(PROVINCE)));
-		stringBuilder.append(deleteUnknowData(retData.get(CITY)));
-		stringBuilder.append(deleteUnknowData(retData.get(CARRIER)));
+		stringBuilder.append(filterUnknownData(retData.get(COUNTRY)));
+		stringBuilder.append(filterUnknownData(retData.get(PROVINCE)));
+		stringBuilder.append(filterUnknownData(retData.get(CITY)));
+		stringBuilder.append(filterUnknownData(retData.get(CARRIER)));
 		return stringBuilder.toString();
 	}
 
@@ -149,11 +149,18 @@ public class IpActualAddressImpl implements IpActualAddress {
 	 * @param str 需要处理的字符串
 	 * @return 处理过的字符串
 	 */
-	private String deleteUnknowData(String str) {
+	private String filterUnknownData(String str) {
 		if(unknownData.contains(str)) {
 			return "";
 		}
 		return str;
 	}
 
+	@Override
+	public String toString() {
+		return "IpActualAddressImpl{" +
+				"httpUrl='" + httpUrl + '\'' +
+				", unknownData=" + unknownData +
+				'}';
+	}
 }

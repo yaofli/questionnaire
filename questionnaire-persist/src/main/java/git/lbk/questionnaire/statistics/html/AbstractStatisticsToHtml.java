@@ -48,4 +48,12 @@ public abstract class AbstractStatisticsToHtml implements StatisticsToHtml {
 	}
 
 	protected abstract String getContent();
+
+	@Override
+	public String toString() {
+		return "AbstractStatisticsToHtml{" +
+				"questionStatistics=" + questionStatistics +
+				'}';
+	}
+
 }

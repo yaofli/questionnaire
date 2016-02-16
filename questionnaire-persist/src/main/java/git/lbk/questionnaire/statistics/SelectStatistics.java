@@ -123,4 +123,11 @@ public class SelectStatistics extends AbstractQuestionStatistics<SelectQuestion>
 		addAnswerCount(msqa.getAnswer());
 	}
 
+	@Override
+	public String toString() {
+		return "SelectStatistics{" +
+				"answerCounts=" + answerCounts +
+				", optionNumber=" + optionNumber +
+				"} " + super.toString();
+	}
 }

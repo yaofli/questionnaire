@@ -18,6 +18,7 @@ package git.lbk.questionnaire.statistics;
 
 import git.lbk.questionnaire.answer.QuestionAnswer;
 import git.lbk.questionnaire.entity.question.Question;
+import git.lbk.questionnaire.util.ORMUtil;
 
 /**
  * 实现了部分统计功能, 并增加了
@@ -112,4 +113,12 @@ public abstract class AbstractQuestionStatistics<T extends Question> implements 
 	 */
 	protected abstract void addAnswerMessage(QuestionAnswer questionAnswer);
 
+	@Override
+	public String toString() {
+		return "AbstractQuestionStatistics{" +
+				"question=" + ORMUtil.toString(question) +
+				", noneAnswerCount=" + noneAnswerCount +
+				", answerPeopleCount=" + answerPeopleCount +
+				'}';
+	}
 }

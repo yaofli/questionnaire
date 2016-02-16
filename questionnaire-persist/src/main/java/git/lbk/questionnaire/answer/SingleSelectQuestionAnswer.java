@@ -60,4 +60,11 @@ public class SingleSelectQuestionAnswer extends AbstractQuestionAnswer<SingleSel
 		int optionsNumber = getQuestion().getOptions().size();
 		return (answer >= 0 && answer < optionsNumber);
 	}
+
+	@Override
+	public String toString() {
+		return "SingleSelectQuestionAnswer{" +
+				"answer=" + answer +
+				"} " + super.toString();
+	}
 }

@@ -16,7 +16,10 @@
 
 package git.lbk.questionnaire.entity.question;
 
-public class SingleSelectQuestion extends SelectQuestion {
+import java.io.Serializable;
+
+public class SingleSelectQuestion extends SelectQuestion implements Serializable {
+	private static final long serialVersionUID = -6968800611135101481L;
 
 	public static final String TYPE = "radio";
 

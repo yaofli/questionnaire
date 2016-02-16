@@ -52,7 +52,7 @@ public class SelectStatisticsToHtml extends AbstractStatisticsToHtml {
 
 	private static final NumberFormat PERCENT_FORMAT = NumberFormat.getPercentInstance();
 
-	SelectStatistics selectStatistics;
+	private SelectStatistics selectStatistics;
 
 	@Override
 	protected String getContent() {
@@ -91,4 +91,8 @@ public class SelectStatisticsToHtml extends AbstractStatisticsToHtml {
 				.replace(PERCENTAGE_PLACEHOLDER, "");
 	}
 
+	@Override
+	public String toString() {
+		return "SelectStatisticsToHtml{} " + super.toString();
+	}
 }

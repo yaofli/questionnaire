@@ -62,4 +62,11 @@ public class MultiplySelectionQuestAnswer extends AbstractQuestionAnswer<Multipl
 		int questionNumber = getQuestion().getOptions().size();
 		return !answer.stream().anyMatch(sel -> sel<0 || sel>=questionNumber);
 	}
+
+	@Override
+	public String toString() {
+		return "MultiplySelectionQuestAnswer{" +
+				"answer=" + answer +
+				"} " + super.toString();
+	}
 }

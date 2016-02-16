@@ -19,14 +19,18 @@ package git.lbk.questionnaire.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import git.lbk.questionnaire.util.ORMUtil;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * 一个完整的问卷调查
  */
-public class Survey {
+public class Survey implements Serializable{
+
+	private static final long serialVersionUID = 5173875894602974070L;
 
 	/**
 	 * 正常状态
@@ -234,6 +238,7 @@ public class Survey {
 				", modifyTime=" + modifyTime +
 				", pageCount=" + pageCount +
 				", status=" + status +
+				", pages=" + ORMUtil.toString(pages) +
 				'}';
 	}
 }

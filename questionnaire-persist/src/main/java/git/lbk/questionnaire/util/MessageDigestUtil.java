@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 LBK
+ * Copyright 2016 LBK
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package git.lbk.questionnaire.security;
-
-import git.lbk.questionnaire.util.StringUtil;
+package git.lbk.questionnaire.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

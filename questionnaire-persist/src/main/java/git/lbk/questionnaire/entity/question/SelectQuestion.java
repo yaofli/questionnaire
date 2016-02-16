@@ -16,9 +16,12 @@
 
 package git.lbk.questionnaire.entity.question;
 
+import java.io.Serializable;
 import java.util.*;
 
-public abstract class SelectQuestion extends Question {
+public abstract class SelectQuestion extends Question implements Serializable{
+
+	private static final long serialVersionUID = 8879537660226786275L;
 
 	private List<Option> options;
 	private Integer style;

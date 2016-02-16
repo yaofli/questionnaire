@@ -21,7 +21,7 @@ import git.lbk.questionnaire.email.EmailService;
 import git.lbk.questionnaire.entity.EmailValidate;
 import git.lbk.questionnaire.entity.User;
 import git.lbk.questionnaire.ipAddress.IpActualAddressService;
-import git.lbk.questionnaire.security.MessageDigestUtil;
+import git.lbk.questionnaire.util.MessageDigestUtil;
 import git.lbk.questionnaire.service.UserService;
 
 import java.security.SecureRandom;

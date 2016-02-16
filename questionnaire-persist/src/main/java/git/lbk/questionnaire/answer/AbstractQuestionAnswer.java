@@ -72,4 +72,12 @@ public abstract class AbstractQuestionAnswer<T extends Question> implements Ques
 	 */
 	protected abstract boolean validateRequiredAnswer();
 
+	@Override
+	public String toString() {
+		return "AbstractQuestionAnswer{" +
+				"number=" + number +
+				", question=" + question +
+				'}';
+	}
+
 }

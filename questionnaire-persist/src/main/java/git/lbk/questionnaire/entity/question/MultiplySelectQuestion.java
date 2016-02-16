@@ -16,7 +16,10 @@
 
 package git.lbk.questionnaire.entity.question;
 
-public class MultiplySelectQuestion extends SelectQuestion {
+import java.io.Serializable;
+
+public class MultiplySelectQuestion extends SelectQuestion implements Serializable {
+	private static final long serialVersionUID = 7369115188235720048L;
 
 	public static final String TYPE = "checkbox";
 

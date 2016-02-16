@@ -27,7 +27,6 @@ import java.util.*;
 
 public class QuestionAnswerFactory {
 
-
 	/**
 	 * 获得哨兵答案
 	 *

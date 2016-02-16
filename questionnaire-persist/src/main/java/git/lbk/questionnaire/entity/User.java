@@ -216,10 +216,10 @@ public class User implements Serializable{
 				", name='" + name + '\'' +
 				", password='" + password + '\'' +
 				", autoLogin='" + autoLogin + '\'' +
-				", telephone='" + mobile + '\'' +
+				", mobile='" + mobile + '\'' +
 				", email='" + email + '\'' +
 				", status=" + status +
-				", type='" + type + '\'' +
+				", type=" + type +
 				", registerTime=" + registerTime +
 				", lastLoginTime=" + lastLoginTime +
 				", lastLoginAddress='" + lastLoginAddress + '\'' +

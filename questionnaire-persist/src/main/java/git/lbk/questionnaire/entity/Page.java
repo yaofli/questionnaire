@@ -20,15 +20,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import git.lbk.questionnaire.entity.question.Question;
+import git.lbk.questionnaire.util.ORMUtil;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * 问卷调查的一个页面
  */
-public class Page {
+public class Page implements Serializable{
+
+	private static final long serialVersionUID = -133004759094398853L;
 
 	private Integer id;
 	@NotNull
@@ -125,13 +129,13 @@ public class Page {
 	}
 
 	@Override
-	public String
-	toString() {
+	public String toString() {
 		return "Page{" +
 				"id=" + id +
 				", title='" + title + '\'' +
-				", question='" + questions + '\'' +
+				", questions=" + questions +
 				", rank=" + rank +
+				", survey=" + ORMUtil.toString(survey) +
 				'}';
 	}
 }

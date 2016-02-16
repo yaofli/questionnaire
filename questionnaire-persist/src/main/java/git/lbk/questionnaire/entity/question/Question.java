@@ -19,6 +19,8 @@ package git.lbk.questionnaire.entity.question;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import java.io.Serializable;
+
 /**
  * 所有调查问题的公共父类, 包含公有的属性
  */
@@ -28,7 +30,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 		@JsonSubTypes.Type(value = SingleSelectQuestion.class, name = SingleSelectQuestion.TYPE),
 		@JsonSubTypes.Type(value = MultiplySelectQuestion.class, name = MultiplySelectQuestion.TYPE)
 })
-public abstract class Question {
+public abstract class Question implements Serializable {
+
+	private static final long serialVersionUID = -2432519629118327310L;
 
 	private boolean required;
 	private String title;
