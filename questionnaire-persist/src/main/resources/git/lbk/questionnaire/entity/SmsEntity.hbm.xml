@@ -21,10 +21,13 @@
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
-    <class name="git.lbk.questionnaire.entity.SmsCount" table="sms_count">
-        <id name="identity" column="identity" type="java.lang.String">
-            <generator class="assigned"/>
+    <class name="git.lbk.questionnaire.entity.SmsEntity" table="sms">
+        <id name="id" column="id">
+            <generator class="native"/>
         </id>
-        <property name="count" column="count" type="java.lang.Integer"/>
+        <property name="mobile" column="mobile"/>
+        <property name="ip" column="ip"/>
+        <property name="type" column="type"/>
+        <property name="time" column="time"/>
     </class>
 </hibernate-mapping>

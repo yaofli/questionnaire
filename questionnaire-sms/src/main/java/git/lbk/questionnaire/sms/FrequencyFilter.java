@@ -16,6 +16,7 @@
 
 package git.lbk.questionnaire.sms;
 
+import git.lbk.questionnaire.entity.SmsEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,8 +98,8 @@ public class FrequencyFilter implements SmsFilter {
 	}
 
 	@Override
-	public void filter(SmsMessage smsMessage) throws SendSmsFailException {
-		if(setSendTime(smsMessage.getMobile()) && setSendTime(smsMessage.getIp())){
+	public void filter(SmsEntity smsEntity) throws SendSmsFailException {
+		if(setSendTime(smsEntity.getMobile()) && setSendTime(smsEntity.getIp())){
 			return;
 		}
 		throw new FrequentlyException("发送短信过于频繁");

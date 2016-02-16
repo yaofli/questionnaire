@@ -16,6 +16,8 @@
 
 package git.lbk.questionnaire.sms;
 
+import git.lbk.questionnaire.entity.SmsEntity;
+
 /**
  * 该接口提供最终的发送短信服务.
  * 可以使用模板发送短信
@@ -29,9 +31,9 @@ public interface SmsService {
 
 	/**
 	 * 发送验证码
-	 * @param smsMessage 发送短信的基本数据
+	 * @param smsEntity 发送短信的基本数据
 	 * @throws SendSmsFailException 发送失败时抛出该异常, 比如过于频繁, 发送次数过多等.
 	 */
-	void sendCaptcha(SmsMessage smsMessage)
+	void sendCaptcha(SmsEntity smsEntity)
 			throws SendSmsFailException;
 }

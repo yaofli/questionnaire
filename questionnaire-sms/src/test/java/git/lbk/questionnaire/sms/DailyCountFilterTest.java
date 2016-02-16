@@ -16,8 +16,8 @@
 
 package git.lbk.questionnaire.sms;
 
-import git.lbk.questionnaire.dao.impl.SmsCountDaoImpl;
-import git.lbk.questionnaire.entity.SmsCount;
+import git.lbk.questionnaire.dao.impl.SmsEntityDaoImpl;
+import git.lbk.questionnaire.entity.SmsEntity;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,60 +32,44 @@ public class DailyCountFilterTest {
 
 	@Autowired
 	private DailyCountFilter dailyCountFilter;
-	private SmsCountDaoImpl smsCountDao;
-	private SmsMessage smsMessage;
+	private SmsEntityDaoImpl smsCountDao;
+	private SmsEntity smsEntity;
 
 	@Before
 	public void setUp() throws Exception {
-		smsCountDao = EasyMock.createMock(SmsCountDaoImpl.class);
+		smsCountDao = EasyMock.createMock(SmsEntityDaoImpl.class);
 		dailyCountFilter.setSmsDao(smsCountDao);
-		smsMessage = new SmsMessage();
-		smsMessage.setIp("127.0.0.1");
-		smsMessage.setMobile("12345678901");
+		smsEntity = new SmsEntity("12345678901", "127.0.0.1", SmsEntity.REGISTER_TYPE);
 	}
 
 	@Test
 	public void testSendMessage() throws Exception {
-		String mobile = smsMessage.getMobile();
-		String ip = smsMessage.getIp();
-		EasyMock.expect(smsCountDao.getEntity(mobile)).andReturn(createSmsCount(mobile, 1));
-		smsCountDao.saveEntity(createSmsCount(mobile, 2));
-		EasyMock.expect(smsCountDao.getEntity(ip)).andReturn(createSmsCount(ip, 5));
-		smsCountDao.saveEntity(createSmsCount(ip, 6));
+		EasyMock.expect(smsCountDao.getMobileCount(smsEntity.getMobile())).andReturn(1L);
+		EasyMock.expect(smsCountDao.getIPCount(smsEntity.getIp())).andReturn(5L);
+		smsCountDao.saveEntity(EasyMock.anyObject());
 
 		EasyMock.replay(smsCountDao);
 
-		dailyCountFilter.filter(smsMessage);
+		dailyCountFilter.filter(smsEntity);
 	}
 
 	@Test(expected = DailySendMuchException.class)
 	public void testSendMessageMobileMany() throws Exception {
-		String mobile = smsMessage.getMobile();
-		EasyMock.expect(smsCountDao.getEntity(mobile)).andReturn(createSmsCount(mobile, 3));
+		EasyMock.expect(smsCountDao.getMobileCount(smsEntity.getMobile())).andReturn(3L);
 
 		EasyMock.replay(smsCountDao);
 
-		dailyCountFilter.filter(smsMessage);
+		dailyCountFilter.filter(smsEntity);
 	}
 
 	@Test(expected = DailySendMuchException.class)
 	public void testSendMessageIPMany() throws Exception {
-		String mobile = smsMessage.getMobile();
-		String ip = smsMessage.getIp();
-		EasyMock.expect(smsCountDao.getEntity(mobile)).andReturn(createSmsCount(mobile, 1));
-		smsCountDao.saveEntity(createSmsCount(mobile, 2));
-		EasyMock.expect(smsCountDao.getEntity(ip)).andReturn(createSmsCount(ip, 11));
+		EasyMock.expect(smsCountDao.getMobileCount(smsEntity.getMobile())).andReturn(1L);
+		EasyMock.expect(smsCountDao.getIPCount(smsEntity.getIp())).andReturn(11L);
 
 		EasyMock.replay(smsCountDao);
 
-		dailyCountFilter.filter(smsMessage);
-	}
-
-	private SmsCount createSmsCount(String identity, int count) {
-		SmsCount smsCount = new SmsCount();
-		smsCount.setIdentity(identity);
-		smsCount.setCount(count);
-		return smsCount;
+		dailyCountFilter.filter(smsEntity);
 	}
 
 }

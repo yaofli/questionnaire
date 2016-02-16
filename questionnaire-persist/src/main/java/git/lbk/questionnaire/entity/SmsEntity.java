@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 LBK
+ * Copyright 2015 LBK
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,36 +14,55 @@
  * limitations under the License.
  */
 
-package git.lbk.questionnaire.sms;
+package git.lbk.questionnaire.entity;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
+import java.util.*;
 
 /**
- * 短信内容
+ * 包含手机验证码发送次数的model, 其中identity表示发送手机验证码的标示, 可以为客户IP 或者 手机号.
  */
-public class SmsMessage {
+public class SmsEntity implements Serializable{
 
-	public final static String REGISTER = "reg";
+	private static final long serialVersionUID = -38794093210096359L;
+
+	/**
+	 * 注册类型
+	 */
+	public static final Integer REGISTER_TYPE = 0;
+
+	private Integer id;
 
 	@Pattern(regexp = "\\d{11}")
 	private String mobile;
 
 	private String ip;
-
 	@NotNull
-	private String type;
+	private Integer type;
+
+	private Date time;
 
 	private String captcha;
 
-	public SmsMessage() {
+	public SmsEntity() {
+		time = new Date();
 	}
 
-	public SmsMessage(String mobile, String ip, String userName, String type, String captcha) {
+	public SmsEntity(String mobile, String ip, Integer type) {
+		this();
 		this.mobile = mobile;
 		this.ip = ip;
 		this.type = type;
-		this.captcha = captcha;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public String getMobile() {
@@ -58,16 +77,24 @@ public class SmsMessage {
 		return ip;
 	}
 
-	public void setIp(String ip) {
-		this.ip = ip;
+	public void setIp(String identity) {
+		this.ip = identity;
 	}
 
-	public String getType() {
+	public Integer getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(Integer type) {
 		this.type = type;
+	}
+
+	public Date getTime() {
+		return time;
+	}
+
+	public void setTime(Date time) {
+		this.time = time;
 	}
 
 	public String getCaptcha() {
@@ -83,31 +110,28 @@ public class SmsMessage {
 		if(this == o) return true;
 		if(o == null || getClass() != o.getClass()) return false;
 
-		SmsMessage that = (SmsMessage) o;
+		SmsEntity smsEntity = (SmsEntity) o;
 
-		if(mobile != null ? !mobile.equals(that.mobile) : that.mobile != null) return false;
-		if(ip != null ? !ip.equals(that.ip) : that.ip != null) return false;
-		if(type != null ? !type.equals(that.type) : that.type != null) return false;
-		return !(captcha != null ? !captcha.equals(that.captcha) : that.captcha != null);
+		if(ip != null ? !ip.equals(smsEntity.ip) : smsEntity.ip != null) return false;
+		if(type != null ? !type.equals(smsEntity.type) : smsEntity.type != null) return false;
+		return !(time != null ? !time.equals(smsEntity.time) : smsEntity.time != null);
 
 	}
 
 	@Override
 	public int hashCode() {
-		int result = mobile != null ? mobile.hashCode() : 0;
-		result = 31 * result + (ip != null ? ip.hashCode() : 0);
+		int result = ip != null ? ip.hashCode() : 0;
 		result = 31 * result + (type != null ? type.hashCode() : 0);
-		result = 31 * result + (captcha != null ? captcha.hashCode() : 0);
+		result = 31 * result + (time != null ? time.hashCode() : 0);
 		return result;
 	}
 
 	@Override
 	public String toString() {
-		return "SmsMessage{" +
-				"mobile='" + mobile + '\'' +
-				", ip='" + ip + '\'' +
-				", type='" + type + '\'' +
-				", captcha='" + captcha + '\'' +
+		return "SmsEntity{" +
+				"identity='" + ip + '\'' +
+				", type=" + type +
+				", time=" + time +
 				'}';
 	}
 }

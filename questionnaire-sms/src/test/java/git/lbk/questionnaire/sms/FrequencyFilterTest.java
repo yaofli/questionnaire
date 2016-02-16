@@ -16,6 +16,7 @@
 
 package git.lbk.questionnaire.sms;
 
+import git.lbk.questionnaire.entity.SmsEntity;
 import git.lbk.questionnaire.util.DateUtil;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -75,13 +76,11 @@ public class FrequencyFilterTest {
 		private final Random random = new Random();
 		private AtomicInteger sendNum = new AtomicInteger();
 		private final long sendInterval;
-		private SmsMessage smsMessage;
+		private SmsEntity smsEntity;
 
 		public UserSendSms(int identifier) {
 			sendInterval = frequencyFilter.getSendInterval() + 100;
-			smsMessage = new SmsMessage();
-			smsMessage.setIp(identifier + "." + identifier);
-			smsMessage.setMobile(identifier + "");
+			smsEntity = new SmsEntity(identifier+"", identifier+"."+identifier, SmsEntity.REGISTER_TYPE);
 		}
 
 		@Override
@@ -119,7 +118,7 @@ public class FrequencyFilterTest {
 
 		private boolean sendSms(long lastSendTime) throws InterruptedException {
 			try {
-				frequencyFilter.filter(smsMessage);
+				frequencyFilter.filter(smsEntity);
 				sendNum.getAndIncrement();
 			}
 			catch(FrequentlyException e) {
@@ -140,8 +139,8 @@ public class FrequencyFilterTest {
 			return sendNum.get();
 		}
 
-		public SmsMessage getSmsMessage() {
-			return smsMessage;
+		public SmsEntity getSmsEntity() {
+			return smsEntity;
 		}
 	}
 }

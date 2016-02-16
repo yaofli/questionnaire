@@ -16,7 +16,7 @@
 
 package git.lbk.questionnaire.springmvc.controller;
 
-import git.lbk.questionnaire.sms.SmsMessage;
+import git.lbk.questionnaire.entity.SmsEntity;
 import git.lbk.questionnaire.sms.FrequentlyException;
 import git.lbk.questionnaire.sms.DailySendMuchException;
 import git.lbk.questionnaire.sms.SmsService;
@@ -59,7 +59,7 @@ public class SmsCaptchaController {
 	/**
 	 * 发送手机短信验证码
 	 * @param request 请求对象
-	 * @param smsMessage 包含 手机号 和 验证码类型 的请求参数
+	 * @param smsEntity 包含 手机号 和 验证码类型 的请求参数
 	 * @param error 错误对象
 	 * @return 返回值中key"status"对应着结果状态:
 	 * <ul>
@@ -73,7 +73,7 @@ public class SmsCaptchaController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "", method = RequestMethod.GET)
-	public Map<String, Object> sendCaptcha(HttpServletRequest request, @Valid SmsMessage smsMessage,
+	public Map<String, Object> sendCaptcha(HttpServletRequest request, @Valid SmsEntity smsEntity,
 	                                   BindingResult error) {
 		Map<String, Object> map = new HashMap<>();
 		if(error.hasErrors()){
@@ -85,12 +85,12 @@ public class SmsCaptchaController {
 			map.put("status", "captcha error");
 			return map;
 		}
-		smsMessage.setIp(NetUtil.getRealIP(request));
-		smsMessage.setCaptcha(textProducer.getText());
-		request.getSession().setAttribute(SESSION_KEY, smsMessage.getCaptcha());
+		smsEntity.setIp(NetUtil.getRealIP(request));
+		smsEntity.setCaptcha(textProducer.getText());
+		request.getSession().setAttribute(SESSION_KEY, smsEntity.getCaptcha());
 
 		try {
-			smsService.sendCaptcha(smsMessage);
+			smsService.sendCaptcha(smsEntity);
 			map.put("status", "success");
 		}
 		catch(FrequentlyException ex){

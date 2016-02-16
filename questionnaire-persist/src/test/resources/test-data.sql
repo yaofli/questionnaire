@@ -23,14 +23,12 @@ VALUES
   ('15', 1, '2015-11-21 20:50:12', 'reg'),
   ('16', 1, '2015-11-23 23:32:12', 'reg');
 
-INSERT INTO sms_count(identity, count)
+INSERT INTO sms (mobile, ip, type, time)
 VALUES
-  ('1', 1),
-  ('2', 2),
-  ('3', 3),
-  ('4', 4),
-  ('5', 5),
-  ('6', 6);
+  ('12345678901', '127.0.0.1', 1, now()),
+  ('12345678901', '127.0.0.2', 1, now()),
+  ('12345678902', '127.0.0.3', 1, now()),
+  ('12345678901', '127.0.0.1', 1, now());
 
 INSERT INTO survey(user_id, title, create_time, modify_time, page_count, survey_status)
 VALUES

@@ -16,8 +16,8 @@
 
 package git.lbk.questionnaire.sms;
 
-import git.lbk.questionnaire.dao.impl.SmsCountDaoImpl;
-import git.lbk.questionnaire.entity.SmsCount;
+import git.lbk.questionnaire.dao.impl.SmsEntityDaoImpl;
+import git.lbk.questionnaire.entity.SmsEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +27,7 @@ public class DailyCountFilter implements SmsFilter {
 
 	private volatile int ipDailyMaxSendCount;
 	private volatile int mobileDailyMaxSendCount;
-	private SmsCountDaoImpl smsDao;
+	private SmsEntityDaoImpl smsDao;
 
 	public void setIpDailyMaxSendCount(int ipDailyMaxSendCount) {
 		this.ipDailyMaxSendCount = ipDailyMaxSendCount;
@@ -37,7 +37,7 @@ public class DailyCountFilter implements SmsFilter {
 		this.mobileDailyMaxSendCount = mobileDailyMaxSendCount;
 	}
 
-	public void setSmsDao(SmsCountDaoImpl smsDao) {
+	public void setSmsDao(SmsEntityDaoImpl smsDao) {
 		this.smsDao = smsDao;
 	}
 
@@ -46,36 +46,17 @@ public class DailyCountFilter implements SmsFilter {
 	}
 
 	@Override
-	public void filter(SmsMessage smsMessage) throws SendSmsFailException {
-		if( addSendCount(smsMessage.getMobile(), mobileDailyMaxSendCount)
-				&& addSendCount(smsMessage.getIp(), ipDailyMaxSendCount) ){
-			return;
+	public void filter(SmsEntity smsMessage) throws SendSmsFailException {
+		String mobile = smsMessage.getMobile();
+		String ip = smsMessage.getIp();
+		if(smsDao.getMobileCount(mobile) >= mobileDailyMaxSendCount) {
+			throw new DailySendMuchException("发送次数超过了日发送次数");
 		}
-		throw new DailySendMuchException("发送次数超过了日发送次数");
-	}
-
-	/**
-	 * 增加发送次数. 如果发送次数小于maxCount, 则增加发送次数. 否则不修改任何东西
-	 *
-	 * @param identity 标识符, 用于获取/修改发送计数
-	 * @param maxCount 最大的发送次数
-	 * @return 如果修改成功, 则返回true. 否则返回false
-	 */
-	private boolean addSendCount(String identity, int maxCount) {
-		SmsCount smsCount = smsDao.getEntity(identity);
-		if(smsCount == null) {
-			smsCount = new SmsCount();
-			smsCount.setIdentity(identity);
-			smsCount.setCount(1);
-			smsDao.saveEntity(smsCount);
-			return true;
+		if(smsDao.getIPCount(ip) >= ipDailyMaxSendCount) {
+			throw new DailySendMuchException("发送次数超过了日发送次数");
 		}
-		if(smsCount.getCount() < maxCount) {
-			smsCount.setCount(smsCount.getCount() + 1);
-			smsDao.saveEntity(smsCount);
-			return true;
-		}
-		return false;
+		SmsEntity smsEntity = new SmsEntity(mobile, ip, smsMessage.getType());
+		smsDao.saveEntity(smsEntity);
 	}
 
 	@Override
@@ -93,7 +74,7 @@ public class DailyCountFilter implements SmsFilter {
 
 	/* 测试时使用的方法 */
 
-	SmsCountDaoImpl getSmsDao() {
+	SmsEntityDaoImpl getSmsDao() {
 		return smsDao;
 	}
 

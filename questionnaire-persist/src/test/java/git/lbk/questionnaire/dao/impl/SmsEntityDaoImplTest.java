@@ -16,36 +16,47 @@
 
 package git.lbk.questionnaire.dao.impl;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:questionnaire-persistTest.xml")
-public class SmsCountDaoImplTest {
+public class SmsEntityDaoImplTest {
 
 	@Autowired
-	private SmsCountDaoImpl smsCountDao;
+	private SmsEntityDaoImpl smsCountDao;
 
 	@Test
+	public void testGetMobileCount(){
+		assertEquals(3, smsCountDao.getMobileCount("12345678901"));
+		assertEquals(0, smsCountDao.getMobileCount("12345678903"));
+	}
+
+	@Test
+	public void testGetIPCount(){
+		assertEquals(2, smsCountDao.getIPCount("127.0.0.1"));
+		assertEquals(0, smsCountDao.getIPCount("127.0.0.5"));
+	}
+
+	@Ignore("会毁坏测试数据, 修改表结构时在测试")
+	@Test
 	public void testTruncate() throws Exception {
-		assertNotNull(smsCountDao.getEntity("1"));
-		assertNotNull(smsCountDao.getEntity("2"));
-		assertNotNull(smsCountDao.getEntity("3"));
-		assertNotNull(smsCountDao.getEntity("4"));
-		assertNotNull(smsCountDao.getEntity("5"));
-		assertNotNull(smsCountDao.getEntity("6"));
+		assertNotNull(smsCountDao.getEntity(1));
+		assertNotNull(smsCountDao.getEntity(2));
+		assertNotNull(smsCountDao.getEntity(3));
+		assertNotNull(smsCountDao.getEntity(4));
 		smsCountDao.truncate();
-		assertNull(smsCountDao.getEntity("1"));
-		assertNull(smsCountDao.getEntity("2"));
-		assertNull(smsCountDao.getEntity("3"));
-		assertNull(smsCountDao.getEntity("4"));
-		assertNull(smsCountDao.getEntity("5"));
-		assertNull(smsCountDao.getEntity("6"));
+		assertNull(smsCountDao.getEntity(1));
+		assertNull(smsCountDao.getEntity(2));
+		assertNull(smsCountDao.getEntity(3));
+		assertNull(smsCountDao.getEntity(4));
 	}
 }
