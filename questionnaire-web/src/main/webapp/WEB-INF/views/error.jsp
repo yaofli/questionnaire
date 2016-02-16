@@ -48,7 +48,9 @@
 <body>
 <jsp:include page="templet/header.jsp"/>
 
-错误页
+<div>
+    <p class="am-text-center am-text-xl">发生错误了, 我们正在尽力修复...</p>
+</div>
 
 <jsp:include page="templet/footer.jsp"/>
 </body>

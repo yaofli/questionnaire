@@ -25,7 +25,7 @@ import org.springframework.mail.javamail.JavaMailSender;
  */
 public class AsyncEmailImpl implements Email {
 
-	// fixme 像这样使用Spring封装的异步模块合适呢? 还是直接使用JDK的合适呢(sms模块)? JDK的更原生, 减少对其他类库的依赖, 而Spring的可配置性实现起来貌似更简单...
+	// fixme 像这样使用Spring封装的异步模块合适呢? 还是直接使用JDK的合适呢(sms模块)? JDK对其他类库的依赖更小, 而Spring的可配置性实现起来貌似更简单...
 	private TaskExecutor taskExecutor;
 	private Email sendMail;
 

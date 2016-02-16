@@ -26,7 +26,6 @@ import java.util.*;
 
 /**
  * 需要注入的参数通过mock创建并注入, 所以不需要使用SpringJUnit4ClassRunner
- * fixme 这里同样只测试了单线程的情况, 没有测试多线程下的执行情况
  */
 public class IpActualAddressServiceImplTest {
 
