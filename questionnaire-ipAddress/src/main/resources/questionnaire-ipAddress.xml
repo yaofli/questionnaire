@@ -48,14 +48,4 @@
         <property name="userLastLoginService" ref="lastLoginService"/>
     </bean>
 
-    <tx:advice id="ipTxAdvice" transaction-manager="transactionManager">
-        <tx:attributes>
-            <tx:method name="*" propagation="REQUIRED" isolation="DEFAULT"/>
-        </tx:attributes>
-    </tx:advice>
-
-    <aop:config>
-        <aop:advisor advice-ref="ipTxAdvice" pointcut="execution(* git.lbk.questionnaire.ipAddress.AddressMessageService.*(..))" />
-    </aop:config>
-
 </beans>

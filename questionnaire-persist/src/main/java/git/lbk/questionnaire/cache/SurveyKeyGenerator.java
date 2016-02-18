@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 LBK
+ * Copyright 2016 LBK
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package git.lbk.questionnaire.dao.impl;
+package git.lbk.questionnaire.cache;
 
-import git.lbk.questionnaire.entity.Page;
-import org.springframework.stereotype.Repository;
+import git.lbk.questionnaire.util.StringUtil;
+import org.springframework.cache.interceptor.KeyGenerator;
 
-@Repository("pageDao")
-public class PageDaoImpl extends BaseDaoImpl<Page> {
+import java.lang.reflect.Method;
 
-	/**
-	 * 删除一个调查问卷的所有页面
-	 * @param surveyId 调查问卷id
-	 */
-	public void deletePageBySurveyId(Integer surveyId){
-		String hql = "delete Page p where p.survey.id=?";
-		updateEntityByHQL(hql, surveyId);
+public class SurveyKeyGenerator implements KeyGenerator {
+
+	@Override
+	public Object generate(Object target, Method method, Object... params) {
+		return target.getClass().getSimpleName()
+				+ "@" + target.hashCode()
+				+ "." + method.getName()
+				+ "(" + StringUtil.join(",", params) + ")";
 	}
 
 }

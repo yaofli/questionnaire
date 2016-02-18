@@ -46,16 +46,6 @@ public interface BaseDao<T> {
 	void deleteEntity(T t);
 
 	//读操作
-
-	/**
-	 * 根据id加载实体
-	 * @param id 实体id
-	 * @return 匹配的实体代理, 可能存在延迟加载.
-	 *          如果使用了延迟加载, 在使用时发现没有匹配的实体, 则抛出异常.
-	 *          在使用之前如果session已经关闭, 则会抛出LazyLoadException异常
-	 */
-	T loadEntity(Serializable id);
-
 	/**
 	 * 根据id获得实体
 	 * @param id 实体id

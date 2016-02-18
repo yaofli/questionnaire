@@ -89,17 +89,6 @@ public class SurveyServiceImpl implements SurveyService {
 	}
 
 	/**
-	 * 获取某个调查问卷的所有页面
-	 *
-	 * @param surveyId 调查问卷id
-	 * @return 该调查问卷的所有页面
-	 */
-	@Override
-	public List<Page> getPageBySurveyId(Integer surveyId) {
-		return pageDao.getPagesBySurveyId(surveyId);
-	}
-
-	/**
 	 * 创建一个调查问卷
 	 *
 	 * @param survey 调查问卷的基本信息

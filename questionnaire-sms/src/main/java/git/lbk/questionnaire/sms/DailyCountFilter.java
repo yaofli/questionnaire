@@ -20,6 +20,7 @@ import git.lbk.questionnaire.dao.impl.SmsEntityDaoImpl;
 import git.lbk.questionnaire.entity.SmsEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 public class DailyCountFilter implements SmsFilter {
 
@@ -42,10 +43,10 @@ public class DailyCountFilter implements SmsFilter {
 	}
 
 	@Override
-	public void init() {
-	}
+	public void init() {}
 
 	@Override
+	@Transactional
 	public void filter(SmsEntity smsMessage) throws SendSmsFailException {
 		String mobile = smsMessage.getMobile();
 		String ip = smsMessage.getIp();
@@ -65,25 +66,13 @@ public class DailyCountFilter implements SmsFilter {
 	}
 
 	/**
-	 * 清空发送短信计数表的数据
+	 * 创建新的日志表
 	 */
-	public void clearData() {
-		logger.info("清空短信计数数据表");
-		smsDao.truncate();
-	}
-
-	/* 测试时使用的方法 */
-
-	SmsEntityDaoImpl getSmsDao() {
-		return smsDao;
-	}
-
-	int getIpDailyMaxSendCount() {
-		return ipDailyMaxSendCount;
-	}
-
-	int getMobileDailyMaxSendCount() {
-		return mobileDailyMaxSendCount;
+	@Transactional
+	public void createNowLogTable(){
+		smsDao.createTable(1);
+		smsDao.createTable(2);
+		smsDao.createTable(3);
 	}
 
 }

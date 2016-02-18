@@ -60,7 +60,6 @@ public class Survey implements Serializable{
 		INVALID_SURVEY.setDetailDescribe("");
 		INVALID_SURVEY.setCreateTime(null);
 		INVALID_SURVEY.setModifyTime(null);
-		INVALID_SURVEY.setPageCount(0);
 		INVALID_SURVEY.setStatus(DELETE_STATUS);
 		INVALID_SURVEY.setPages(Collections.emptyList());
 	}
@@ -72,7 +71,6 @@ public class Survey implements Serializable{
 	private String detailDescribe;
 	private Date createTime;
 	private Date modifyTime;
-	private Integer pageCount;
 	private Integer status;
 
 	private List<Page> pages = new ArrayList<>(0);
@@ -126,11 +124,7 @@ public class Survey implements Serializable{
 	}
 
 	public Integer getPageCount() {
-		return pageCount;
-	}
-
-	public void setPageCount(Integer pageCount) {
-		this.pageCount = pageCount;
+		return pages.size();
 	}
 
 	public Integer getStatus() {
@@ -209,7 +203,6 @@ public class Survey implements Serializable{
 			return false;
 		if(createTime != null ? !createTime.equals(survey.createTime) : survey.createTime != null) return false;
 		if(modifyTime != null ? !modifyTime.equals(survey.modifyTime) : survey.modifyTime != null) return false;
-		if(pageCount != null ? !pageCount.equals(survey.pageCount) : survey.pageCount != null) return false;
 		return !(status != null ? !status.equals(survey.status) : survey.status != null);
 
 	}
@@ -222,7 +215,6 @@ public class Survey implements Serializable{
 		result = 31 * result + (detailDescribe != null ? detailDescribe.hashCode() : 0);
 		result = 31 * result + (createTime != null ? createTime.hashCode() : 0);
 		result = 31 * result + (modifyTime != null ? modifyTime.hashCode() : 0);
-		result = 31 * result + (pageCount != null ? pageCount.hashCode() : 0);
 		result = 31 * result + (status != null ? status.hashCode() : 0);
 		return result;
 	}
@@ -236,7 +228,6 @@ public class Survey implements Serializable{
 				", detailDescribe='" + detailDescribe + '\'' +
 				", createTime=" + createTime +
 				", modifyTime=" + modifyTime +
-				", pageCount=" + pageCount +
 				", status=" + status +
 				", pages=" + ORMUtil.toString(pages) +
 				'}';

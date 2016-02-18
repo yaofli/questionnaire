@@ -116,4 +116,22 @@ public class StringUtil {
 		return count;
 	}
 
+	/**
+	 * 使用指定的连接符, 连接数组中所有的元素
+	 * @param delimiter 连接符
+	 * @param objects 对象数组
+	 * @return 使用连接符连接的字符串
+	 */
+	public static String join(CharSequence delimiter, Object[] objects){
+		if(objects.length==0){
+			return "";
+		}
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(objects[0]);
+		for(int i=1; i<objects.length; i++){
+			stringBuilder.append(delimiter).append(objects[i]);
+		}
+		return stringBuilder.toString();
+	}
+
 }

@@ -55,7 +55,6 @@ public class SurveyController {
 	public String addSurvey(@Valid Survey survey,
 	                        @ModelAttribute(UserController.SESSION_USER_ID) Integer userId) throws IOException {
 		survey.setStatus(Survey.DESIGN_STATUS);
-		survey.setPageCount(0);
 		survey.setUserId(userId);
 		if(!surveyService.createSurvey(survey)) {
 			return "redirect:/error";
@@ -92,7 +91,6 @@ public class SurveyController {
 			Survey survey = objectMapper.readValue(surveyStr, Survey.class);
 			survey.setUserId(userId);
 			survey.setStatus(Survey.DESIGN_STATUS);
-			survey.setPageCount(survey.getPages().size());
 			for(Page page : survey.getPages()) {
 				page.setSurvey(survey);
 			}

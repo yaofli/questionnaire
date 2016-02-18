@@ -29,7 +29,6 @@
         <property name="detailDescribe" column="detail_describe"/>
         <property name="createTime" column="create_time" update="false" insert="false"/>
         <property name="modifyTime" column="modify_time"/>
-        <property name="pageCount" column="page_count"/>
         <property name="status" column="survey_status" update="false"/>
         <list name="pages" inverse="true">
             <key>

@@ -18,6 +18,7 @@ package git.lbk.questionnaire.ipAddress;
 
 import git.lbk.questionnaire.dao.impl.UserDaoImpl;
 import git.lbk.questionnaire.entity.User;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 这个类基本上没有用, 但是如果没有这个类就没法用事务.
@@ -35,6 +36,7 @@ public class AddressMessageService {
 	 *
 	 * @param user 用户对象
 	 */
+	@Transactional
 	public void updateUserLastLoginIp(User user) {
 		userDao.updateLastLoginInfo(user);
 	}

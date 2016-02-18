@@ -44,7 +44,6 @@ public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 		clazz = (Class<T>) type.getActualTypeArguments()[0];
 	}
 
-
 	/**
 	 * 保存实体对象
 	 *
@@ -92,7 +91,7 @@ public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 	 * @param objects 参数
 	 * @return 受影响的行数
 	 */
-	public int updateEntityByHQL(String hql, Object... objects) {
+	protected int updateEntityByHQL(String hql, Object... objects) {
 		return hibernateTemplate.bulkUpdate(hql, objects);
 	}
 
@@ -102,26 +101,13 @@ public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 	 * @param sql     sql语句
 	 * @param objects sql参数
 	 */
-	public int updateEntityBySQL(String sql, Object... objects) {
+	protected int updateEntityBySQL(String sql, Object... objects) {
 		SQLQuery query = hibernateTemplate.getSessionFactory()
 				.getCurrentSession().createSQLQuery(sql);
 		for(int i = 0; i < objects.length; i++) {
 			query.setParameter(i, objects[i]);
 		}
 		return query.executeUpdate();
-	}
-
-	/**
-	 * 根据id加载实体
-	 *
-	 * @param id 实体id
-	 * @return 匹配的实体代理, 可能存在延迟加载.
-	 * 如果使用了延迟加载, 在使用时发现没有匹配的实体, 则抛出异常.
-	 * 在使用之前如果session已经关闭, 则会抛出LazyLoadException异常
-	 */
-	@Override
-	public T loadEntity(Serializable id) {
-		return hibernateTemplate.load(clazz, id);
 	}
 
 	/**
@@ -142,7 +128,7 @@ public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 	 * @param objects 参数
 	 * @return 结果的List集合
 	 */
-	public List<T> findEntityByHQL(String hql, Object... objects) {
+	protected List<T> findEntityByHQL(String hql, Object... objects) {
 		return (List<T>) hibernateTemplate.find(hql, objects);
 	}
 
@@ -154,7 +140,7 @@ public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 	 * @param objects 参数
 	 * @return 查询结果
 	 */
-	public Object uniqueResult(String hql, Object... objects) {
+	protected Object uniqueResult(String hql, Object... objects) {
 		Query query = hibernateTemplate.getSessionFactory()
 				.getCurrentSession().createQuery(hql);
 		for(int i = 0; i < objects.length; i++) {
@@ -171,7 +157,7 @@ public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 	 * @param objects sql参数
 	 * @return 查询的结果类型
 	 */
-	public List executeSQLQuery(Class<T> clazz, String sql, Object... objects) {
+	protected List executeSQLQuery(Class<T> clazz, String sql, Object... objects) {
 		SQLQuery query = hibernateTemplate.getSessionFactory()
 				.getCurrentSession().createSQLQuery(sql);
 		if(clazz != null) {
@@ -181,5 +167,19 @@ public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 			query.setParameter(i, objects[i]);
 		}
 		return query.list();
+	}
+
+	/**
+	 * 执行原生的sql查询, 获得单值数据
+	 * @param sql sql语句
+	 * @param objects 参数
+	 * @return 查询获得的单值数据
+	 */
+	protected Object uniqueResultBySql(String sql, Object... objects){
+		SQLQuery query = hibernateTemplate.getSessionFactory().getCurrentSession().createSQLQuery(sql);
+		for(int i=0; i<objects.length; i++){
+			query.setParameter(i, objects[i]);
+		}
+		return query.uniqueResult();
 	}
 }

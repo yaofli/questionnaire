@@ -16,7 +16,6 @@
 
 package git.lbk.questionnaire.service;
 
-import git.lbk.questionnaire.entity.Page;
 import git.lbk.questionnaire.entity.Survey;
 import git.lbk.questionnaire.statistics.QuestionStatistics;
 
@@ -45,13 +44,6 @@ public interface SurveyService {
 	 * @return 指定id的调查对象及其关联的page
 	 */
 	Survey getSurveyAndPage(Integer id);
-
-	/**
-	 * 获取某个调查问卷的所有页面
-	 * @param surveyId 调查问卷id
-	 * @return 该调查问卷的所有页面
-	 */
-	List<Page> getPageBySurveyId(Integer surveyId);
 
 	/**
 	 * 创建一个调查问卷

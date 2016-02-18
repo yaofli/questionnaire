@@ -20,6 +20,7 @@ import git.lbk.questionnaire.entity.SmsEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -75,6 +76,7 @@ public class SmsServiceImpl implements SmsService {
 	 * @throws SendSmsFailException 发送失败时抛出该异常, 比如过于频繁, 发送次数过多等.
 	 */
 	@Override
+	@Transactional
 	public void sendCaptcha(SmsEntity smsEntity)
 			throws SendSmsFailException {
 		for(SmsFilter filter : filters) {

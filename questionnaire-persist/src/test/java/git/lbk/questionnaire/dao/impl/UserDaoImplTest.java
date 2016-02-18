@@ -17,7 +17,6 @@
 package git.lbk.questionnaire.dao.impl;
 
 import git.lbk.questionnaire.entity.User;
-import git.lbk.questionnaire.util.ORMUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,11 +57,6 @@ public class UserDaoImplTest {
 		user.setType(User.COMMON);
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		user.setRegisterTime(dateFormat.parse("2014-02-06 22:08:30"));
-	}
-
-	@Test
-	public void testLoadEntity() throws Exception {
-		assertFalse("load方法懒加载失效", ORMUtil.isInitialized(userDao.loadEntity(user.getId())));
 	}
 
 	@Test
