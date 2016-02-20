@@ -16,15 +16,19 @@
 
 package git.lbk.questionnaire.dao.impl;
 
-import git.lbk.questionnaire.entity.SmsEntity;
+import git.lbk.questionnaire.entity.Sms;
 import git.lbk.questionnaire.util.DateUtil;
+import org.hibernate.HibernateException;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigInteger;
 import java.util.*;
 
-@Repository("smsCountDao")
-public class SmsEntityDaoImpl extends BaseDaoImpl<SmsEntity> {
+@Repository("smsDao")
+public class SmsDaoImpl extends BaseDaoImpl<Sms> {
 
 	/**
 	 * 创建新的日志表
@@ -37,12 +41,30 @@ public class SmsEntityDaoImpl extends BaseDaoImpl<SmsEntity> {
 	}
 
 	/**
+	 * 创建新的日志表. 该方法会自动开启, 提交/回滚事务, 因此. 无需再service层开启事务.
+	 * @param monthExcursion 偏移指定的月份
+	 */
+	public void createTableWithTransaction(int monthExcursion){
+		String sql = "CREATE TABLE IF NOT EXISTS " + getTableName(monthExcursion) + " LIKE sms";
+		Session session = hibernateTemplate.getSessionFactory().openSession();
+		Transaction transaction = session.beginTransaction();
+		try{
+			SQLQuery query = session.createSQLQuery(sql);
+			query.executeUpdate();
+			transaction.commit();
+		}
+		catch(HibernateException ignore){
+			transaction.rollback();
+		}
+	}
+
+	/**
 	 * 保存SmsEntity实体对象
 	 */
 	@Override
-	public void saveEntity(SmsEntity smsEntity) {
+	public void saveEntity(Sms sms) {
 		String sql = "INSERT INTO " + getNowTableName() + "(mobile, ip, type) VALUES(?, ?, ?)";
-		updateEntityBySQL(sql, smsEntity.getMobile(), smsEntity.getIp(), smsEntity.getType());
+		updateEntityBySQL(sql, sms.getMobile(), sms.getIp(), sms.getType());
 	}
 
 	/**

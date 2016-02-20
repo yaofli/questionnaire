@@ -16,7 +16,7 @@
 
 package git.lbk.questionnaire.sms;
 
-import git.lbk.questionnaire.entity.SmsEntity;
+import git.lbk.questionnaire.entity.Sms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -34,7 +34,7 @@ public class SmsServiceImpl implements SmsService {
 
 	private static final Logger logger = LoggerFactory.getLogger(SmsServiceImpl.class);
 
-	private Sms sms;
+	private git.lbk.questionnaire.sms.Sms sms;
 	private List<SmsFilter> filters;
 
 	/**
@@ -46,7 +46,7 @@ public class SmsServiceImpl implements SmsService {
 		updateTemplate();
 	}
 
-	public void setSms(Sms sms) {
+	public void setSms(git.lbk.questionnaire.sms.Sms sms) {
 		this.sms = sms;
 	}
 
@@ -72,32 +72,32 @@ public class SmsServiceImpl implements SmsService {
 	/**
 	 * 发送验证码
 	 *
-	 * @param smsEntity 发送短信的基本数据
+	 * @param sms 发送短信的基本数据
 	 * @throws SendSmsFailException 发送失败时抛出该异常, 比如过于频繁, 发送次数过多等.
 	 */
 	@Override
 	@Transactional
-	public void sendCaptcha(SmsEntity smsEntity)
+	public void sendCaptcha(Sms sms)
 			throws SendSmsFailException {
 		for(SmsFilter filter : filters) {
-			filter.filter(smsEntity);
+			filter.filter(sms);
 		}
-		if(SmsEntity.REGISTER_TYPE.equals(smsEntity.getType())) {
-			sendRegisterSms(smsEntity);
+		if(git.lbk.questionnaire.entity.Sms.REGISTER_TYPE.equals(sms.getType())) {
+			sendRegisterSms(sms);
 		}
 		else {
-			throw new UnknownTypeException("未知的验证码类型: " + smsEntity.getType());
+			throw new UnknownTypeException("未知的验证码类型: " + sms.getType());
 		}
 	}
 
 	/**
 	 * 发送注册验证码
 	 *
-	 * @param smsEntity 发送短信的基本数据
+	 * @param sms 发送短信的基本数据
 	 */
-	private void sendRegisterSms(SmsEntity smsEntity) {
-		sms.sendMessage(smsEntity.getMobile(),
-				template.getProperty("register").replace("{captcha}", smsEntity.getCaptcha()));
+	private void sendRegisterSms(git.lbk.questionnaire.entity.Sms sms) {
+		this.sms.sendMessage(sms.getMobile(),
+				template.getProperty("register").replace("{captcha}", sms.getCaptcha()));
 	}
 
 }

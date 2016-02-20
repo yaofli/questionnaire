@@ -16,7 +16,6 @@
 
 package git.lbk.questionnaire.sms;
 
-import git.lbk.questionnaire.entity.SmsEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,38 +32,25 @@ public class FrequencyFilter implements SmsFilter {
 
 	private static final Logger logger = LoggerFactory.getLogger(FrequencyFilter.class);
 
-	private volatile long sendInterval;
-	private volatile long cleanMapInterval;
+	private long sendInterval;
+	private long cleanMapInterval;
 	/**
 	 * 存放 手机号/IP 和 上次发送时间 的键值对
 	 */
 	private ConcurrentMap<String, Long> sendAddressMap = new ConcurrentHashMap<>();
 	private Timer timer = new Timer("sms_frequency_filter_clear_data_thread");
 
+	/**
+	 * @param sendInterval 向同一个手机号/ip发送短信的最短发送间隔(单位: 秒)
+	 * @param cleanMapInterval 清理发送记录的时间间隔(单位: 秒)
+	 */
+	public FrequencyFilter(long sendInterval, long cleanMapInterval) {
+		this.sendInterval = sendInterval * 1000;
+		this.cleanMapInterval = cleanMapInterval * 1000;
+	}
+
 	public long getSendInterval() {
 		return sendInterval;
-	}
-
-	/**
-	 * 设置向同一个手机号/ip发送短信的最短发送间隔(单位: 秒)
-	 *
-	 * @param sendInterval 发送的最短间隔
-	 */
-	public void setSendInterval(long sendInterval) {
-		this.sendInterval = sendInterval * 1000;
-	}
-
-	public long getCleanMapInterval() {
-		return cleanMapInterval;
-	}
-
-	/**
-	 * 设置清理发送记录的时间间隔(单位: 秒)
-	 *
-	 * @param cleanMapInterval 清理发送记录的时间间隔
-	 */
-	public void setCleanMapInterval(long cleanMapInterval) {
-		this.cleanMapInterval = cleanMapInterval * 1000;
 	}
 
 	@Override
@@ -98,8 +84,8 @@ public class FrequencyFilter implements SmsFilter {
 	}
 
 	@Override
-	public void filter(SmsEntity smsEntity) throws SendSmsFailException {
-		if(setSendTime(smsEntity.getMobile()) && setSendTime(smsEntity.getIp())){
+	public void filter(git.lbk.questionnaire.entity.Sms sms) throws SendSmsFailException {
+		if(setSendTime(sms.getMobile()) && setSendTime(sms.getIp())){
 			return;
 		}
 		throw new FrequentlyException("发送短信过于频繁");

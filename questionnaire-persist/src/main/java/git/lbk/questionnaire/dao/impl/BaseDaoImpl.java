@@ -34,7 +34,7 @@ import java.util.*;
 public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 
 	@Autowired
-	private HibernateTemplate hibernateTemplate;
+	protected HibernateTemplate hibernateTemplate;
 
 	private Class<T> clazz;
 

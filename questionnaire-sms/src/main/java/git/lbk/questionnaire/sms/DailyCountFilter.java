@@ -16,8 +16,7 @@
 
 package git.lbk.questionnaire.sms;
 
-import git.lbk.questionnaire.dao.impl.SmsEntityDaoImpl;
-import git.lbk.questionnaire.entity.SmsEntity;
+import git.lbk.questionnaire.dao.impl.SmsDaoImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +27,7 @@ public class DailyCountFilter implements SmsFilter {
 
 	private volatile int ipDailyMaxSendCount;
 	private volatile int mobileDailyMaxSendCount;
-	private SmsEntityDaoImpl smsDao;
+	private SmsDaoImpl smsDao;
 
 	public void setIpDailyMaxSendCount(int ipDailyMaxSendCount) {
 		this.ipDailyMaxSendCount = ipDailyMaxSendCount;
@@ -38,32 +37,31 @@ public class DailyCountFilter implements SmsFilter {
 		this.mobileDailyMaxSendCount = mobileDailyMaxSendCount;
 	}
 
-	public void setSmsDao(SmsEntityDaoImpl smsDao) {
+	public void setSmsDao(SmsDaoImpl smsDao) {
 		this.smsDao = smsDao;
 	}
 
 	@Override
-	public void init() {}
+	public void init() {
+		smsDao.createTableWithTransaction(0);
+		smsDao.createTableWithTransaction(1);
+		smsDao.createTableWithTransaction(2);
+	}
 
 	@Override
 	@Transactional
-	public void filter(SmsEntity smsMessage) throws SendSmsFailException {
-		String mobile = smsMessage.getMobile();
-		String ip = smsMessage.getIp();
-		if(smsDao.getMobileCount(mobile) >= mobileDailyMaxSendCount) {
+	public void filter(git.lbk.questionnaire.entity.Sms sms) throws SendSmsFailException {
+		if(smsDao.getMobileCount(sms.getMobile()) >= mobileDailyMaxSendCount) {
 			throw new DailySendMuchException("发送次数超过了日发送次数");
 		}
-		if(smsDao.getIPCount(ip) >= ipDailyMaxSendCount) {
+		if(smsDao.getIPCount(sms.getIp()) >= ipDailyMaxSendCount) {
 			throw new DailySendMuchException("发送次数超过了日发送次数");
 		}
-		SmsEntity smsEntity = new SmsEntity(mobile, ip, smsMessage.getType());
-		smsDao.saveEntity(smsEntity);
+		smsDao.saveEntity(sms);
 	}
 
 	@Override
-	public void destroy() {
-
-	}
+	public void destroy() {}
 
 	/**
 	 * 创建新的日志表

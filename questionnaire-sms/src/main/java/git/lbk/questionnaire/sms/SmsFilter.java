@@ -16,7 +16,7 @@
 
 package git.lbk.questionnaire.sms;
 
-import git.lbk.questionnaire.entity.SmsEntity;
+import git.lbk.questionnaire.entity.Sms;
 
 /**
  * 过滤短信的接口. 如果要发送的短信符合一定的规则, 则放行; 否则, 不能发送
@@ -30,10 +30,10 @@ public interface SmsFilter {
 
 	/**
 	 * 判断短信是否可以发送. 如果不能发送, 则抛出异常
-	 * @param smsEntity 将要发送的短信内容
+	 * @param sms 将要发送的短信内容
 	 * @throws SendSmsFailException 如果不可发送短信, 则抛出异常.
 	 */
-	void filter(SmsEntity smsEntity) throws SendSmsFailException;
+	void filter(Sms sms) throws SendSmsFailException;
 
 	/**
 	 * 销毁该过滤器

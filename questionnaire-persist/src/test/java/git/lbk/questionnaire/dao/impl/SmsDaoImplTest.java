@@ -26,10 +26,10 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:questionnaire-persistTest.xml")
-public class SmsEntityDaoImplTest {
+public class SmsDaoImplTest {
 
 	@Autowired
-	private SmsEntityDaoImpl smsCountDao;
+	private SmsDaoImpl smsCountDao;
 
 	@Test
 	public void testGetMobileCount(){

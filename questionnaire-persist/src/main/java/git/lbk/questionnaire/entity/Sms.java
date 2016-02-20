@@ -24,7 +24,7 @@ import java.util.*;
 /**
  * 包含手机验证码发送次数的model, 其中identity表示发送手机验证码的标示, 可以为客户IP 或者 手机号.
  */
-public class SmsEntity implements Serializable{
+public class Sms implements Serializable{
 
 	private static final long serialVersionUID = -38794093210096359L;
 
@@ -46,11 +46,11 @@ public class SmsEntity implements Serializable{
 
 	private String captcha;
 
-	public SmsEntity() {
+	public Sms() {
 		time = new Date();
 	}
 
-	public SmsEntity(String mobile, String ip, Integer type) {
+	public Sms(String mobile, String ip, Integer type) {
 		this();
 		this.mobile = mobile;
 		this.ip = ip;
@@ -110,11 +110,11 @@ public class SmsEntity implements Serializable{
 		if(this == o) return true;
 		if(o == null || getClass() != o.getClass()) return false;
 
-		SmsEntity smsEntity = (SmsEntity) o;
+		Sms sms = (Sms) o;
 
-		if(ip != null ? !ip.equals(smsEntity.ip) : smsEntity.ip != null) return false;
-		if(type != null ? !type.equals(smsEntity.type) : smsEntity.type != null) return false;
-		return !(time != null ? !time.equals(smsEntity.time) : smsEntity.time != null);
+		if(ip != null ? !ip.equals(sms.ip) : sms.ip != null) return false;
+		if(type != null ? !type.equals(sms.type) : sms.type != null) return false;
+		return !(time != null ? !time.equals(sms.time) : sms.time != null);
 
 	}
 
@@ -128,7 +128,7 @@ public class SmsEntity implements Serializable{
 
 	@Override
 	public String toString() {
-		return "SmsEntity{" +
+		return "Sms{" +
 				"id=" + id +
 				", mobile='" + mobile + '\'' +
 				", ip='" + ip + '\'' +

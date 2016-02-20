@@ -16,8 +16,8 @@
 
 package git.lbk.questionnaire.sms;
 
-import git.lbk.questionnaire.dao.impl.SmsEntityDaoImpl;
-import git.lbk.questionnaire.entity.SmsEntity;
+import git.lbk.questionnaire.dao.impl.SmsDaoImpl;
+import git.lbk.questionnaire.entity.Sms;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,44 +32,44 @@ public class DailyCountFilterTest {
 
 	@Autowired
 	private DailyCountFilter dailyCountFilter;
-	private SmsEntityDaoImpl smsCountDao;
-	private SmsEntity smsEntity;
+	private SmsDaoImpl smsCountDao;
+	private Sms sms;
 
 	@Before
 	public void setUp() throws Exception {
-		smsCountDao = EasyMock.createMock(SmsEntityDaoImpl.class);
+		smsCountDao = EasyMock.createMock(SmsDaoImpl.class);
 		dailyCountFilter.setSmsDao(smsCountDao);
-		smsEntity = new SmsEntity("12345678901", "127.0.0.1", SmsEntity.REGISTER_TYPE);
+		sms = new Sms("12345678901", "127.0.0.1", Sms.REGISTER_TYPE);
 	}
 
 	@Test
 	public void testSendMessage() throws Exception {
-		EasyMock.expect(smsCountDao.getMobileCount(smsEntity.getMobile())).andReturn(1L);
-		EasyMock.expect(smsCountDao.getIPCount(smsEntity.getIp())).andReturn(5L);
+		EasyMock.expect(smsCountDao.getMobileCount(sms.getMobile())).andReturn(1L);
+		EasyMock.expect(smsCountDao.getIPCount(sms.getIp())).andReturn(5L);
 		smsCountDao.saveEntity(EasyMock.anyObject());
 
 		EasyMock.replay(smsCountDao);
 
-		dailyCountFilter.filter(smsEntity);
+		dailyCountFilter.filter(sms);
 	}
 
 	@Test(expected = DailySendMuchException.class)
 	public void testSendMessageMobileMany() throws Exception {
-		EasyMock.expect(smsCountDao.getMobileCount(smsEntity.getMobile())).andReturn(3L);
+		EasyMock.expect(smsCountDao.getMobileCount(sms.getMobile())).andReturn(3L);
 
 		EasyMock.replay(smsCountDao);
 
-		dailyCountFilter.filter(smsEntity);
+		dailyCountFilter.filter(sms);
 	}
 
 	@Test(expected = DailySendMuchException.class)
 	public void testSendMessageIPMany() throws Exception {
-		EasyMock.expect(smsCountDao.getMobileCount(smsEntity.getMobile())).andReturn(1L);
-		EasyMock.expect(smsCountDao.getIPCount(smsEntity.getIp())).andReturn(11L);
+		EasyMock.expect(smsCountDao.getMobileCount(sms.getMobile())).andReturn(1L);
+		EasyMock.expect(smsCountDao.getIPCount(sms.getIp())).andReturn(11L);
 
 		EasyMock.replay(smsCountDao);
 
-		dailyCountFilter.filter(smsEntity);
+		dailyCountFilter.filter(sms);
 	}
 
 }
