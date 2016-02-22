@@ -17,6 +17,7 @@
 package git.lbk.questionnaire.dao.impl;
 
 import git.lbk.questionnaire.dao.BaseDao;
+import git.lbk.questionnaire.query.Page;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -171,15 +172,68 @@ public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 
 	/**
 	 * 执行原生的sql查询, 获得单值数据
-	 * @param sql sql语句
+	 *
+	 * @param sql     sql语句
 	 * @param objects 参数
 	 * @return 查询获得的单值数据
 	 */
-	protected Object uniqueResultBySql(String sql, Object... objects){
+	protected Object uniqueResultBySql(String sql, Object... objects) {
 		SQLQuery query = hibernateTemplate.getSessionFactory().getCurrentSession().createSQLQuery(sql);
-		for(int i=0; i<objects.length; i++){
+		for(int i = 0; i < objects.length; i++) {
 			query.setParameter(i, objects[i]);
 		}
 		return query.uniqueResult();
 	}
+
+	/**
+	 * 查询出某页的实体信息, 其中标识列为"id". 该方法相当于调用
+	 * <pre>{@code
+	 * findAll(page, fromAndWhereHql, "id", objects);
+	 * }</pre>
+	 *
+	 * @param page            分页信息, 该方法会修改该参数
+	 * @param fromAndWhereHql hql的from和where子句
+	 * @param objects         参数
+	 * @return 该页的实体信息, 结果集大小等
+	 */
+	protected Page<T> findAll(Page<T> page, String fromAndWhereHql, Object... objects) {
+		return findAll(page, fromAndWhereHql, "id", objects);
+	}
+
+	/**
+	 * 查询出某页的实体信息.
+	 *
+	 * @param page            分页信息, 该方法会修改该参数
+	 * @param fromAndWhereHql hql的from和where子句
+	 * @param flagColumn      用来统计结果集大小的标志列(比如id, *)
+	 * @param objects         参数
+	 * @return 该页的实体信息, 结果集大小等.
+	 */
+	protected Page<T> findAll(Page<T> page, String fromAndWhereHql, String flagColumn, Object... objects) {
+		long totalCount = (long) uniqueResult("select count(" + flagColumn + ") " + fromAndWhereHql, objects);
+		page.setTotalCount((int) totalCount);
+		if(page.getFirstResult() < page.getTotalCount()) {
+			page.setContent(getPageList(page, fromAndWhereHql, objects));
+		}
+		return page;
+	}
+
+	/**
+	 * 获得指定页面的对象列表
+	 *
+	 * @param page    分页信息, 该方法会修改该参数
+	 * @param hql     hql语句
+	 * @param objects 参数
+	 * @return 该页的页面信息
+	 */
+	private List<T> getPageList(Page<T> page, String hql, Object... objects) {
+		Query query = hibernateTemplate.getSessionFactory().getCurrentSession().createQuery(hql);
+		query.setFirstResult(page.getFirstResult());
+		query.setMaxResults(page.getPageSize());
+		for(int i = 0; i < objects.length; i++) {
+			query.setParameter(i, objects[i]);
+		}
+		return query.list();
+	}
+
 }

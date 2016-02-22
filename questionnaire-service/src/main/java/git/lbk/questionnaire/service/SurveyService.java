@@ -17,6 +17,8 @@
 package git.lbk.questionnaire.service;
 
 import git.lbk.questionnaire.entity.Survey;
+import git.lbk.questionnaire.query.Page;
+import git.lbk.questionnaire.query.SurveyCondition;
 import git.lbk.questionnaire.statistics.QuestionStatistics;
 
 import java.util.*;
@@ -25,18 +27,19 @@ import java.util.*;
 public interface SurveyService {
 
 	/**
-	 * 获取某个用户的所有调查问卷的基本信息
-	 * @param userId 用户id
-	 * @return 该用户的所有调查问卷
+	 * 查询出符合条件的survey对象
+	 *
+	 * @param surveyCondition 查询条件以及分页条件
+	 * @return 该页的survey信息
 	 */
-	List<Survey> getSurveyByUserId(Integer userId);
+	Page<Survey> findSurvey(SurveyCondition surveyCondition);
 
 	/**
 	 * 获取指定id的调查对象. 注意使用这种方法获取的调查对象中的pages并没有加载, 所以不能使用
 	 * @param id 调查id
 	 * @return 指定id的调查对象
 	 */
-	Survey getSurvey(Integer id);
+	Survey findSurvey(Integer id);
 
 	/**
 	 * 获取指定id的调查对象以及其所关联的页面对象. 如果该调查对象为删除状态, 则返回null

@@ -24,6 +24,7 @@ import git.lbk.questionnaire.entity.Page;
 import git.lbk.questionnaire.entity.Survey;
 import git.lbk.questionnaire.answer.QuestionAnswer;
 import git.lbk.questionnaire.answer.QuestionAnswerFactory;
+import git.lbk.questionnaire.query.SurveyCondition;
 import git.lbk.questionnaire.service.SurveyService;
 import git.lbk.questionnaire.statistics.QuestionStatistics;
 import git.lbk.questionnaire.statistics.QuestionStatisticsFactory;
@@ -50,14 +51,14 @@ public class SurveyServiceImpl implements SurveyService {
 	}
 
 	/**
-	 * 获取某个用户的所有 正常状态 或者 设计状态 的调查问卷的基本信息
+	 * 查询出符合条件的survey对象
 	 *
-	 * @param userId 用户id
-	 * @return 该用户的所有调查问卷
+	 * @param surveyCondition 查询条件以及分页条件
+	 * @return 该页的survey信息
 	 */
 	@Override
-	public List<Survey> getSurveyByUserId(Integer userId) {
-		return surveyDao.getSurveyByUser(userId);
+	public git.lbk.questionnaire.query.Page<Survey> findSurvey(SurveyCondition surveyCondition) {
+		return surveyDao.findSurvey(surveyCondition);
 	}
 
 	/**
@@ -67,7 +68,7 @@ public class SurveyServiceImpl implements SurveyService {
 	 * @return 指定id的调查对象. 如果没有指定的调查对象 或者 调查对象为删除状态 则返回{@link Survey#INVALID_SURVEY}
 	 */
 	@Override
-	public Survey getSurvey(Integer id) {
+	public Survey findSurvey(Integer id) {
 		Survey survey = surveyDao.getEntity(id);
 		if(survey == null || survey.isDelete()) {
 			return Survey.INVALID_SURVEY;
@@ -83,7 +84,7 @@ public class SurveyServiceImpl implements SurveyService {
 	 */
 	@Override
 	public Survey getSurveyAndPage(Integer id) {
-		Survey survey = getSurvey(id);
+		Survey survey = findSurvey(id);
 		survey.getPages().size();   // 强制加载页面
 		return survey;
 	}

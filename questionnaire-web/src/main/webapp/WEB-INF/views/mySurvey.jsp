@@ -16,6 +16,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="utf-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!doctype html>
 <html class="no-js">
 <head>
@@ -54,13 +55,36 @@
 <div class="am-margin-lg">
     <a href="/addSurveyPage" class="am-btn am-btn-primary">创建新问卷</a>
 
+    <form:form action="/survey/mySurvey" method="get" modelAttribute="condition"
+               class="am-form-inline am-margin-vertical">
+    <div class="am-form-group">
+        <form:input path="title" class="am-form-field" placeholder="问卷名或者id" />
+    </div>
+    <div class="am-form-group">
+        <form:select path="status" class="am-form-field">
+            <form:option value="" label="状态" />
+            <form:option value="0" label="发布" />
+            <form:option value="1" label="设计" />
+        </form:select>
+    </div>
+    页面大小:
+    <form:select path="page.pageSize" class="am-form-field">
+        <form:option value="3"/>
+        <form:option value="5"/>
+        <form:option value="8"/>
+        <form:option value="10"/>
+    </form:select>
+    <input type="submit" value="查询" class="am-btn am-btn-default" />
+    </form:form>
+
     <div id="surveys" class="am-panel-group am-margin-vertical-sm">
-        <c:forEach items="${surveyList}" var="survey">
+        <c:forEach items="${page.content}" var="survey">
             <section class="am-panel am-panel-default">
                 <header class="am-panel-hd am-cf">
                     <h3 class="am-fl am-panel-title am-margin-right-sm am-u-sm-6">
-                        <c:out value="${survey.title}" escapeXml="true" />
+                        <c:out value="标题:${survey.title}|id:${survey.id}" escapeXml="true" />
                     </h3>
+
                     <div class="am-dropdown am-margin-horizontal-sm" data-am-dropdown>
                         <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
                             回收问卷<span class="am-icon-caret-down"></span>
@@ -81,6 +105,7 @@
                        class="am-margin-horizontal-sm reverseDesigning">
                             ${survey.isDesign() ? "开放问卷" : "关闭问卷"}
                     </a>
+
                     <div class="am-dropdown am-margin-horizontal-sm" data-am-dropdown>
                         <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
                             设计问卷<span class="am-icon-caret-down"></span>
@@ -112,6 +137,23 @@
             </section>
         </c:forEach>
     </div>
+
+    <ul data-am-widget="pagination" class="am-pagination am-center" style="width: ${90*2+page.totalPage*50}px">
+        <li class="am-pagination-prev ">
+            <a href="/survey/mySurvey?${condition.httpQueryString}&page.pageNo=${page.prevPage}" class="">上一页</a>
+        </li>
+        <c:forEach items="${page.pageList}" var="pageNo">
+            <li class="${page.pageNo==pageNo ? "am-active" : ""}">
+                <a href="/survey/mySurvey?${condition.httpQueryString}&page.pageNo=${pageNo}">
+                    ${pageNo+1}
+                </a>
+            </li>
+        </c:forEach>
+        <li class="am-pagination-next ">
+            <a href="/survey/mySurvey?${condition.httpQueryString}&page.pageNo=${page.nextPage}" class="">下一页</a>
+        </li>
+    </ul>
+
     <jsp:include page="templet/footer.jsp"/>
 </body>
 </html>

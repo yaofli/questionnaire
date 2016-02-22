@@ -17,21 +17,24 @@
 package git.lbk.questionnaire.dao.impl;
 
 import git.lbk.questionnaire.entity.Survey;
+import git.lbk.questionnaire.query.Page;
+import git.lbk.questionnaire.query.QueryCondition;
+import git.lbk.questionnaire.query.SurveyCondition;
 import org.springframework.stereotype.Repository;
-
-import java.util.*;
 
 @Repository("surveyDao")
 public class SurveyDaoImpl extends BaseDaoImpl<Survey> {
 
 	/**
 	 * 根据用户id获取所有 正常状态 或者 设计状态 的调查问卷
-	 * @param userId 用户id
+	 *
+	 * @param surveyCondition 查询条件
 	 * @return 该用户所有的调查问卷
 	 */
-	public List<Survey> getSurveyByUser(Integer userId){
-		String hql = "from Survey s where s.userId=? and (s.status=? or s.status=?)";
-		return findEntityByHQL(hql, userId, Survey.NORMAL_STATUS, Survey.DESIGN_STATUS);
+	public Page<Survey> findSurvey(SurveyCondition surveyCondition) {
+		QueryCondition condition = surveyCondition.getCondition();
+		String hql = "from Survey " + condition.getConditionWithWhere();
+		return findAll(surveyCondition.getPage(), hql, condition.getParamsAsArray());
 	}
 
 	/**

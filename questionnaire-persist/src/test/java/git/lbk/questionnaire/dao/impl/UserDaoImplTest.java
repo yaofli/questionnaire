@@ -17,6 +17,7 @@
 package git.lbk.questionnaire.dao.impl;
 
 import git.lbk.questionnaire.entity.User;
+import git.lbk.questionnaire.query.Page;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -195,6 +196,15 @@ public class UserDaoImplTest {
 		assertNotEquals("初始化数据库不正确, 没有id为" + userId + "的用户", null, user);
 		userDao.updateEntityBySQL("delete from user where id = ?", userId);
 		assertEquals("删除失败", null, userDao.getEntity(userId));
+	}
+
+	@Test
+	public void testFindAll() throws Exception{
+		Page<User> page = new Page<User>(3, 0);
+		page = userDao.findAll(page, "from User");
+		assertEquals(page.getContent().size(), 3);
+		assertEquals(page.getTotalCount(), 4);
+		assertEquals(page.getTotalPage(), 2);
 	}
 
 	@Test

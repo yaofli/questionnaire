@@ -19,6 +19,7 @@ package git.lbk.questionnaire.springmvc.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import git.lbk.questionnaire.entity.Page;
 import git.lbk.questionnaire.entity.Survey;
+import git.lbk.questionnaire.query.SurveyCondition;
 import git.lbk.questionnaire.service.SurveyService;
 import git.lbk.questionnaire.util.NetUtil;
 import git.lbk.questionnaire.util.annotation.CheckToken;
@@ -45,8 +46,10 @@ public class SurveyController {
 	private SurveyService surveyService;
 
 	@RequestMapping(value = "/mySurvey", method = RequestMethod.GET)
-	public String mySurvey(Map<String, Object> map, @ModelAttribute(UserController.SESSION_USER_ID) Integer userId) {
-		map.put("surveyList", surveyService.getSurveyByUserId(userId));
+	public String mySurvey(Map<String, Object> map, SurveyCondition surveyCondition, HttpServletRequest request) {
+		surveyCondition.setUserId((Integer) map.get(UserController.SESSION_USER_ID));
+		map.put("condition", surveyCondition);
+		map.put("page", surveyService.findSurvey(surveyCondition));
 		return "mySurvey";
 	}
 
