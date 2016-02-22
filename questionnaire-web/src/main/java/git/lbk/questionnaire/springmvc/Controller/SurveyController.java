@@ -46,7 +46,7 @@ public class SurveyController {
 	private SurveyService surveyService;
 
 	@RequestMapping(value = "/mySurvey", method = RequestMethod.GET)
-	public String mySurvey(Map<String, Object> map, SurveyCondition surveyCondition, HttpServletRequest request) {
+	public String mySurvey(Map<String, Object> map, SurveyCondition surveyCondition) {
 		surveyCondition.setUserId((Integer) map.get(UserController.SESSION_USER_ID));
 		map.put("condition", surveyCondition);
 		map.put("page", surveyService.findSurvey(surveyCondition));
@@ -144,6 +144,15 @@ public class SurveyController {
 		}
 		map.put("survey", survey.toJson());
 		return "designSurvey";
+	}
+
+	@RequestMapping(value="/surveySquare")
+	public String surveySquare(Map<String, Object> map, SurveyCondition surveyCondition){
+		surveyCondition.setUserId(null);
+		surveyCondition.setStatus(Survey.NORMAL_STATUS);
+		map.put("condition", surveyCondition);
+		map.put("page", surveyService.findSurvey(surveyCondition));
+		return "surveySquare";
 	}
 
 	@RequestMapping(value = "/participate/{surveyId}")
