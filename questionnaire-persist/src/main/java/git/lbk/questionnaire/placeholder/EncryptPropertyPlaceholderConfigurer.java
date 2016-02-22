@@ -16,7 +16,7 @@
 
 package git.lbk.questionnaire.placeholder;
 
-import git.lbk.questionnaire.security.AESUtils;
+import git.lbk.questionnaire.util.AESUtils;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 
 import java.util.*;

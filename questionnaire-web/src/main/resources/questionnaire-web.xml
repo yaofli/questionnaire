@@ -39,6 +39,7 @@
     <bean id="errorHandlerResolve" class="git.lbk.questionnaire.util.annotationResolve.ErrorHandlerResolve"/>
 
     <mvc:interceptors>
+        <bean class="git.lbk.questionnaire.springmvc.interceptors.LoggerInterceptor"/>
         <bean class="git.lbk.questionnaire.springmvc.interceptors.CheckTokenInterceptor">
             <property name="errorResolve" ref="errorHandlerResolve"/>
         </bean>
@@ -46,6 +47,11 @@
             <property name="userService" ref="userService"/>
         </bean>
     </mvc:interceptors>
+
+    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="defaultErrorView" value="/error"/>
+        <property name="exceptionAttribute" value="ex"/>
+    </bean>
 
     <mvc:view-controller path="/" view-name="index"/>
     <mvc:view-controller path="/index" view-name="index"/>

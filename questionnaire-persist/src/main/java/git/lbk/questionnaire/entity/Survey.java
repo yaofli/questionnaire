@@ -16,25 +16,36 @@
 
 package git.lbk.questionnaire.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import git.lbk.questionnaire.util.ORMUtil;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * 一个完整的问卷调查
  */
-public class Survey {
+public class Survey implements Serializable{
+
+	private static final long serialVersionUID = 5173875894602974070L;
 
 	/**
 	 * 正常状态
 	 */
 	public static final Integer NORMAL_STATUS = 0;
+
+	/**
+	 * 设计状态
+	 */
+	public static final Integer DESIGN_STATUS = 1;
+
 	/**
 	 * 删除状态
 	 */
-	public static final Integer DELETE_STATUS = 1;
+	public static final Integer DELETE_STATUS = 2;
 
 	/**
 	 * 无效调查. id为-1.
@@ -49,10 +60,8 @@ public class Survey {
 		INVALID_SURVEY.setDetailDescribe("");
 		INVALID_SURVEY.setCreateTime(null);
 		INVALID_SURVEY.setModifyTime(null);
-		INVALID_SURVEY.setDesigning(true);
-		INVALID_SURVEY.setPageCount(0);
 		INVALID_SURVEY.setStatus(DELETE_STATUS);
-		INVALID_SURVEY.setPages(new ArrayList<>(0));
+		INVALID_SURVEY.setPages(Collections.emptyList());
 	}
 
 	private Integer id;
@@ -62,8 +71,6 @@ public class Survey {
 	private String detailDescribe;
 	private Date createTime;
 	private Date modifyTime;
-	private Boolean designing;
-	private Integer pageCount;
 	private Integer status;
 
 	private List<Page> pages = new ArrayList<>(0);
@@ -116,20 +123,8 @@ public class Survey {
 		this.modifyTime = modifyTime;
 	}
 
-	public Boolean getDesigning() {
-		return designing;
-	}
-
-	public void setDesigning(Boolean designing) {
-		this.designing = designing;
-	}
-
 	public Integer getPageCount() {
-		return pageCount;
-	}
-
-	public void setPageCount(Integer pageCount) {
-		this.pageCount = pageCount;
+		return pages.size();
 	}
 
 	public Integer getStatus() {
@@ -162,6 +157,38 @@ public class Survey {
 		}
 	}
 
+	@JsonIgnore
+	public boolean isNormal(){
+		return NORMAL_STATUS.equals(status);
+	}
+
+	@JsonIgnore
+	public boolean isDesign(){
+		return DESIGN_STATUS.equals(status);
+	}
+
+	@JsonIgnore
+	public boolean isDelete(){
+		return DELETE_STATUS.equals(status);
+	}
+
+	/**
+	 * 翻转设计状态. 如果是正常状态, 则置为设计状态; 如果是设计状态, 则置为正常状态; 否则没有任何动作
+	 * @return 如果是正常状态或者设计状态, 则返回true; 否则返回false.
+	 */
+	public boolean reverseDesign(){
+		if(isNormal()){
+			status = DESIGN_STATUS;
+		}
+		else if(isDesign()){
+			status = NORMAL_STATUS;
+		}
+		else{
+			return false;
+		}
+		return true;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if(this == o) return true;
@@ -176,8 +203,6 @@ public class Survey {
 			return false;
 		if(createTime != null ? !createTime.equals(survey.createTime) : survey.createTime != null) return false;
 		if(modifyTime != null ? !modifyTime.equals(survey.modifyTime) : survey.modifyTime != null) return false;
-		if(designing != null ? !designing.equals(survey.designing) : survey.designing != null) return false;
-		if(pageCount != null ? !pageCount.equals(survey.pageCount) : survey.pageCount != null) return false;
 		return !(status != null ? !status.equals(survey.status) : survey.status != null);
 
 	}
@@ -190,8 +215,6 @@ public class Survey {
 		result = 31 * result + (detailDescribe != null ? detailDescribe.hashCode() : 0);
 		result = 31 * result + (createTime != null ? createTime.hashCode() : 0);
 		result = 31 * result + (modifyTime != null ? modifyTime.hashCode() : 0);
-		result = 31 * result + (designing != null ? designing.hashCode() : 0);
-		result = 31 * result + (pageCount != null ? pageCount.hashCode() : 0);
 		result = 31 * result + (status != null ? status.hashCode() : 0);
 		return result;
 	}
@@ -205,9 +228,8 @@ public class Survey {
 				", detailDescribe='" + detailDescribe + '\'' +
 				", createTime=" + createTime +
 				", modifyTime=" + modifyTime +
-				", designing=" + designing +
-				", pageCount=" + pageCount +
 				", status=" + status +
+				", pages=" + ORMUtil.toString(pages) +
 				'}';
 	}
 }

@@ -16,7 +16,9 @@
 
 package git.lbk.questionnaire.sms;
 
-public class FrequentlyException extends RuntimeException{
+public class FrequentlyException extends SendSmsFailException{
+	private static final long serialVersionUID = 7228789187251088297L;
+
 	public FrequentlyException() {
 	}
 

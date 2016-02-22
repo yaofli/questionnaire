@@ -16,7 +16,6 @@
 
 package git.lbk.questionnaire.ipAddress;
 
-import git.lbk.questionnaire.dao.impl.UserDaoImpl;
 import git.lbk.questionnaire.entity.User;
 import org.easymock.EasyMock;
 import org.easymock.LogicalOperator;
@@ -27,23 +26,22 @@ import java.util.*;
 
 /**
  * 需要注入的参数通过mock创建并注入, 所以不需要使用SpringJUnit4ClassRunner
- * fixme 这里同样只测试了单线程的情况, 没有测试多线程下的执行情况
  */
 public class IpActualAddressServiceImplTest {
 
 	private IpActualAddressService ipActualAddressService;
 	private IpActualAddress ipActualAddress;
-	private UserDaoImpl userDao;
+	private AddressMessageService addressMessageService;
 	private User user;
 
 	@Before
 	public void setUp() throws Exception {
 		ipActualAddress = EasyMock.createMock(IpActualAddress.class);
-		userDao = EasyMock.createMock(UserDaoImpl.class);
+		addressMessageService = EasyMock.createMock(AddressMessageService.class);
 
 		IpActualAddressServiceImpl ipActualAddressService = new IpActualAddressServiceImpl();
 		ipActualAddressService.setIpActualAddress(ipActualAddress);
-		ipActualAddressService.setUserDao(userDao);
+		ipActualAddressService.setUserLastLoginService(addressMessageService);
 		ipActualAddressService.init();
 		this.ipActualAddressService = ipActualAddressService;
 
@@ -58,7 +56,7 @@ public class IpActualAddressServiceImplTest {
 	public void testSaveIpActualInfo() throws Exception {
 		EasyMock.expect(ipActualAddress.getIpActualAddress(user.getLastLoginIp()))
 				.andReturn(user.getLastLoginAddress());
-		userDao.updateLastLoginInfo(EasyMock.cmp(user, new Comparator<User>() {
+		addressMessageService.updateUserLastLoginIp(EasyMock.cmp(user, new Comparator<User>() {
 			@Override
 			public int compare(User u1, User u2) {
 				if(!u1.getId().equals(u2.getId())){

@@ -24,7 +24,7 @@
         <property name="locations">
             <list>
                 <value>ihuyiAccount.properties</value>
-                <value>sms.properties</value>
+                <value>smsTest.properties</value>
             </list>
         </property>
         <property name="fileEncoding" value="utf-8"/>
@@ -36,21 +36,32 @@
         </property>
     </bean>
 
-    <bean id="sendSms" class="git.lbk.questionnaire.sms.SendSmsImpl">
+    <bean id="sms" class="git.lbk.questionnaire.sms.Sms2ConsoleImpl">
         <property name="maxTryNumber" value="${sms.maxTryNumber}"/>
-        <property name="account" value="${sms.account}"/>
-        <property name="password" value="${sms.password}"/>
     </bean>
 
-    <bean id="sms" class="git.lbk.questionnaire.sms.SmsImpl" init-method="init" destroy-method="destroy">
+    <bean id="asyncSms" class="git.lbk.questionnaire.sms.AsyncSmsImpl">
+        <property name="sendSms" ref="sms"/>
+    </bean>
+
+    <bean id="frequencyFilter" class="git.lbk.questionnaire.sms.FrequencyFilter">
+        <property name="cleanMapInterval" value="${sms.cleanMapInterval}"/>
         <property name="sendInterval" value="${sms.sendInterval}"/>
+    </bean>
+
+    <bean id="dailyCountFilter" class="git.lbk.questionnaire.sms.DailyCountFilter">
         <property name="ipDailyMaxSendCount" value="${sms.ipDailyMaxSendCount}"/>
         <property name="mobileDailyMaxSendCount" value="${sms.mobileDailyMaxSendCount}"/>
-        <property name="clearMapInterval" value="${sms.clearMapInterval}"/>
     </bean>
 
     <bean id="smsService" class="git.lbk.questionnaire.sms.SmsServiceImpl">
-        <property name="sms" ref="sms"/>
+        <property name="filters">
+            <list>
+                <ref bean="frequencyFilter"/>
+                <ref bean="dailyCountFilter"/>
+            </list>
+        </property>
+        <property name="sms" ref="asyncSms"/>
     </bean>
 
 </beans>

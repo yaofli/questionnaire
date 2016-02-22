@@ -16,73 +16,26 @@
 
 package git.lbk.questionnaire.sms;
 
-import git.lbk.questionnaire.dao.BaseDao;
-import git.lbk.questionnaire.entity.SmsCount;
-
 /**
- * 该接口包装了SendSms接口.
- * 实现了异步发送, 限制ip, 手机号日发送次数, 以及短时间内的发送频率
+ * 负责发送短信的类.
+ * 该类不负责限制发送次数, 频率等问题, 只是简单的把信息发送出去
  */
 public interface Sms {
 
-	void setSmsDao(BaseDao<SmsCount> smsDao);
-
-	void setSendSms(SendSms sendSms);
-
 	/**
-	 * 设置向同一个手机号发送短信的最短发送间隔(单位: 秒)
+	 * 设置发送失败时的最大尝试次数
 	 *
-	 * @param sendInterval 发送的最短间隔
+	 * @param maxTryNumber 发送失败时的最大尝试次数
 	 */
-	void setSendInterval(long sendInterval);
+	void setMaxTryNumber(int maxTryNumber);
 
 	/**
-	 * 设置一个ip一天可以请求发送短信的最大次数
+	 * 向mobile发送message消息
 	 *
-	 * @param ipDailyMaxSendCount 一个ip一天可以请求发送的的最大次数
+	 * @param mobile  手机号
+	 * @param message 短信内容
+	 * @return 成功返回-1, 否则返回其他值
 	 */
-	void setIpDailyMaxSendCount(int ipDailyMaxSendCount);
-
-	/**
-	 * 设置一天向一个手机号发送短信的最大次数
-	 *
-	 * @param mobileDailyMaxSendCount 一天向一个手机号发送短信的最大次数
-	 */
-	void setMobileDailyMaxSendCount(int mobileDailyMaxSendCount);
-
-	/**
-	 * 设置清理发送记录的时间间隔(单位: 秒)
-	 *
-	 * @param clearMapInterval 清理发送记录的时间间隔
-	 */
-	void setClearMapInterval(long clearMapInterval);
-
-	/**
-	 * 初始化该类实例,
-	 * 在调用该方法之前需要先将发送间隔, 日发送最大次数, 清理发送记录的时间间隔注入
-	 */
-	void init() throws Exception;
-
-	/**
-	 * 发送短信
-	 *
-	 * @param mobile 手机号码
-	 * @param message  短信内容
-	 * @param ip       请求发送短信的客户端的ip
-	 * @throws FrequentlyException 如果发送过于频繁
-	 * @throws SendManyDailyException 如果超过了一天发送的最大次数
-	 */
-	void sendMessage(String mobile, String message, String ip)
-			throws FrequentlyException, SendManyDailyException;
-
-	/**
-	 * 清空发送短信计数表的数据
-	 */
-	void clearData();
-
-	/**
-	 * 释放资源
-	 */
-	void destroy();
+	int sendMessage(String mobile, String message);
 
 }

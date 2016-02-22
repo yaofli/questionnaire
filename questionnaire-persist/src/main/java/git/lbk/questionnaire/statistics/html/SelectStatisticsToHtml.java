@@ -17,14 +17,13 @@
 package git.lbk.questionnaire.statistics.html;
 
 import git.lbk.questionnaire.entity.question.Option;
-import git.lbk.questionnaire.entity.question.SelectQuestion;
 import git.lbk.questionnaire.statistics.QuestionStatistics;
 import git.lbk.questionnaire.statistics.SelectStatistics;
 
 import java.text.NumberFormat;
 import java.util.*;
 
-public class SelectStatisticsToHtml extends StatisticsToHtmlAbstract {
+public class SelectStatisticsToHtml extends AbstractStatisticsToHtml {
 
 
 	private static final String TRS_PLACEHOLDER = "${trs}";
@@ -53,7 +52,7 @@ public class SelectStatisticsToHtml extends StatisticsToHtmlAbstract {
 
 	private static final NumberFormat PERCENT_FORMAT = NumberFormat.getPercentInstance();
 
-	SelectStatistics selectStatistics;
+	private SelectStatistics selectStatistics;
 
 	@Override
 	protected String getContent() {
@@ -62,7 +61,7 @@ public class SelectStatisticsToHtml extends StatisticsToHtmlAbstract {
 	}
 
 	private String getMainPart(){
-		List<Option> options = ((SelectQuestion) selectStatistics.getQuestion()).getOptions();
+		List<Option> options = (selectStatistics.getQuestion()).getOptions();
 		StringBuilder trsHtml = new StringBuilder();
 		for(int i = 0; i < options.size(); i++) {
 			trsHtml.append(TR_TEMPLATE
@@ -92,4 +91,8 @@ public class SelectStatisticsToHtml extends StatisticsToHtmlAbstract {
 				.replace(PERCENTAGE_PLACEHOLDER, "");
 	}
 
+	@Override
+	public String toString() {
+		return "SelectStatisticsToHtml{} " + super.toString();
+	}
 }

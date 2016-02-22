@@ -21,15 +21,6 @@ import git.lbk.questionnaire.entity.User;
 public interface UserService {
 
 	/**
-	 * 成功
-	 */
-	int SUCCESS = 0;
-	/**
-	 * 邮箱或者手机号已经被占用
-	 */
-	int IDENTITY_USED = 1;
-
-	/**
 	 * 判断用户是否注册
 	 * @param account 用户 手机号 或者 邮箱
 	 * @return 如果用户已经注册, 且 已经激活 或者 账号还在有效期内, 则返回true, 否则返回false
@@ -43,7 +34,7 @@ public interface UserService {
 	 * @param ip 用户ip
 	 * @return 成功返回SUCCESS, 如果邮箱/手机号已经注册, 则返回IDENTITY_USED
 	 */
-	int register(User user, String ip);
+	void register(User user, String ip);
 
 	/**
 	 * 验证用户登录信息是否匹配

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2016 LBK
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cache="http://www.springframework.org/schema/cache"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <bean id="cacheManagerFactoryBean" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <property name="configLocation" value="classpath:ehcache.xml"/>
+    </bean>
+
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+        <property name="cacheManager" ref="cacheManagerFactoryBean"/>
+    </bean>
+
+    <cache:advice id="cacheAdvice" cache-manager="cacheManager">
+
+        <!-- survey缓存策略-->
+        <cache:caching cache="survey"
+                       condition="#root.targetClass==T(git.lbk.questionnaire.dao.impl.SurveyDaoImpl)">
+            <cache:cacheable method="getEntity" key="#p0"/>
+
+            <cache:cache-evict method="saveOrUpdateEntity" key="#p0.id"/>
+            <cache:cache-evict method="updateEntity" key="#p0.id"/>
+            <cache:cache-evict method="deleteEntity" key="#p0.id"/>
+            <cache:cache-evict method="updateSurveyStatus" key="#p0"/>
+        </cache:caching>
+        <cache:caching cache="userSurvey"
+                       condition="#root.targetClass==T(git.lbk.questionnaire.dao.impl.SurveyDaoImpl)">
+            <!-- 由于删除cache的key不好拼凑, 暂时空着 -->
+        </cache:caching>
+        <cache:caching cache="surveyBelongUser"
+                    condition="#root.targetClass==T(git.lbk.questionnaire.dao.impl.SurveyDaoImpl)">
+            <!-- 由于删除cache的key不好拼凑, 暂时空着 -->
+        </cache:caching>
+
+        <!-- page缓存策略 -->
+        <cache:caching cache="getPagesBySurveyId"
+                       condition="#root.targetClass==T(git.lbk.questionnaire.dao.impl.PageDaoImpl)">
+            <cache:cacheable method="getPagesBySurveyId" key="#p0"/>
+
+            <cache:cache-evict method="deletePageBySurveyId" key="#p0"/>
+        </cache:caching>
+
+    </cache:advice>
+
+    <aop:config>
+        <aop:advisor advice-ref="cacheAdvice" pointcut="execution(* git.lbk.questionnaire.dao.BaseDao+.*(..))"/>
+    </aop:config>
+
+</beans>

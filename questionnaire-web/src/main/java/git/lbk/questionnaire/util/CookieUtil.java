@@ -119,4 +119,30 @@ public class CookieUtil {
 		CookieUtil.deleteCookie(response, AUTO_LOGIN_COOKIE_KEY);
 	}
 
+	/**
+	 * 将cookie数组转换成字符串
+	 */
+	public static String toString(Cookie[] cookies){
+		if(cookies == null){
+			return "";
+		}
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("{");
+		for(Cookie cookie : cookies) {
+			stringBuilder.append(toString(cookie)).append(", ");
+		}
+		if(stringBuilder.length()>1){
+			stringBuilder.delete(stringBuilder.length()-2, stringBuilder.length());
+		}
+		stringBuilder.append("}");
+		return stringBuilder.toString();
+	}
+
+	/**
+	 * 将cookie转换成字符串
+	 */
+	public static String toString(Cookie cookie){
+		return cookie.getName() + "=" + cookie.getValue() + ", path: " + cookie.getPath();
+	}
+
 }

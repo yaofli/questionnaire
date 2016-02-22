@@ -19,20 +19,8 @@ package git.lbk.questionnaire.dao.impl;
 import git.lbk.questionnaire.entity.Page;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
-
 @Repository("pageDao")
 public class PageDaoImpl extends BaseDaoImpl<Page> {
-
-	/**
-	 * 获取一个调查问卷所有的页面
-	 * @param surveyId 调查问卷id
-	 * @return 到调查问卷有的页面
-	 */
-	public List<Page> getPagesBySurveyId(Integer surveyId){
-		String hql = "from Page p where p.survey.id=?";
-		return findEntityByHQL(hql, surveyId);
-	}
 
 	/**
 	 * 删除一个调查问卷的所有页面

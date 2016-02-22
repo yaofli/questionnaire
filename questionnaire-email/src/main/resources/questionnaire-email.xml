@@ -43,28 +43,29 @@
         </property>
     </bean>
 
-    <bean id="sendMimeMail" class="git.lbk.questionnaire.email.SendMimeEmail">
+    <bean id="sendMimeMail" class="git.lbk.questionnaire.email.MimeEmail">
         <property name="sender" ref="sender"/>
         <property name="from" value="${email.username}"/>
     </bean>
 -->
 
-    <bean id="sendMimeMail" class="git.lbk.questionnaire.email.SendEmailToConsole"/>
+    <bean id="sendMimeMail" class="git.lbk.questionnaire.email.EmailToConsole"/>
 
-    <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+    <bean id="asyncSendExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <property name="threadGroupName" value="asyncSendEmail"/>
         <property name="corePoolSize" value="3"/>
         <property name="maxPoolSize" value="10"/>
     </bean>
 
-    <bean id="asyncSendMail" class="git.lbk.questionnaire.email.AsyncSendEmailImpl">
+    <bean id="asyncMail" class="git.lbk.questionnaire.email.AsyncEmailImpl">
         <property name="sendMail" ref="sendMimeMail"/>
-        <property name="taskExecutor" ref="taskExecutor"/>
+        <property name="taskExecutor" ref="asyncSendExecutor"/>
     </bean>
 
-    <bean id="mailService" class="git.lbk.questionnaire.email.SendEmailServiceImpl"
+    <bean id="mailService" class="git.lbk.questionnaire.email.EmailServiceImpl"
           init-method="init"
           destroy-method="destroy">
-        <property name="asyncSendMail" ref="asyncSendMail"/>
+        <property name="email" ref="asyncMail"/>
         <property name="emailDao" ref="emailValidateDao"/>
         <property name="templatePath" value="mailTemplate"/>
     </bean>
@@ -76,8 +77,8 @@
 
     <bean id="emailCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="emailDeleteExpireJob"/>
-        <!-- 每个奇数月份的1号运行 -->
-        <property name="cronExpression" value="0 0 0 1 1/2 ?"/>
+        <!-- 每月的1号运行 -->
+        <property name="cronExpression" value="0 0 0 1 * ?"/>
     </bean>
 
     <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
@@ -98,7 +99,7 @@
 
     <aop:config>
         <aop:advisor advice-ref="mailTxAdvice"
-                     pointcut="execution(* git.lbk.questionnaire.email.SendEmailService.*(..))"/>
+                     pointcut="execution(* git.lbk.questionnaire.email.EmailService.*(..))"/>
     </aop:config>
 
 </beans>

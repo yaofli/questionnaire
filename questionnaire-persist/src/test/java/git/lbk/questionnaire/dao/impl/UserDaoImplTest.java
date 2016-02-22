@@ -17,11 +17,12 @@
 package git.lbk.questionnaire.dao.impl;
 
 import git.lbk.questionnaire.entity.User;
-import org.hibernate.hql.internal.ast.QuerySyntaxException;
+import git.lbk.questionnaire.query.Page;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate4.HibernateQueryException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -57,12 +58,6 @@ public class UserDaoImplTest {
 		user.setType(User.COMMON);
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		user.setRegisterTime(dateFormat.parse("2014-02-06 22:08:30"));
-	}
-
-	// 由于事务是加在Dao上的, 离开Dao的loadEntity方法时就会关闭session, 导致LazyInitializationException异常,
-	// 所以无法测试LoadEntity方法, 因此只能测试getEntity方法
-	@Test
-	public void testLoadEntity() throws Exception {
 	}
 
 	@Test
@@ -176,9 +171,9 @@ public class UserDaoImplTest {
 		userDao.updateEntity(user);
 	}
 
-	@Test(expected = QuerySyntaxException.class)
+	@Test(expected = HibernateQueryException.class)
 	public void testUpdateEntityByHQLError() throws Exception {
-		String hql = "update user u set u.name = ? where u.id = ?";
+		String hql = "update user u set u.name = ? where u.id = ?"; // User 写成了 user
 		userDao.updateEntityByHQL(hql, user.getName(), user.getId());
 	}
 
@@ -201,6 +196,15 @@ public class UserDaoImplTest {
 		assertNotEquals("初始化数据库不正确, 没有id为" + userId + "的用户", null, user);
 		userDao.updateEntityBySQL("delete from user where id = ?", userId);
 		assertEquals("删除失败", null, userDao.getEntity(userId));
+	}
+
+	@Test
+	public void testFindAll() throws Exception{
+		Page<User> page = new Page<User>(3, 0);
+		page = userDao.findAll(page, "from User");
+		assertEquals(page.getContent().size(), 3);
+		assertEquals(page.getTotalCount(), 4);
+		assertEquals(page.getTotalPage(), 2);
 	}
 
 	@Test

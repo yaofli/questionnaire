@@ -23,33 +23,40 @@ VALUES
   ('15', 1, '2015-11-21 20:50:12', 'reg'),
   ('16', 1, '2015-11-23 23:32:12', 'reg');
 
-INSERT INTO sms_count(identity, count)
-VALUES
-  ('1', 1),
-  ('2', 2),
-  ('3', 3),
-  ('4', 4),
-  ('5', 5),
-  ('6', 6);
+CREATE TABLE IF NOT EXISTS sms(
+  id     INT(11)     NOT NULL AUTO_INCREMENT,
+  mobile VARCHAR(11) NOT NULL,
+  ip     VARCHAR(40) NOT NULL,
+  type   INT(11)     NOT NULL DEFAULT '1',
+  time   DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+)DEFAULT CHARSET = utf8;
 
-INSERT INTO survey(user_id, title, create_time, modify_time, designing, page_count, survey_status)
+INSERT INTO sms (mobile, ip, type, time)
 VALUES
-  (3, '3', '2015-10-29 7:34:23', '2015-10-29 7:34:23', 0, 2, 0),
-  (4, '4_1', '2015-10-20 9:34:23', '2015-10-29 15:34:23', 0, 2, 0),
-  (4, '4_2', '2015-11-29 20:34:23', '2015-11-29 10:34:23', 0, 0, 0),
-  (4, '4_3', '2015-10-14 7:44:23', '2015-10-20 19:34:23', 0, 0, 0);
+  ('12345678901', '127.0.0.1', 1, now()),
+  ('12345678901', '127.0.0.2', 1, now()),
+  ('12345678902', '127.0.0.3', 1, now()),
+  ('12345678901', '127.0.0.1', 1, now());
 
-INSERT INTO page(survey_id, title, questions, question_count, rank)
+INSERT INTO survey(user_id, title, create_time, modify_time, survey_status)
 VALUES
-  (2, '2_1', '2_1', 2, 1),
-  (2, '2_2', '2_2', 1, 2),
-  (1, '1_1', '1_1', 2, 1),
-  (1, '1_2', '1_2', 0, 2);
+  (3, '3', '2015-10-29 7:34:23', '2015-10-29 7:34:23', 0),
+  (4, '4_1', '2015-10-20 9:34:23', '2015-10-29 15:34:23', 0),
+  (4, '4_2', '2015-11-29 20:34:23', '2015-11-29 10:34:23', 0),
+  (4, '4_3', '2015-10-14 7:44:23', '2015-10-20 19:34:23', 0);
 
-INSERT INTO survey (user_id, title, create_time, modify_time, designing, page_count)
+INSERT INTO page(survey_id, title, questions, rank)
 VALUES
-(4, '4_4', '2015-10-14 7:44:23', '2015-10-20 19:34:23', 0, 0),
-(4, '4_4', '2015-10-14 7:44:23', '2015-10-20 19:34:23', 0, 0);
+  (2, '2_1', '2_1', 1),
+  (2, '2_2', '2_2', 2),
+  (1, '1_1', '1_1', 1),
+  (1, '1_2', '1_2', 2);
+
+INSERT INTO survey (user_id, title, create_time, modify_time, survey_status)
+VALUES
+(4, '4_4', '2015-10-14 7:44:23', '2015-10-20 19:34:23', 0),
+(4, '4_4', '2015-10-14 7:44:23', '2015-10-20 19:34:23', 0);
 INSERT INTO answer(survey_id, answer_time, ip, answer)
 VALUES
   (5, '2015-10-14 7:44:23', '127.0.0.1', '1'),

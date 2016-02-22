@@ -60,7 +60,7 @@ public class EmailValidateDaoImplTest {
 		assertNotNull(emailValidateDao.getEntity("15"));
 		assertNotNull(emailValidateDao.getEntity("16"));
 
-		emailValidateDao.deleteBeforeTime(DateUtil.getDate(Calendar.HOUR_OF_DAY, -EmailValidate.EXPIRE_TIME));
+		emailValidateDao.deleteBeforeTime(DateUtil.getExcursionDateByNow(Calendar.HOUR_OF_DAY, -EmailValidate.EXPIRE_TIME));
 
 		assertNull(emailValidateDao.getEntity("11"));
 		assertNull(emailValidateDao.getEntity("13"));

@@ -17,6 +17,7 @@
 package git.lbk.questionnaire.entity;
 
 import git.lbk.questionnaire.util.DateUtil;
+import git.lbk.questionnaire.util.ORMUtil;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -106,6 +107,7 @@ public class EmailValidate implements Serializable{
 	public String toString() {
 		return "EmailValidate{" +
 				"identityCode='" + identityCode + '\'' +
+				", user=" + ORMUtil.toString(user) +
 				", createTime=" + createTime +
 				", type='" + type + '\'' +
 				'}';

@@ -16,6 +16,7 @@
 
 package git.lbk.questionnaire.security;
 
+import git.lbk.questionnaire.util.MessageDigestUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

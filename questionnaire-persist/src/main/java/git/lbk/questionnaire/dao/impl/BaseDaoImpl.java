@@ -17,10 +17,11 @@
 package git.lbk.questionnaire.dao.impl;
 
 import git.lbk.questionnaire.dao.BaseDao;
+import git.lbk.questionnaire.query.Page;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
@@ -28,12 +29,13 @@ import java.util.*;
 
 /**
  * 所有Dao的抽象父类, 提供了基本的查询, 更新操作
+ *
  * @param <T> Dao需要对哪个实体类进行操作
  */
 public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 
 	@Autowired
-	private SessionFactory sf;
+	protected HibernateTemplate hibernateTemplate;
 
 	private Class<T> clazz;
 
@@ -43,83 +45,70 @@ public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 		clazz = (Class<T>) type.getActualTypeArguments()[0];
 	}
 
-
 	/**
 	 * 保存实体对象
+	 *
 	 * @param t 实体对象
 	 */
 	@Override
 	public void saveEntity(T t) {
-		sf.getCurrentSession().save(t);
+		hibernateTemplate.save(t);
 	}
 
 	/**
 	 * 保存或者更新实体对象. 根据实体对象中的id判断, 如果已经有该id了, 则更新实体, 否则保存实体对象
+	 *
 	 * @param t 实体对象
 	 */
 	@Override
 	public void saveOrUpdateEntity(T t) {
-		sf.getCurrentSession().saveOrUpdate(t);
+		hibernateTemplate.saveOrUpdate(t);
 	}
 
 	/**
 	 * 更新实体对象
+	 *
 	 * @param t 实体对象
 	 */
 	@Override
 	public void updateEntity(T t) {
-		sf.getCurrentSession().update(t);
+		hibernateTemplate.update(t);
 	}
 
 	/**
 	 * 删除实体对象
+	 *
 	 * @param t 实体的引用
 	 */
 	@Override
 	public void deleteEntity(T t) {
-		sf.getCurrentSession().delete(t);
+		hibernateTemplate.delete(t);
 	}
 
 	/**
 	 * 批量执行hql语句
-	 * @param hql hql语句
+	 *
+	 * @param hql     hql语句
 	 * @param objects 参数
 	 * @return 受影响的行数
 	 */
-	public int updateEntityByHQL(String hql, Object... objects) {
-		Query query = sf.getCurrentSession().createQuery(hql);
-		if(objects != null) {
-			for(int i = 0; i < objects.length; i++) {
-				query.setParameter(i, objects[i]);
-			}
-		}
-		return query.executeUpdate();
+	protected int updateEntityByHQL(String hql, Object... objects) {
+		return hibernateTemplate.bulkUpdate(hql, objects);
 	}
 
 	/**
 	 * 执行原生的sql更新语句
+	 *
 	 * @param sql     sql语句
 	 * @param objects sql参数
 	 */
-	public int updateEntityBySQL(String sql, Object... objects){
-		SQLQuery query = sf.getCurrentSession().createSQLQuery(sql);
+	protected int updateEntityBySQL(String sql, Object... objects) {
+		SQLQuery query = hibernateTemplate.getSessionFactory()
+				.getCurrentSession().createSQLQuery(sql);
 		for(int i = 0; i < objects.length; i++) {
 			query.setParameter(i, objects[i]);
 		}
 		return query.executeUpdate();
-	}
-
-	/**
-	 * 根据id加载实体
-	 *
-	 * @param id 实体id
-	 * @return 匹配的实体代理, 可能存在延迟加载.
-	 * 如果使用了延迟加载, 在使用时发现没有匹配的实体, 则抛出异常.
-	 * 在使用之前如果session已经关闭, 则会抛出LazyLoadException异常
-	 */
-	@Override
-	public T loadEntity(Serializable id) {
-		return (T) sf.getCurrentSession().load(clazz, id);
 	}
 
 	/**
@@ -130,7 +119,7 @@ public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 	 */
 	@Override
 	public T getEntity(Serializable id) {
-		return (T) sf.getCurrentSession().get(clazz, id);
+		return hibernateTemplate.get(clazz, id);
 	}
 
 	/**
@@ -140,12 +129,8 @@ public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 	 * @param objects 参数
 	 * @return 结果的List集合
 	 */
-	public List<T> findEntityByHQL(String hql, Object... objects) {
-		Query query = sf.getCurrentSession().createQuery(hql);
-		for(int i=0; i<objects.length; i++){
-			query.setParameter(i, objects[i]);
-		}
-		return query.list();
+	protected List<T> findEntityByHQL(String hql, Object... objects) {
+		return (List<T>) hibernateTemplate.find(hql, objects);
 	}
 
 	/**
@@ -156,8 +141,9 @@ public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 	 * @param objects 参数
 	 * @return 查询结果
 	 */
-	public Object uniqueResult(String hql, Object... objects) {
-		Query query = sf.getCurrentSession().createQuery(hql);
+	protected Object uniqueResult(String hql, Object... objects) {
+		Query query = hibernateTemplate.getSessionFactory()
+				.getCurrentSession().createQuery(hql);
 		for(int i = 0; i < objects.length; i++) {
 			query.setParameter(i, objects[i]);
 		}
@@ -167,13 +153,14 @@ public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 	/**
 	 * 执行原生的sql查询(可以指定是否封装成实体)
 	 *
-	 * @param clazz 封装的实体的类型
+	 * @param clazz   封装的实体的类型(如果为null, 则表示不封装)
 	 * @param sql     原生sql语句
 	 * @param objects sql参数
 	 * @return 查询的结果类型
 	 */
-	public List executeSQLQuery(Class<T> clazz, String sql, Object... objects) {
-		SQLQuery query = sf.getCurrentSession().createSQLQuery(sql);
+	protected List executeSQLQuery(Class<T> clazz, String sql, Object... objects) {
+		SQLQuery query = hibernateTemplate.getSessionFactory()
+				.getCurrentSession().createSQLQuery(sql);
 		if(clazz != null) {
 			query.addEntity(clazz);
 		}
@@ -182,4 +169,71 @@ public abstract class BaseDaoImpl<T> implements BaseDao<T> {
 		}
 		return query.list();
 	}
+
+	/**
+	 * 执行原生的sql查询, 获得单值数据
+	 *
+	 * @param sql     sql语句
+	 * @param objects 参数
+	 * @return 查询获得的单值数据
+	 */
+	protected Object uniqueResultBySql(String sql, Object... objects) {
+		SQLQuery query = hibernateTemplate.getSessionFactory().getCurrentSession().createSQLQuery(sql);
+		for(int i = 0; i < objects.length; i++) {
+			query.setParameter(i, objects[i]);
+		}
+		return query.uniqueResult();
+	}
+
+	/**
+	 * 查询出某页的实体信息, 其中标识列为"id". 该方法相当于调用
+	 * <pre>{@code
+	 * findAll(page, fromAndWhereHql, "id", objects);
+	 * }</pre>
+	 *
+	 * @param page            分页信息, 该方法会修改该参数
+	 * @param fromAndWhereHql hql的from和where子句
+	 * @param objects         参数
+	 * @return 该页的实体信息, 结果集大小等
+	 */
+	protected Page<T> findAll(Page<T> page, String fromAndWhereHql, Object... objects) {
+		return findAll(page, fromAndWhereHql, "id", objects);
+	}
+
+	/**
+	 * 查询出某页的实体信息.
+	 *
+	 * @param page            分页信息, 该方法会修改该参数
+	 * @param fromAndWhereHql hql的from和where子句
+	 * @param flagColumn      用来统计结果集大小的标志列(比如id, *)
+	 * @param objects         参数
+	 * @return 该页的实体信息, 结果集大小等.
+	 */
+	protected Page<T> findAll(Page<T> page, String fromAndWhereHql, String flagColumn, Object... objects) {
+		long totalCount = (long) uniqueResult("select count(" + flagColumn + ") " + fromAndWhereHql, objects);
+		page.setTotalCount((int) totalCount);
+		if(page.getFirstResult() < page.getTotalCount()) {
+			page.setContent(getPageList(page, fromAndWhereHql, objects));
+		}
+		return page;
+	}
+
+	/**
+	 * 获得指定页面的对象列表
+	 *
+	 * @param page    分页信息, 该方法会修改该参数
+	 * @param hql     hql语句
+	 * @param objects 参数
+	 * @return 该页的页面信息
+	 */
+	private List<T> getPageList(Page<T> page, String hql, Object... objects) {
+		Query query = hibernateTemplate.getSessionFactory().getCurrentSession().createQuery(hql);
+		query.setFirstResult(page.getFirstResult());
+		query.setMaxResults(page.getPageSize());
+		for(int i = 0; i < objects.length; i++) {
+			query.setParameter(i, objects[i]);
+		}
+		return query.list();
+	}
+
 }

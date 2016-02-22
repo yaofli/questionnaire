@@ -16,14 +16,14 @@
 
 package git.lbk.questionnaire.statistics;
 
-import git.lbk.questionnaire.entity.answer.MultiplySelectionQuestAnswer;
-import git.lbk.questionnaire.entity.answer.QuestionAnswer;
-import git.lbk.questionnaire.entity.answer.SingleSelectQuestionAnswer;
+import git.lbk.questionnaire.answer.MultiplySelectionQuestAnswer;
+import git.lbk.questionnaire.answer.QuestionAnswer;
+import git.lbk.questionnaire.answer.SingleSelectQuestionAnswer;
 import git.lbk.questionnaire.entity.question.SelectQuestion;
 
 import java.util.*;
 
-public class SelectStatistics extends QuestionStatisticsAbstract {
+public class SelectStatistics extends AbstractQuestionStatistics<SelectQuestion> {
 
 	private List<Integer> answerCounts;
 	private int optionNumber;
@@ -123,4 +123,11 @@ public class SelectStatistics extends QuestionStatisticsAbstract {
 		addAnswerCount(msqa.getAnswer());
 	}
 
+	@Override
+	public String toString() {
+		return "SelectStatistics{" +
+				"answerCounts=" + answerCounts +
+				", optionNumber=" + optionNumber +
+				"} " + super.toString();
+	}
 }

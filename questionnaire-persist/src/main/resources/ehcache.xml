@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2016 LBK
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<ehcache>
+    <diskStore path="F:/git/ehcache"/>
+    <defaultCache
+            maxElementsInMemory="10000"
+            eternal="false"
+            timeToIdleSeconds="1200"
+            timeToLiveSeconds="1200"
+            overflowToDisk="true"
+            maxElementsOnDisk="1000"
+            diskExpiryThreadIntervalSeconds="1200"
+            memoryStoreEvictionPolicy="LRU"
+            />
+
+    <!-- survey缓存池-->
+    <cache name="survey"
+            maxElementsInMemory="100"
+            eternal="false"
+            timeToIdleSeconds="86400"
+            timeToLiveSeconds="259200"
+             overflowToDisk="false"
+            memoryStoreEvictionPolicy="LRU"
+            />
+    <cache name="userSurvey"
+           maxElementsInMemory="100"
+           eternal="false"
+           timeToIdleSeconds="172800"
+           timeToLiveSeconds="259200"
+           overflowToDisk="false"
+           memoryStoreEvictionPolicy="LRU"
+           />
+    <cache name="surveyBelongUser"
+           maxElementsInMemory="10000"
+           eternal="false"
+           timeToIdleSeconds="172800"
+           timeToLiveSeconds="259200"
+           overflowToDisk="false"
+           memoryStoreEvictionPolicy="LRU"
+    />
+
+    <!-- page缓存池 -->
+    <cache name="surveyPage"
+           maxElementsInMemory="1000"
+           eternal="false"
+           timeToIdleSeconds="3600"
+           timeToLiveSeconds="259200"
+           overflowToDisk="false"
+           diskExpiryThreadIntervalSeconds="1200"
+           memoryStoreEvictionPolicy="LRU"
+    />
+</ehcache>
