@@ -234,17 +234,4 @@ public class UserDaoImplTest {
 		assertEquals("无效用户自动登录成功", null, userDao.validateAutoLoginInfo("12345"));
 	}
 
-	@Test
-	public void testUpdateLastLoginInfo() {
-		User u = userDao.getEntity(user.getId());
-		u.setLastLoginTime(new Date());
-		u.setLastLoginAddress("河南洛阳\n电信");
-		u.setLastLoginIp("172.10.23.12");
-		userDao.updateLastLoginInfo(u);
-
-		assertEquals(u, userDao.getEntity(u.getId()));
-
-		userDao.updateEntity(user);
-	}
-
 }

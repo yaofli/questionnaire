@@ -114,33 +114,25 @@ public class UserController {
 
 	@ResponseBody
 	@RequestMapping("/login")
-	public Map<String, Object> login(HttpServletRequest request, HttpServletResponse response) {
-		Map<String, Object> map = new HashMap<>();
+	public String login(HttpServletRequest request, HttpServletResponse response) {
 		if(!CaptchaUtil.validateImageCpatcha(request)) {
-			map.put("status", "captcha error");
-			return map;
+			return "captcha error";
 		}
 		String account = request.getParameter("account");
 		String password = request.getParameter("password");
 		if((StringUtil.verifyEmail(account) && StringUtil.verifyMobile(account))
 				|| StringUtil.isNull(password) || password.length() < 6) {
-			map.put("status", "message error");
-			return map;
+			return "message error";
 		}
 		User user = userService.validateLoginInfo(account, password, NetUtil.getRealIP(request));
 		if(user == null) {
-			map.put("status", "password error");
-			return map;
+			return "password error";
 		}
 		saveUserToSession(user, request.getSession());
-		map.put("status", "success");
-		map.put("lastLoginTime", DateUtil.format(user.getLastLoginTime(), "yyyy-MM-dd HH:mm"));
-		map.put("lastLoginIp", user.getLastLoginIp());
-		map.put("lastLoginAddress", user.getLastLoginAddress());
 		if("true".equals(request.getParameter("autoLogin"))) {
 			CookieUtil.setAutoLoginCookie(request, response, user.getAutoLogin());
 		}
-		return map;
+		return "success";
 	}
 
 	/**

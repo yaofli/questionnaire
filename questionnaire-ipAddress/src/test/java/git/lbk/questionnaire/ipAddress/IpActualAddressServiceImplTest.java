@@ -16,13 +16,10 @@
 
 package git.lbk.questionnaire.ipAddress;
 
-import git.lbk.questionnaire.entity.User;
+import git.lbk.questionnaire.entity.UserLoginRecord;
 import org.easymock.EasyMock;
-import org.easymock.LogicalOperator;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.*;
 
 /**
  * 需要注入的参数通过mock创建并注入, 所以不需要使用SpringJUnit4ClassRunner
@@ -31,54 +28,33 @@ public class IpActualAddressServiceImplTest {
 
 	private IpActualAddressService ipActualAddressService;
 	private IpActualAddress ipActualAddress;
-	private AddressMessageService addressMessageService;
-	private User user;
+	private UserLoginRecordService addressMessageService;
 
 	@Before
 	public void setUp() throws Exception {
 		ipActualAddress = EasyMock.createMock(IpActualAddress.class);
-		addressMessageService = EasyMock.createMock(AddressMessageService.class);
+		addressMessageService = EasyMock.createMock(UserLoginRecordService.class);
 
 		IpActualAddressServiceImpl ipActualAddressService = new IpActualAddressServiceImpl();
 		ipActualAddressService.setIpActualAddress(ipActualAddress);
 		ipActualAddressService.setUserLastLoginService(addressMessageService);
 		ipActualAddressService.init();
 		this.ipActualAddressService = ipActualAddressService;
-
-		user = new User();
-		user.setId(1);
-		user.setLastLoginIp("127.0.0.1");
-		user.setLastLoginAddress("河南洛阳");
-		user.setLastLoginTime(new Date());
 	}
 
 	@Test
 	public void testSaveIpActualInfo() throws Exception {
-		EasyMock.expect(ipActualAddress.getIpActualAddress(user.getLastLoginIp()))
-				.andReturn(user.getLastLoginAddress());
-		addressMessageService.updateUserLastLoginIp(EasyMock.cmp(user, new Comparator<User>() {
-			@Override
-			public int compare(User u1, User u2) {
-				if(!u1.getId().equals(u2.getId())){
-					return 1;
-				}
-				if(!u1.getLastLoginIp().equals(u2.getLastLoginIp())){
-					return 1;
-				}
-				if(!u1.getLastLoginAddress().equals(u2.getLastLoginAddress())){
-					return 1;
-				}
-				long before = u1.getLastLoginTime().getTime();
-				long later = before + 3 * 60 * 1000;
-				long u2Time = u2.getLastLoginTime().getTime();
-				if(before>u2Time || later<u2Time){
-					return 1;
-				}
-				return 0;
-			}
-		}, LogicalOperator.EQUAL));
+		String ip = "127.0.0.1";
+		String address = "河南郑州";
+		EasyMock.expect(ipActualAddress.getIpActualAddress(ip))
+				.andReturn(address);
+		addressMessageService.updateUserLastLoginIp(EasyMock.isA(UserLoginRecord.class));
 
-		ipActualAddressService.saveIpActualInfo(user);
+		EasyMock.replay(ipActualAddress, addressMessageService);
 
+		ipActualAddressService.saveIpActualInfo(1, ip);
+		Thread.sleep(1000);
+
+		EasyMock.verify(ipActualAddress, addressMessageService);
 	}
 }

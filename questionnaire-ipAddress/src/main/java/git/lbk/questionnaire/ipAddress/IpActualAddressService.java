@@ -16,8 +16,6 @@
 
 package git.lbk.questionnaire.ipAddress;
 
-import git.lbk.questionnaire.entity.User;
-
 /**
  * 提供ip地址查询服务
  */
@@ -27,12 +25,12 @@ public interface IpActualAddressService {
 
 	/**
 	 * 根据用户最后登录的ip获取登录的实际地址, 然后将最后登录ip, 地点, 时间保存到数据库中
-	 * 该方法并不保证绝对的正确性, 比如连续调用两次该方法, 数据库中的最终数据可能是第一次时的数据, 而不是第二次的.
-	 * 调用该方法之前需要设置好用户id 和 最后登录ip
+	 * 该方法并不保证绝对的正确性, 比如连续调用两次该方法, 数据库中的最终数据可能是第一次时的数据, 而不是第二次的
 	 *
-	 * @param user user实体
+	 * @param userId 用户id
+	 * @param ip     用户登录IP地址
 	 */
-	void saveIpActualInfo(User user);
+	void saveIpActualInfo(int userId, String ip);
 
 	void destroy();
 

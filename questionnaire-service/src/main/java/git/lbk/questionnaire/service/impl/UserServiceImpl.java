@@ -140,8 +140,7 @@ public class UserServiceImpl implements UserService {
 			return null;
 		}
 		if(!user.getStatus().equals(User.NOT_VERIFIED)) {
-			user.setLastLoginIp(ip);
-			ipActualAddressService.saveIpActualInfo(user);
+			ipActualAddressService.saveIpActualInfo(user.getId(), ip);
 		}
 		return user;
 	}
@@ -212,9 +211,8 @@ public class UserServiceImpl implements UserService {
 			return null;
 		}
 		user.setStatus(User.NORMAL_STATUS);
-		user.setLastLoginIp(ip);
 		userDao.updateEntity(user);
-		ipActualAddressService.saveIpActualInfo(user);
+		ipActualAddressService.saveIpActualInfo(user.getId(), ip);
 		return user;
 	}
 

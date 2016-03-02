@@ -89,40 +89,24 @@
                 };
                 data[oCaptcha.attr('name')] = captcha;
 
-                $.post('<c:url value="/user/login"/>', data, function (json){
-                    if( json['status'] == 'success' ){
-                        // fixme 这里和templet/footer.jsp中的几乎一样, 但是我还没想好该怎么去除重复. 弄成一个模板, 然后ajax请求?
-                        var tips = '<p class="am-text-center">登录成功, 5秒后自动刷新(关闭本窗口立即刷新)</p>' +
-                                '<div class="am-panel am-panel-default">' +
-                                '<div class="am-panel-hd am-cf">上次登录信息</div>' +
-                                '<table class="am-table am-table-bd am-table-bdrs am-table-striped am-table-hover">' +
-                                '<tr><td>上次登录时间</td><td>' + json['lastLoginTime'] + '</td></tr>' +
-                                '<tr><td>上次登录IP</td><td>' + json['lastLoginIp'] + '</td></tr>' +
-                                '<tr><td>上次登录地点</td><td>' + json['lastLoginAddress'] + '</td></tr>' +
-                                '</table>' +
-                                '</div>';
-                        layer.open({
-                            type: 1,
-                            skin: 'layui-layer-rim',
-                            area: ['420px', '300px'],
-                            title: '登录成功',
-                            content: tips,
-                            time: 5000,
-                            end: function (){
-                                location.reload();
-                            }
+                $.post('<c:url value="/user/login"/>', data, function (result){
+                    if( result == 'success' ){
+                        layer.msg('登录成功, 即将刷新页面', {
+                            icon: 1,
+                            time: 2000
+                        }, function (){
+                            location.reload();
                         });
                     }
                     else{
-                        if( json['status'] == 'captcha error' ){
+                        if( result == 'captcha error' ){
                             layer.msg('验证码错误, 重新输入');
                             oCaptcha.val('');
                         }
-                        else if( json['status'] == 'password error' ){
+                        else if( result == 'password error' ){
                             layer.msg('账号或者密码错误, 请重新输入');
                         }
                         else{
-                            // if(json['status'] == 'message error')
                             layer.msg('输入信息有误, 请重新输入');
                         }
                         window.captcha.flush('#loginPage_flushCaptcha img:first');
