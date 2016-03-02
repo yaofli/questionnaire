@@ -22,9 +22,7 @@
         </encoder>
     </appender>
 
-    <logger name="git.lbk.questionnaire" level="DEBUG">
-        <appender-ref ref="STDOUT"/>
-    </logger>
+    <logger name="git.lbk.questionnaire" level="DEBUG"/>
 
     <root level="ERROR">
         <appender-ref ref="STDOUT"/>

@@ -32,7 +32,12 @@
     <context:component-scan base-package="git.lbk.questionnaire.dao.impl"/>
 
     <bean class="git.lbk.questionnaire.placeholder.EncryptPropertyPlaceholderConfigurer">
-        <property name="location" value="jdbcTest.properties"/>
+        <property name="locations" >
+            <list>
+                <value>classpath*:jdbcTest.properties</value>
+                <value>classpath*:redisTest.properties</value>
+            </list>
+        </property>
         <property name="fileEncoding" value="utf-8"/>
         <property name="encryptPropNames">
             <list>
@@ -92,5 +97,22 @@
     <aop:config>
         <aop:advisor advice-ref="txAdvice" pointcut="execution(* *..*DaoImpl.*(..))"/>
     </aop:config>
+
+
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxTotal" value="${redis.maxTotal}"/>
+        <property name="maxWaitMillis" value="${redis.maxWait}"/>
+        <property name="maxIdle" value="${redis.maxIdle}"/>
+        <property name="minIdle" value="${redis.minIdle}"/>
+    </bean>
+
+    <bean id="jedisPool" class="redis.clients.jedis.JedisPool" destroy-method="destroy">
+        <constructor-arg name="host" value="${redis.host}"/>
+        <constructor-arg name="poolConfig" ref="jedisPoolConfig"/>
+    </bean>
+
+    <bean id="rateLimit" class="git.lbk.questionnaire.util.RateLimit" init-method="init">
+        <property name="jedisPool" ref="jedisPool"/>
+    </bean>
 
 </beans>

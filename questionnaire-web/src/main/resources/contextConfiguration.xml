@@ -27,6 +27,7 @@
                 <value>classpath:sms.properties</value>
                 <value>classpath:emailAccount.properties</value>
                 <value>classpath:ipAddress.properties</value>
+                <value>classpath:redis.properties</value>
             </list>
         </property>
         <property name="fileEncoding" value="utf-8" />

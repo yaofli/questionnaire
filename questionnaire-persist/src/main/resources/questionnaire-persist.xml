@@ -60,6 +60,22 @@
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxTotal" value="${redis.maxTotal}"/>
+        <property name="maxWaitMillis" value="${redis.maxWait}"/>
+        <property name="maxIdle" value="${redis.maxIdle}"/>
+        <property name="minIdle" value="${redis.minIdle}"/>
+    </bean>
+
+    <bean id="jedisPool" class="redis.clients.jedis.JedisPool" destroy-method="destroy">
+        <constructor-arg name="host" value="${redis.host}"/>
+        <constructor-arg name="poolConfig" ref="jedisPoolConfig"/>
+    </bean>
+
+    <bean id="rateLimit" class="git.lbk.questionnaire.util.RateLimit" init-method="init">
+        <property name="jedisPool" ref="jedisPool"/>
+    </bean>
+
     <import resource="questionnaire-cache.xml"/>
 
 </beans>

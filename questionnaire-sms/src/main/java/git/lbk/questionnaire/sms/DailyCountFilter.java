@@ -16,61 +16,54 @@
 
 package git.lbk.questionnaire.sms;
 
-import git.lbk.questionnaire.dao.impl.SmsDaoImpl;
+import git.lbk.questionnaire.entity.Sms;
+import git.lbk.questionnaire.util.RateLimit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.util.*;
+
+/**
+ * 每日发送次数限制.
+ */
 public class DailyCountFilter implements SmsFilter {
-
 	private static final Logger logger = LoggerFactory.getLogger(DailyCountFilter.class);
 
-	private volatile int ipDailyMaxSendCount;
-	private volatile int mobileDailyMaxSendCount;
-	private SmsDaoImpl smsDao;
+	private static final String KEY_PREFIX = "rate.daily.limiting:";
+
+	private List<String> ipParams = new ArrayList<>(2);
+	private List<String> mobileParams = new ArrayList<>(2);
+	private RateLimit rateLimit;
 
 	public void setIpDailyMaxSendCount(int ipDailyMaxSendCount) {
-		this.ipDailyMaxSendCount = ipDailyMaxSendCount;
+		int secondOfDay = 60 * 60 * 24;
+		ipParams.add(Integer.toString(secondOfDay));
+		ipParams.add(Integer.toString(ipDailyMaxSendCount));
 	}
 
 	public void setMobileDailyMaxSendCount(int mobileDailyMaxSendCount) {
-		this.mobileDailyMaxSendCount = mobileDailyMaxSendCount;
+		int secondOfDay = 60 * 60 * 24;
+		mobileParams.add(Integer.toString(secondOfDay));
+		mobileParams.add(Integer.toString(mobileDailyMaxSendCount));
 	}
 
-	public void setSmsDao(SmsDaoImpl smsDao) {
-		this.smsDao = smsDao;
-	}
-
-	@Override
-	public void init() {
-		smsDao.createTableWithTransaction(0);
-		smsDao.createTableWithTransaction(1);
-		smsDao.createTableWithTransaction(2);
+	public void setRateLimit(RateLimit rateLimit) {
+		this.rateLimit = rateLimit;
 	}
 
 	@Override
-	@Transactional
-	public void filter(git.lbk.questionnaire.entity.Sms sms) throws SendSmsFailException {
-		if(smsDao.getMobileCount(sms.getMobile()) >= mobileDailyMaxSendCount) {
-			throw new DailySendMuchException("发送次数超过了日发送次数");
+	public void init() {}
+
+	@Override
+	public void filter(Sms sms) throws DailySendMuchException {
+		if(rateLimit.isExceedRate(KEY_PREFIX+sms.getMobile(), mobileParams)
+				|| rateLimit.isExceedRate(KEY_PREFIX+sms.getIp(), ipParams)){
+			throw new DailySendMuchException("发送短信过于频繁");
 		}
-		if(smsDao.getIPCount(sms.getIp()) >= ipDailyMaxSendCount) {
-			throw new DailySendMuchException("发送次数超过了日发送次数");
-		}
-		smsDao.saveEntity(sms);
+		logger.info(sms.toString());
 	}
 
 	@Override
 	public void destroy() {}
-
-	/**
-	 * 创建新的日志表
-	 */
-	@Transactional
-	public void createNowLogTable(){
-		smsDao.createTable(1);
-		smsDao.createTable(2);
-		smsDao.createTable(3);
-	}
 
 }

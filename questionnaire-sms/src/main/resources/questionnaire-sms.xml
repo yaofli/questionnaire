@@ -28,15 +28,16 @@
         <property name="sendSms" ref="sms"/>
     </bean>
 
-    <bean id="frequencyFilter" class="git.lbk.questionnaire.sms.FrequencyFilter" init-method="init" destroy-method="destroy">
-        <constructor-arg name="cleanMapInterval" value="${sms.cleanMapInterval}"/>
-        <constructor-arg name="sendInterval" value="${sms.sendInterval}"/>
+    <bean id="frequencyFilter" class="git.lbk.questionnaire.sms.FrequencyFilter" init-method="init"
+          destroy-method="destroy">
+        <property name="rateLimit" ref="rateLimit"/>
+        <property name="sendInterval" value="${sms.sendInterval}"/>
     </bean>
 
     <bean id="dailyCountFilter" class="git.lbk.questionnaire.sms.DailyCountFilter" init-method="init" destroy-method="destroy">
-        <property name="ipDailyMaxSendCount" value="${sms.ipDailyMaxSendCount}"/>
+        <property name="rateLimit" ref="rateLimit"/>
         <property name="mobileDailyMaxSendCount" value="${sms.mobileDailyMaxSendCount}"/>
-        <property name="smsDao" ref="smsDao"/>
+        <property name="ipDailyMaxSendCount" value="${sms.ipDailyMaxSendCount}"/>
     </bean>
 
     <bean id="smsService" class="git.lbk.questionnaire.sms.SmsServiceImpl">
@@ -47,25 +48,6 @@
             </list>
         </property>
         <property name="sms" ref="asyncSms"/>
-    </bean>
-
-    <bean id="createSmsTableJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-        <property name="targetObject" ref="dailyCountFilter"/>
-        <property name="targetMethod" value="createNowLogTable"/>
-    </bean>
-
-    <bean id="smsSchedulerTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-        <property name="jobDetail" ref="createSmsTableJob"/>
-        <!-- 每月的20号 02:00:00 运行-->
-        <property name="cronExpression" value="0 0 2 20 * ?"/>
-    </bean>
-
-    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-        <property name="triggers">
-            <list>
-                <ref bean="smsSchedulerTrigger"/>
-            </list>
-        </property>
     </bean>
 
 </beans>

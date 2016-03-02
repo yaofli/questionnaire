@@ -97,7 +97,7 @@ public class SmsServiceImpl implements SmsService {
 	 */
 	private void sendRegisterSms(git.lbk.questionnaire.entity.Sms sms) {
 		this.sms.sendMessage(sms.getMobile(),
-				template.getProperty("register").replace("{captcha}", sms.getCaptcha()));
+				template.getProperty("register").replace("${captcha}", sms.getCaptcha()));
 	}
 
 }
