@@ -28,13 +28,31 @@
             memoryStoreEvictionPolicy="LRU"
             />
 
+    <!-- 用户缓存区 -->
+    <cache name="userPasswordLogin"
+           maxElementsInMemory="100"
+           eternal="false"
+           timeToIdleSeconds="864000"
+           timeToLiveSeconds="2592000"
+           overflowToDisk="false"
+           memoryStoreEvictionPolicy="LRU"
+    />
+    <cache name="userAutoLogin"
+           maxElementsInMemory="100"
+           eternal="false"
+           timeToIdleSeconds="864000"
+           timeToLiveSeconds="2592000"
+           overflowToDisk="false"
+           memoryStoreEvictionPolicy="LRU"
+        />
+
     <!-- survey缓存池-->
     <cache name="survey"
-            maxElementsInMemory="100"
+            maxElementsInMemory="300"
             eternal="false"
             timeToIdleSeconds="86400"
             timeToLiveSeconds="259200"
-             overflowToDisk="false"
+            overflowToDisk="false"
             memoryStoreEvictionPolicy="LRU"
             />
     <cache name="userSurvey"
