@@ -32,17 +32,20 @@ public @interface ErrorHandler {
 	 *
 	 * @return 是否添加request属性, 并放行
 	 */
-	boolean passAddAttribute() default false;
+	boolean pass() default false;
 
 	/**
-	 * <b>注意: 该参数只有在passAddParam为false的时候才有效</b><br/>
-	 * token不正确时返回给客户端的值.
+	 * token不正确时返回给客户端的值.<br/>
+	 * 在{@link #pass()}为true的时候
+	 * <ul>
+	 *     <li>如果该值为空, 则设置错误消息, 并放行</li>
+	 *     <li>如果以"dispatcher:"开否, 则设置错误消息, 之后转发到目标页面</li>
+	 * </ul>
+	 * 在{@link #pass()}为false时
 	 * <ul>
 	 *     <li>如果以"redirect:"开头则重定向客户端到目标页面</li>
-	 *     <li>如果以"dispatcher:"开否, 则设置错误消息, 之后转发到目标页面</li>
 	 *     <li>否则, 直接返回</li>
 	 * </ul>
-	 *
 	 * @return 返回给客户端的值
 	 */
 	String returnValue() default "redirect:/";

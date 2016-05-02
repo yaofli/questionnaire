@@ -31,7 +31,6 @@
         <module>questionnaire-service</module>
         <module>questionnaire-ipAddress</module>
         <module>questionnaire-web</module>
-        <module>quesionnaire-log</module>
     </modules>
 
     <properties>

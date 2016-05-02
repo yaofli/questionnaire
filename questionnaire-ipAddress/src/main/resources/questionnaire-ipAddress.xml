@@ -38,14 +38,33 @@
     </bean>-->
     <bean id="ipActualAddress" class="git.lbk.questionnaire.ipAddress.IpActualAddressImitateImpl"/>
 
-    <bean id="lastLoginService" class="git.lbk.questionnaire.ipAddress.AddressMessageService">
-        <property name="userDao" ref="userDao"/>
+    <bean id="lastLoginService" class="git.lbk.questionnaire.ipAddress.UserLoginRecordService" init-method="init">
+        <property name="loginRecordDao" ref="userLoginRecord" />
     </bean>
 
     <bean id="ipAddressService" class="git.lbk.questionnaire.ipAddress.IpActualAddressServiceImpl"
           init-method="init" destroy-method="destroy">
         <property name="ipActualAddress" ref="ipActualAddress"/>
         <property name="userLastLoginService" ref="lastLoginService"/>
+    </bean>
+
+    <bean id="createUserLoginTableJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="lastLoginService"/>
+        <property name="targetMethod" value="createNowLogTable"/>
+    </bean>
+
+    <bean id="smsSchedulerTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="createUserLoginTableJob"/>
+        <!-- 每月的20号 02:00:00 运行 -->
+        <property name="cronExpression" value="0 0 2 20 * ?"/>
+    </bean>
+
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="smsSchedulerTrigger"/>
+            </list>
+        </property>
     </bean>
 
 </beans>

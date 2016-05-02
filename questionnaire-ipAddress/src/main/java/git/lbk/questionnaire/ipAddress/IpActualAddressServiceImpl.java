@@ -16,11 +16,10 @@
 
 package git.lbk.questionnaire.ipAddress;
 
-import git.lbk.questionnaire.entity.User;
+import git.lbk.questionnaire.entity.UserLoginRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -34,13 +33,13 @@ public class IpActualAddressServiceImpl implements IpActualAddressService {
 
 	private IpActualAddress ipActualAddress;
 	private ExecutorService executorService;
-	private AddressMessageService userLastLoginService;
+	private UserLoginRecordService userLastLoginService;
 
 	public void setIpActualAddress(IpActualAddress ipActualAddress) {
 		this.ipActualAddress = ipActualAddress;
 	}
 
-	public void setUserLastLoginService(AddressMessageService userLastLoginService) {
+	public void setUserLastLoginService(UserLoginRecordService userLastLoginService) {
 		this.userLastLoginService = userLastLoginService;
 	}
 
@@ -53,17 +52,17 @@ public class IpActualAddressServiceImpl implements IpActualAddressService {
 	 * 根据用户最后登录的ip获取登录的实际地址, 然后将最后登录ip, 地点, 时间保存到数据库中
 	 * 该方法并不保证绝对的正确性, 比如连续调用两次该方法, 数据库中的最终数据可能是第一次时的数据, 而不是第二次的
 	 *
-	 * @param user User对象, 需要使用其中的id 和 ip
+	 * @param userId 用户id
+	 * @param ip 用户登录IP地址
 	 */
 	@Override
-	public void saveIpActualInfo(User user) {
-		User u = new User();
-		u.setId(user.getId());
-		u.setLastLoginIp(user.getLastLoginIp());
-		u.setLastLoginTime(new Date());
+	public void saveIpActualInfo(int userId, String ip) {
+		UserLoginRecord loginRecord = new UserLoginRecord();
+		loginRecord.setUserId(userId);
+		loginRecord.setIp(ip);
 		executorService.submit(()->{
-			u.setLastLoginAddress(ipActualAddress.getIpActualAddress(u.getLastLoginIp()));
-			userLastLoginService.updateUserLastLoginIp(u);
+			loginRecord.setAddress(ipActualAddress.getIpActualAddress(loginRecord.getIp()));
+			userLastLoginService.updateUserLastLoginIp(loginRecord);
 		});
 	}
 

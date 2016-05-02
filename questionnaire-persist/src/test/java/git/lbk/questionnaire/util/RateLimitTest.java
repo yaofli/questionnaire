@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 LBK
+ * Copyright 2016 LBK
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,33 +14,26 @@
  * limitations under the License.
  */
 
-package git.lbk.questionnaire.dao.impl;
+package git.lbk.questionnaire.util;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import static org.junit.Assert.assertEquals;
+import org.springframework.util.Assert;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:questionnaire-persistTest.xml")
-public class SmsDaoImplTest {
+public class RateLimitTest {
 
 	@Autowired
-	private SmsDaoImpl smsCountDao;
+	private RateLimit rateLimit;
 
 	@Test
-	public void testGetMobileCount(){
-		assertEquals(3, smsCountDao.getMobileCount("12345678901"));
-		assertEquals(0, smsCountDao.getMobileCount("12345678903"));
-	}
-
-	@Test
-	public void testGetIPCount(){
-		assertEquals(2, smsCountDao.getIPCount("127.0.0.1"));
-		assertEquals(0, smsCountDao.getIPCount("127.0.0.5"));
+	public void testIsExceedRate() throws Exception {
+		Assert.isTrue(!rateLimit.isExceedRate("rateLimit1", 2, 1), "限制频率调用失败. 应该可以通过, 结果却没有");
+		Assert.isTrue(rateLimit.isExceedRate("rateLimit1", 2, 1), "限制频率调用失败. 应该不能通过, 结果却通过了");
 	}
 
 }

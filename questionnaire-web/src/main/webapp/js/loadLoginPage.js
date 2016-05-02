@@ -40,6 +40,7 @@ $(function(){
 		layer.close(loading);
 		layer.open({
 			type: 1,
+			title: '登录',
 			skin: 'layui-layer-rim',
 			area: ['450px', '350px'],
 			content: loginPage

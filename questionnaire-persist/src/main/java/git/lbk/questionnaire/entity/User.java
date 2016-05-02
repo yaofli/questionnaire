@@ -17,7 +17,6 @@
 package git.lbk.questionnaire.entity;
 
 import git.lbk.questionnaire.springmvc.validator.CheckEmailPhone;
-import git.lbk.questionnaire.util.DateUtil;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
@@ -68,9 +67,7 @@ public class User implements Serializable{
 	private Character status;
 	private Character type;
 	private Date registerTime;
-	private Date lastLoginTime;
-	private String lastLoginAddress;
-	private String lastLoginIp;
+
 
 	public Integer getId() {
 		return id;
@@ -144,30 +141,6 @@ public class User implements Serializable{
 		this.registerTime = registerTime;
 	}
 
-	public Date getLastLoginTime() {
-		return lastLoginTime;
-	}
-
-	public void setLastLoginTime(Date lastLoginTime) {
-		this.lastLoginTime = lastLoginTime;
-	}
-
-	public String getLastLoginAddress() {
-		return lastLoginAddress;
-	}
-
-	public void setLastLoginAddress(String lastLoginAddress) {
-		this.lastLoginAddress = lastLoginAddress;
-	}
-
-	public String getLastLoginIp() {
-		return lastLoginIp;
-	}
-
-	public void setLastLoginIp(String lastLoginIp) {
-		this.lastLoginIp = lastLoginIp;
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if(this == o) return true;
@@ -183,12 +156,7 @@ public class User implements Serializable{
 		if(email != null ? !email.equals(user.email) : user.email != null) return false;
 		if(status != null ? !status.equals(user.status) : user.status != null) return false;
 		if(type != null ? !type.equals(user.type) : user.type != null) return false;
-		if(!DateUtil.equals(registerTime, user.registerTime)) return false;
-		if(!DateUtil.equals(lastLoginTime, user.lastLoginTime)) return
-				false;
-		if(lastLoginAddress != null ? !lastLoginAddress.equals(user.lastLoginAddress) : user.lastLoginAddress != null)
-			return false;
-		return !(lastLoginIp != null ? !lastLoginIp.equals(user.lastLoginIp) : user.lastLoginIp != null);
+		return !(registerTime != null ? !registerTime.equals(user.registerTime) : user.registerTime != null);
 
 	}
 
@@ -203,9 +171,6 @@ public class User implements Serializable{
 		result = 31 * result + (status != null ? status.hashCode() : 0);
 		result = 31 * result + (type != null ? type.hashCode() : 0);
 		result = 31 * result + (registerTime != null ? registerTime.hashCode() : 0);
-		result = 31 * result + (lastLoginTime != null ? lastLoginTime.hashCode() : 0);
-		result = 31 * result + (lastLoginAddress != null ? lastLoginAddress.hashCode() : 0);
-		result = 31 * result + (lastLoginIp != null ? lastLoginIp.hashCode() : 0);
 		return result;
 	}
 
@@ -221,9 +186,6 @@ public class User implements Serializable{
 				", status=" + status +
 				", type=" + type +
 				", registerTime=" + registerTime +
-				", lastLoginTime=" + lastLoginTime +
-				", lastLoginAddress='" + lastLoginAddress + '\'' +
-				", lastLoginIp='" + lastLoginIp + '\'' +
 				'}';
 	}
 }

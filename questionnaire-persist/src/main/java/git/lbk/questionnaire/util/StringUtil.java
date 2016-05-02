@@ -92,12 +92,15 @@ public class StringUtil {
 		if(b == null) {
 			return "";
 		}
+
 		int length = b.length;
 		StringBuilder str = new StringBuilder(length * 2);
+
 		for(byte aB : b) {
 			str.append(HEX_DIGITS[aB >> 4 & 0xf]);
 			str.append(HEX_DIGITS[aB & 0xf]);
 		}
+
 		return str.toString();
 	}
 

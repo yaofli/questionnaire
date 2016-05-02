@@ -43,9 +43,9 @@
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="configLocation" value="classpath:hibernate.cfg.xml"/>
-        <property name="mappingDirectoryLocations">
+        <property name="mappingLocations">
             <list>
-                <value>classpath:git/lbk/questionnaire/entity</value>
+                <value>classpath:git/lbk/questionnaire/entity/*.hbm.xml</value>
             </list>
         </property>
     </bean>
@@ -59,6 +59,22 @@
     </bean>
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxTotal" value="${redis.maxTotal}"/>
+        <property name="maxWaitMillis" value="${redis.maxWait}"/>
+        <property name="maxIdle" value="${redis.maxIdle}"/>
+        <property name="minIdle" value="${redis.minIdle}"/>
+    </bean>
+
+    <bean id="jedisPool" class="redis.clients.jedis.JedisPool" destroy-method="destroy">
+        <constructor-arg name="host" value="${redis.host}"/>
+        <constructor-arg name="poolConfig" ref="jedisPoolConfig"/>
+    </bean>
+
+    <bean id="rateLimit" class="git.lbk.questionnaire.util.RateLimit" init-method="init">
+        <property name="jedisPool" ref="jedisPool"/>
+    </bean>
 
     <import resource="questionnaire-cache.xml"/>
 

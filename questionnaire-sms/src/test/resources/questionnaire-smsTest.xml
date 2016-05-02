@@ -36,32 +36,10 @@
         </property>
     </bean>
 
-    <bean id="sms" class="git.lbk.questionnaire.sms.Sms2ConsoleImpl">
+    <bean id="sms" class="git.lbk.questionnaire.sms.SmsImpl">
         <property name="maxTryNumber" value="${sms.maxTryNumber}"/>
-    </bean>
-
-    <bean id="asyncSms" class="git.lbk.questionnaire.sms.AsyncSmsImpl">
-        <property name="sendSms" ref="sms"/>
-    </bean>
-
-    <bean id="frequencyFilter" class="git.lbk.questionnaire.sms.FrequencyFilter">
-        <property name="cleanMapInterval" value="${sms.cleanMapInterval}"/>
-        <property name="sendInterval" value="${sms.sendInterval}"/>
-    </bean>
-
-    <bean id="dailyCountFilter" class="git.lbk.questionnaire.sms.DailyCountFilter">
-        <property name="ipDailyMaxSendCount" value="${sms.ipDailyMaxSendCount}"/>
-        <property name="mobileDailyMaxSendCount" value="${sms.mobileDailyMaxSendCount}"/>
-    </bean>
-
-    <bean id="smsService" class="git.lbk.questionnaire.sms.SmsServiceImpl">
-        <property name="filters">
-            <list>
-                <ref bean="frequencyFilter"/>
-                <ref bean="dailyCountFilter"/>
-            </list>
-        </property>
-        <property name="sms" ref="asyncSms"/>
+        <property name="account" value="${sms.account}"/>
+        <property name="password" value="${sms.password}"/>
     </bean>
 
 </beans>

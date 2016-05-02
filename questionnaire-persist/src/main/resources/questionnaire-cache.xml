@@ -30,6 +30,26 @@
 
     <cache:advice id="cacheAdvice" cache-manager="cacheManager">
 
+        <cache:caching cache="userPasswordLogin"
+                       condition="#root.targetClass==T(git.lbk.questionnaire.dao.impl.UserDaoImpl)">
+            <cache:cacheable method="validateLoginInfo" key="#p0"/>
+
+            <cache:cache-evict method="saveEntity" key="#p0.mobile"/>
+            <cache:cache-evict method="saveEntity" key="#p0.email"/>
+
+            <cache:cache-evict method="saveOrUpdateEntity" key="#p0.mobile"/>
+            <cache:cache-evict method="saveOrUpdateEntity" key="#p0.email"/>
+        </cache:caching>
+
+        <cache:caching cache="userAutoLogin"
+                       condition="#root.targetClass==T(git.lbk.questionnaire.dao.impl.UserDaoImpl)">
+            <cache:cacheable method="validateAutoLoginInfo" key="#p0"/>
+
+            <cache:cache-evict method="saveEntity" key="#p0.autoLogin"/>
+
+            <cache:cache-evict method="saveOrUpdateEntity" key="#p0.autoLogin"/>
+        </cache:caching>
+
         <!-- survey缓存策略-->
         <cache:caching cache="survey"
                        condition="#root.targetClass==T(git.lbk.questionnaire.dao.impl.SurveyDaoImpl)">

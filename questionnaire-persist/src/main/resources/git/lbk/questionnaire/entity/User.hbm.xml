@@ -33,9 +33,6 @@
         <property name="status" column="user_status" type="java.lang.Character"/>
         <property name="type" column="type" type="java.lang.Character"/>
         <property name="registerTime" column="register_time" type="java.util.Date"/>
-        <property name="lastLoginTime" column="last_login_time" type="java.util.Date"/>
-        <property name="lastLoginAddress" column="last_login_address" type="java.lang.String"/>
-        <property name="lastLoginIp" column="last_login_ip" type="java.lang.String"/>
     </class>
 
 </hibernate-mapping>

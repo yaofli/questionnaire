@@ -1,9 +1,9 @@
-INSERT INTO USER (name, password, auto_login, mobile, email, user_status, type, register_time, last_login_time, last_login_address, last_login_ip)
+INSERT INTO USER (name, password, auto_login, mobile, email, user_status, type, register_time)
 VALUES
-  ('abc', '1234567890', 'abcAutoLogin', NULL, 'abc@gmail.com', 'n', 'c', '2015-11-01 17:01:03', NULL, NULL, NULL),
-  ('123', '1234567890', '123AutoLogin', '12345678901', NULL, 'v', 'c', '2015-10-29 7:34:23', NULL, NULL, NULL),
-  ('zs', '1234567890', 'zsAutoLogin', '13145679381', 'zs@gmail.com', 'n', 'c', '2014-02-06 22:08:30', NULL, NULL, NULL),
-  ('survey', '1234567890', 'surveyAutoLogin', '13135679381', '', 'n', 'c', '2014-02-06 22:08:30', NULL, NULL, NULL);
+  ('abc', '1234567890', 'abcAutoLogin', NULL, 'abc@gmail.com', 'n', 'c', '2015-11-01 17:01:03'),
+  ('123', '1234567890', '123AutoLogin', '12345678901', NULL, 'v', 'c', '2015-10-29 7:34:23'),
+  ('zs', '1234567890', 'zsAutoLogin', '13145679381', 'zs@gmail.com', 'n', 'c', '2014-02-06 22:08:30'),
+  ('survey', '1234567890', 'surveyAutoLogin', '13135679381', '', 'n', 'c', '2014-02-06 22:08:30');
 
 -- 测试 deleteByUserIDAndType 方法的数据
 INSERT INTO email_validate(identity_code, user_id ,create_time, type)

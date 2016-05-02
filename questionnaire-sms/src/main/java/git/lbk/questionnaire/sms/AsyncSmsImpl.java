@@ -46,6 +46,7 @@ public class AsyncSmsImpl implements Sms {
 		catch(Exception e) {
 			logger.warn("提交任务时发生错误", e);
 		}
+
 		return -1;
 	}
 }
