@@ -26,8 +26,8 @@ import java.io.IOException;
 
 public class ErrorHandlerResolve {
 
-	public static final String REDIRECT_PREFIX = "redirect:";
-	public static final String DISPATCHER_PREFIX = "dispatcher:";
+	private static final String REDIRECT_PREFIX = "redirect:";
+	private static final String DISPATCHER_PREFIX = "dispatcher:";
 
 	/**
 	 * 根据errorHandler中的情况处理错误情况. 如果errorHandler为空, 则重定向到首页
@@ -42,22 +42,25 @@ public class ErrorHandlerResolve {
 	                                  ErrorHandler errorHandler) throws IOException, ServletException {
 		String basePath = request.getScheme() + "://" + request.getServerName() + ":"
 				+ request.getServerPort() +	request.getContextPath() + "/";
+
 		if(errorHandler == null) {
 			response.sendRedirect(basePath);
 			return false;
 		}
-		if(errorHandler.passAddAttribute()) {
+
+		String returnValue = errorHandler.returnValue();
+
+		if(errorHandler.pass()) {
 			TokenHelper.addError(request);
+
+			if(returnValue.startsWith(DISPATCHER_PREFIX)) {
+				request.getRequestDispatcher(returnValue.substring(DISPATCHER_PREFIX.length())).forward(request, response);
+			}
 			return true;
 		}
 
-		String returnValue = errorHandler.returnValue();
 		if(returnValue.startsWith(REDIRECT_PREFIX)) {
 			response.sendRedirect(basePath + returnValue.substring(REDIRECT_PREFIX.length()));
-		}
-		else if(returnValue.startsWith(DISPATCHER_PREFIX)) {
-			TokenHelper.addError(request);
-			request.getRequestDispatcher(returnValue.substring(DISPATCHER_PREFIX.length())).forward(request, response);
 		}
 		else {
 			response.getWriter().print(returnValue);
