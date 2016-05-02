@@ -89,12 +89,12 @@ public class UserController {
 			return map;
 		}
 		if(!StringUtil.isNull(user.getMobile())) {
-			if(!CaptchaUtil.validateSmsCpatcha(request)) {
+			if(!CaptchaUtil.validateSmsCaptcha(request)) {
 				map.put("status", "sms captcha error");
 				return map;
 			}
 		}
-		else if(!CaptchaUtil.validateImageCpatcha(request)) {
+		else if(!CaptchaUtil.validateImageCaptcha(request)) {
 			map.put("status", "captcha error");
 			return map;
 		}
@@ -115,7 +115,7 @@ public class UserController {
 	@ResponseBody
 	@RequestMapping("/login")
 	public String login(HttpServletRequest request, HttpServletResponse response) {
-		if(!CaptchaUtil.validateImageCpatcha(request)) {
+		if(!CaptchaUtil.validateImageCaptcha(request)) {
 			return "captcha error";
 		}
 		String account = request.getParameter("account");

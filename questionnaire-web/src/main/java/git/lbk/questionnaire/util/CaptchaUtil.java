@@ -39,7 +39,7 @@ public class CaptchaUtil {
 	 * @param request 请求对象
 	 * @return 如果session中为验证码空, 则返回false. 否则如果一致则返回true, 否则返回false
 	 */
-	public static boolean validateImageCpatcha(HttpServletRequest request){
+	public static boolean validateImageCaptcha(HttpServletRequest request){
 		return validateCaptcha(request, ImageCaptchaController.SESSION_KEY, ImageCaptchaController.REQUEST_NAME);
 	}
 
@@ -49,7 +49,7 @@ public class CaptchaUtil {
 	 * @param request 请求对象
 	 * @return 如果session中为验证码空, 则返回false. 否则如果一致则返回true, 否则返回false
 	 */
-	public static boolean validateSmsCpatcha(HttpServletRequest request) {
+	public static boolean validateSmsCaptcha(HttpServletRequest request) {
 		return validateCaptcha(request, SmsCaptchaController.SESSION_KEY, SmsCaptchaController.REQUEST_NAME);
 	}
 
