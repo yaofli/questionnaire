@@ -43,8 +43,9 @@
 
     <link rel="stylesheet" href="assets/css/amazeui.min.css" />
     <link rel="stylesheet" href="assets/css/app.css" />
-    
+
     <script src="js/jquery.min.js"></script>
+    <script src="js/layer/layer.js"></script>
     <script src="js/tools.js"></script>
     <script src="js/visualSurvey.js"></script>
     <script>
